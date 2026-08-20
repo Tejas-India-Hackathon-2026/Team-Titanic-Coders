@@ -489,7 +489,8 @@ function showAllIndia(btnElement) {
 </section>
 <?php endif; ?>
 
-<!-- Value Banner / Statistics -->
+<?php if (!is_logged_in()): ?>
+<!-- Value Banner / Statistics (Visible only for non-logged in guests) -->
 <div class="container">
     <div class="stats-banner">
         <div class="stats-grid">
@@ -512,6 +513,7 @@ function showAllIndia(btnElement) {
         </div>
     </div>
 </div>
+<?php endif; ?>
 
 <!-- Latest Properties Section -->
 <section class="section">
