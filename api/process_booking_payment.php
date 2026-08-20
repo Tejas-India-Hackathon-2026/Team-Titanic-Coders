@@ -74,6 +74,14 @@ try {
             WHERE property_id = ? AND (renter_id = ? OR LOWER(email) = LOWER(?))
         ");
         $findInq->execute([$amount, $transactionId, $propertyId, $user['id'], $user['email']]);
+
+        if ($findInq->rowCount() === 0) {
+            $insInq = $pdo->prepare("
+                INSERT INTO inquiries (property_id, renter_id, name, email, phone, message, booking_status, token_amount, transaction_id)
+                VALUES (?, ?, ?, ?, ?, 'Reserved room online via RentNear Instant Token Booking Advance.', 'token_paid', ?, ?)
+            ");
+            $insInq->execute([$propertyId, $user['id'], $user['name'], $user['email'], $user['phone'], $amount, $transactionId]);
+        }
     }
 
     $pdo->commit();

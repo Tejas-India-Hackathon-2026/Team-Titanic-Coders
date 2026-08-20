@@ -67,18 +67,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile_info']
                     ':id'      => $userId
                 ]);
             } elseif ($role === 'renter') {
+                $permAddress   = sanitize($_POST['permanent_address'] ?? '');
+                $guardianName  = sanitize($_POST['guardian_name'] ?? '');
+                $emerPhone     = sanitize($_POST['emergency_phone'] ?? '');
+
                 $updateStmt = $pdo->prepare("
                     UPDATE renters 
-                    SET name = :name, email = :email, phone = :phone, occupation = :occ, preferred_city = :pcity
+                    SET name = :name, email = :email, phone = :phone, occupation = :occ, preferred_city = :pcity,
+                        permanent_address = :paddr, guardian_name = :gname, emergency_phone = :ephone
                     WHERE id = :id
                 ");
                 $updateStmt->execute([
-                    ':name'  => $name,
-                    ':email' => $email,
-                    ':phone' => $phone,
-                    ':occ'   => $extra1,
-                    ':pcity' => $extra2,
-                    ':id'    => $userId
+                    ':name'   => $name,
+                    ':email'  => $email,
+                    ':phone'  => $phone,
+                    ':occ'    => $extra1,
+                    ':pcity'  => $extra2,
+                    ':paddr'  => $permAddress,
+                    ':gname'  => $guardianName,
+                    ':ephone' => $emerPhone,
+                    ':id'     => $userId
                 ]);
             } else {
                 $updateStmt = $pdo->prepare("UPDATE admins SET name = :name, email = :email, phone = :phone WHERE id = :id");
@@ -312,13 +320,30 @@ require_once __DIR__ . '/includes/header.php';
                         </div>
                     <?php elseif ($role === 'renter'): ?>
                         <div class="form-group">
-                            <label>Occupation / Profession</label>
-                            <input type="text" name="extra1" class="form-control" placeholder="e.g. Software Engineer, Doctor, Student" value="<?php echo htmlspecialchars($user['occupation'] ?? ''); ?>">
+                            <label><i class="fa-solid fa-graduation-cap me-1"></i> Occupation / College / Workplace</label>
+                            <input type="text" name="extra1" class="form-control" placeholder="e.g. Student at KKM College, Software Engineer" value="<?php echo htmlspecialchars($user['occupation'] ?? ''); ?>">
                         </div>
                         <div class="form-group">
                             <label><i class="fa-solid fa-city me-1"></i> Preferred Rental City / District</label>
                             <input type="text" name="extra2" class="form-control" list="profileCityDatalist" placeholder="e.g. Jamui, Patna, Pune, Bengaluru" value="<?php echo htmlspecialchars($user['preferred_city'] ?? ''); ?>" autocomplete="off">
                             <?php echo render_indian_city_datalist('profileCityDatalist'); ?>
+                        </div>
+
+                        <div class="form-group">
+                            <label><i class="fa-solid fa-house-user me-1"></i> Permanent Home Address (Native Town / Village)</label>
+                            <input type="text" name="permanent_address" class="form-control" placeholder="e.g. Vill: Sikandra, Dist: Jamui, Bihar - 811315" value="<?php echo htmlspecialchars($user['permanent_address'] ?? ''); ?>">
+                            <small style="font-size: 0.74rem; color: var(--text-muted);">Auto-shared with landlord upon booking so you never have to do manual paperwork.</small>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                            <div class="form-group">
+                                <label><i class="fa-solid fa-user-shield me-1"></i> Father / Guardian Name</label>
+                                <input type="text" name="guardian_name" class="form-control" placeholder="e.g. Ram Prasad Sharma" value="<?php echo htmlspecialchars($user['guardian_name'] ?? ''); ?>">
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fa-solid fa-phone-volume me-1"></i> Family / Emergency Phone</label>
+                                <input type="tel" name="emergency_phone" class="form-control" placeholder="9876543210" maxlength="10" value="<?php echo htmlspecialchars($user['emergency_phone'] ?? ''); ?>">
+                            </div>
                         </div>
                     <?php endif; ?>
 
@@ -351,17 +376,32 @@ require_once __DIR__ . '/includes/header.php';
 
                     <div class="form-group">
                         <label for="currentPass">Current Password <span class="text-danger">*</span></label>
-                        <input type="password" name="current_password" id="currentPass" class="form-control" placeholder="••••••••" required>
+                        <div style="position: relative;">
+                            <input type="password" name="current_password" id="currentPass" class="form-control" placeholder="••••••••" required style="padding-right: 2.5rem;">
+                            <button type="button" onclick="togglePasswordVisibility('currentPass', this)" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #64748b; cursor: pointer; padding: 4px;" title="Show/Hide Password">
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
+                        </div>
                     </div>
 
                     <div class="form-group">
                         <label for="newPass">New Password <span class="text-danger">*</span></label>
-                        <input type="password" name="new_password" id="newPass" class="form-control" placeholder="Min 6 characters" required>
+                        <div style="position: relative;">
+                            <input type="password" name="new_password" id="newPass" class="form-control" placeholder="Min 6 characters" required style="padding-right: 2.5rem;">
+                            <button type="button" onclick="togglePasswordVisibility('newPass', this)" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #64748b; cursor: pointer; padding: 4px;" title="Show/Hide Password">
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
+                        </div>
                     </div>
 
                     <div class="form-group">
                         <label for="confirmPass">Confirm New Password <span class="text-danger">*</span></label>
-                        <input type="password" name="confirm_password" id="confirmPass" class="form-control" placeholder="Re-type new password" required>
+                        <div style="position: relative;">
+                            <input type="password" name="confirm_password" id="confirmPass" class="form-control" placeholder="Re-type new password" required style="padding-right: 2.5rem;">
+                            <button type="button" onclick="togglePasswordVisibility('confirmPass', this)" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #64748b; cursor: pointer; padding: 4px;" title="Show/Hide Password">
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
+                        </div>
                     </div>
 
                     <button type="submit" class="btn btn-secondary" style="width: 100%; margin-top: 0.5rem;">
@@ -458,5 +498,26 @@ require_once __DIR__ . '/includes/header.php';
     }
 }
 </style>
+
+<script>
+function togglePasswordVisibility(inputId, btn) {
+    var input = document.getElementById(inputId);
+    if (!input) return;
+    var icon = btn.querySelector('i');
+    if (input.type === 'password') {
+        input.type = 'text';
+        if (icon) {
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        }
+    } else {
+        input.type = 'password';
+        if (icon) {
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    }
+}
+</script>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>

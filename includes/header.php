@@ -171,10 +171,6 @@ $current_page = basename($_SERVER['PHP_SELF']);
                         <a href="add-property.php" class="btn btn-primary btn-sm">
                             <i class="fa-solid fa-plus"></i> Post Property
                         </a>
-                    <?php elseif ($user['role'] === 'admin'): ?>
-                        <a href="logout.php" class="btn btn-danger btn-sm" style="background: #dc2626; border-color: #b91c1c; font-weight: 700; font-size: 0.8rem; padding: 0.35rem 0.75rem;" title="Sign Out of Admin">
-                            <i class="fa-solid fa-arrow-right-from-bracket me-1"></i> Logout
-                        </a>
                     <?php endif; ?>
 
                     <!-- User Profile Dropdown -->

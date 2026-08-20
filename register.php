@@ -197,15 +197,25 @@ require_once __DIR__ . '/includes/header.php';
                     <small style="font-size: 0.76rem; color: var(--text-muted);">An instant 6-digit OTP will be sent to this number.</small>
                 </div>
 
-                <!-- Unique Password with Live Checklist -->
+                <!-- Unique Password with Live Checklist & Preview Option -->
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
                     <div class="form-group">
                         <label for="regPass">Create Password <span class="text-danger">*</span></label>
-                        <input type="password" name="password" id="regPass" class="form-control" placeholder="e.g. Abc@#$25" oninput="checkPasswordStrength(this.value)" required>
+                        <div style="position: relative;">
+                            <input type="password" name="password" id="regPass" class="form-control" placeholder="e.g. Abc@#$25" oninput="checkPasswordStrength(this.value)" required style="padding-right: 2.4rem;">
+                            <button type="button" onclick="togglePasswordVisibility('regPass', this)" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #64748b; cursor: pointer; padding: 4px;" title="Show/Hide Password">
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="regConfirmPass">Confirm Password <span class="text-danger">*</span></label>
-                        <input type="password" name="confirm_password" id="regConfirmPass" class="form-control" placeholder="Re-type password" required>
+                        <div style="position: relative;">
+                            <input type="password" name="confirm_password" id="regConfirmPass" class="form-control" placeholder="Re-type password" required style="padding-right: 2.4rem;">
+                            <button type="button" onclick="togglePasswordVisibility('regConfirmPass', this)" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #64748b; cursor: pointer; padding: 4px;" title="Show/Hide Password">
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -361,6 +371,25 @@ function updateRuleItem(id, passed) {
         el.style.color = '#64748b';
         el.style.fontWeight = '400';
         el.innerHTML = '<i class="fa-regular fa-circle me-1"></i> ' + el.textContent.replace(/^[•✓x\s]+/, '').replace(/^<i[^>]*><\/i>\s*/, '');
+    }
+}
+
+function togglePasswordVisibility(inputId, btn) {
+    var input = document.getElementById(inputId);
+    if (!input) return;
+    var icon = btn.querySelector('i');
+    if (input.type === 'password') {
+        input.type = 'text';
+        if (icon) {
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        }
+    } else {
+        input.type = 'password';
+        if (icon) {
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
     }
 }
 </script>

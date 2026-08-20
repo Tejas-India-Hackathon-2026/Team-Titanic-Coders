@@ -187,9 +187,14 @@ require_once __DIR__ . '/includes/header.php';
 
     <!-- Action Buttons -->
     <div style="max-width: 780px; margin: 1.5rem auto 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-        <button type="button" class="btn btn-secondary" onclick="window.print()">
-            <i class="fa-solid fa-print"></i> Print / Save as PDF
-        </button>
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <button type="button" class="btn btn-secondary" onclick="window.print()">
+                <i class="fa-solid fa-print"></i> Print Receipt
+            </button>
+            <a href="booking-dossier.php?txn_id=<?php echo urlencode($payment['transaction_id']); ?>" class="btn btn-secondary" style="background: #ecfdf5; border-color: #a7f3d0; color: #065f46; font-weight: 700;">
+                <i class="fa-solid fa-file-contract"></i> View Mutual KYC Dossier
+            </a>
+        </div>
         <div style="display: flex; gap: 0.75rem;">
             <a href="renter-dashboard.php" class="btn btn-outline">
                 <i class="fa-solid fa-table-columns"></i> Go to Renter Dashboard

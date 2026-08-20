@@ -139,7 +139,12 @@ require_once __DIR__ . '/includes/header.php';
                     <label for="loginPassword" style="margin-bottom: 0;"><i class="fa-solid fa-lock me-1"></i> Password <span class="text-danger">*</span></label>
                     <a href="forgot-password.php" style="font-size: 0.8rem; font-weight: 600; color: var(--primary);">Forgot Password?</a>
                 </div>
-                <input type="password" name="password" id="loginPassword" class="form-control" placeholder="••••••••" required>
+                <div style="position: relative;">
+                    <input type="password" name="password" id="loginPassword" class="form-control" placeholder="••••••••" required style="padding-right: 2.5rem;">
+                    <button type="button" onclick="togglePasswordVisibility('loginPassword', this)" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #64748b; cursor: pointer; padding: 4px;" title="Show/Hide Password">
+                        <i class="fa-regular fa-eye"></i>
+                    </button>
+                </div>
             </div>
 
             <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;">
@@ -168,5 +173,26 @@ require_once __DIR__ . '/includes/header.php';
         </div>
     </div>
 </div>
+
+<script>
+function togglePasswordVisibility(inputId, btn) {
+    var input = document.getElementById(inputId);
+    if (!input) return;
+    var icon = btn.querySelector('i');
+    if (input.type === 'password') {
+        input.type = 'text';
+        if (icon) {
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        }
+    } else {
+        input.type = 'password';
+        if (icon) {
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    }
+}
+</script>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>

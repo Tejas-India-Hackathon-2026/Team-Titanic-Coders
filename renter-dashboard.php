@@ -173,9 +173,12 @@ require_once __DIR__ . '/includes/header.php';
                         </div>
                     </div>
 
-                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
                         <a href="booking-receipt.php?txn_id=<?php echo urlencode($b['transaction_id']); ?>" class="btn btn-primary btn-sm" style="font-weight: 700;">
-                            <i class="fa-solid fa-receipt"></i> View Official Receipt
+                            <i class="fa-solid fa-receipt"></i> Official Receipt
+                        </a>
+                        <a href="booking-dossier.php?pay_id=<?php echo $b['id']; ?>" class="btn btn-secondary btn-sm" style="font-weight: 700; background: #fff; border-color: #86efac; color: #166534;">
+                            <i class="fa-solid fa-file-contract"></i> Landlord & KYC Dossier
                         </a>
                         <a href="tel:<?php echo htmlspecialchars($b['owner_phone']); ?>" class="btn btn-secondary btn-sm">
                             <i class="fa-solid fa-phone"></i> Call Landlord

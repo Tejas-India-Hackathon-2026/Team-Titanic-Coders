@@ -44,6 +44,22 @@ $stmtInquiries = $pdo->prepare("
 $stmtInquiries->execute([':owner_id' => $user['id']]);
 $inquiries = $stmtInquiries->fetchAll();
 
+// Fetch Confirmed Room Bookings & Full Tenant KYC Dossier
+$stmtBookings = $pdo->prepare("
+    SELECT pay.*, 
+           p.title as property_title, p.location as property_location, p.city as property_city, p.price as property_price, p.image as property_image,
+           r.name as renter_name, r.email as renter_email, r.phone as renter_phone, r.avatar as renter_avatar,
+           r.occupation as renter_occupation, r.preferred_city as renter_city, r.is_verified as renter_is_verified,
+           r.digilocker_aadhaar, r.document_type
+    FROM payments pay
+    JOIN properties p ON pay.property_id = p.id
+    JOIN renters r ON pay.renter_id = r.id
+    WHERE pay.owner_id = :owner_id AND pay.payment_type = 'room_booking_token'
+    ORDER BY pay.id DESC
+");
+$stmtBookings->execute([':owner_id' => $user['id']]);
+$confirmedBookings = $stmtBookings->fetchAll();
+
 // Compute Statistics
 $totalProps = count($properties);
 $activeProps = 0;
@@ -267,6 +283,70 @@ require_once __DIR__ . '/includes/header.php';
             </div>
         <?php endif; ?>
     </div>
+
+    <!-- 🤝 Confirmed Room Bookings & Verified Tenant Dossiers -->
+    <?php if (!empty($confirmedBookings)): ?>
+        <div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border: 2px solid #86efac; border-radius: var(--radius-xl); padding: 1.75rem; margin-bottom: 2.5rem; box-shadow: 0 10px 25px rgba(22, 163, 74, 0.1);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.5rem;">
+                <div>
+                    <span class="badge badge-success" style="background: #16a34a; color: #fff; font-size: 0.72rem; text-transform: uppercase;">
+                        <i class="fa-solid fa-circle-check"></i> Paid Online Bookings
+                    </span>
+                    <h3 style="font-size: 1.35rem; font-weight: 800; color: #065f46; margin: 0.35rem 0 0 0;">
+                        Confirmed Room Bookings & Tenant KYC Dossiers
+                    </h3>
+                </div>
+                <span style="font-size: 0.85rem; color: #166534; font-weight: 700; background: #fff; padding: 0.35rem 0.85rem; border-radius: 20px; border: 1px solid #86efac;">
+                    <?php echo count($confirmedBookings); ?> Room(s) Reserved
+                </span>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+                <?php foreach ($confirmedBookings as $cb): 
+                    $cleanRPhone = preg_replace('/[^0-9]/', '', $cb['renter_phone']);
+                ?>
+                    <div style="background: #ffffff; border: 1.5px solid #86efac; border-radius: var(--radius-lg); padding: 1.25rem; box-shadow: 0 4px 12px rgba(0,0,0,0.04); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                        <div style="display: flex; gap: 1rem; align-items: center;">
+                            <div class="user-avatar" style="width: 52px; height: 52px; font-size: 1.2rem; background: linear-gradient(135deg, #10b981 0%, #047857 100%); flex-shrink: 0;">
+                                <?php echo strtoupper(substr($cb['renter_name'], 0, 1)); ?>
+                            </div>
+                            <div>
+                                <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                                    <h4 style="font-size: 1.1rem; font-weight: 800; color: #0f172a; margin: 0;">
+                                        <?php echo htmlspecialchars($cb['renter_name']); ?>
+                                    </h4>
+                                    <?php if (!empty($cb['renter_is_verified']) && (int)$cb['renter_is_verified'] === 1): ?>
+                                        <span class="badge badge-success" style="background: #dcfce7; color: #166534; border: 1px solid #86efac; font-size: 0.7rem; font-weight: 800;">
+                                            <?php echo render_renter_verified_badge(false, 14); ?> DigiLocker Verified
+                                        </span>
+                                    <?php endif; ?>
+                                </div>
+                                <div style="font-size: 0.82rem; color: #475569; margin: 3px 0;">
+                                    <i class="fa-solid fa-graduation-cap text-primary me-1"></i> <?php echo htmlspecialchars(!empty($cb['renter_occupation']) ? $cb['renter_occupation'] : 'Student / Working Professional'); ?> &bull; 
+                                    <i class="fa-solid fa-id-card text-success me-1"></i> Doc Ref: <code><?php echo htmlspecialchars($cb['digilocker_aadhaar'] ?? 'XXXX-XXXX-8921'); ?></code>
+                                </div>
+                                <div style="font-size: 0.8rem; color: #64748b;">
+                                    Reserved: <strong style="color: var(--primary);"><?php echo htmlspecialchars($cb['property_title']); ?></strong> &bull; Token: <strong style="color: #16a34a;">₹<?php echo number_format($cb['amount']); ?> (PAID)</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            <a href="tel:<?php echo $cleanRPhone; ?>" class="btn btn-secondary btn-sm">
+                                <i class="fa-solid fa-phone"></i> Call
+                            </a>
+                            <a href="https://wa.me/<?php echo $cleanRPhone; ?>?text=<?php echo urlencode('Hi ' . $cb['renter_name'] . ', I saw your room booking token payment on RentNear for ' . $cb['property_title'] . '. Welcome to your new room!'); ?>" target="_blank" class="btn btn-secondary btn-sm" style="background: #25D366; color: #fff; border: none;">
+                                <i class="fa-brands fa-whatsapp"></i> WhatsApp
+                            </a>
+                            <a href="booking-dossier.php?pay_id=<?php echo $cb['id']; ?>" class="btn btn-primary btn-sm" style="background: #16a34a; border-color: #15803d; font-weight: 700;">
+                                <i class="fa-solid fa-file-contract"></i> View Full Police KYC Dossier &rarr;
+                            </a>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    <?php endif; ?>
 
     <!-- Tenant Inquiries Section -->
     <div style="background: #fff; border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: 1.5rem; box-shadow: var(--shadow-sm);">
