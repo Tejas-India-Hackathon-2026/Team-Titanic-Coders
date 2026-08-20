@@ -35,64 +35,99 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <div class="container">
         <nav class="navbar">
             <!-- Brand Logo -->
-            <a href="index.php" class="brand-logo">
-                <div class="logo-icon">
-                    <i class="fa-solid fa-house-chimney"></i>
-                </div>
-                <span>Rent<span class="accent-text">Near</span></span>
-            </a>
+            <?php if (is_logged_in() && $user['role'] === 'admin'): ?>
+                <!-- Admin Role Brand Logo -->
+                <a href="admin-dashboard.php" class="brand-logo">
+                    <div class="logo-icon" style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <span>Rent<span class="accent-text" style="color: #dc2626;">Near</span></span>
+                    <span style="font-size: 0.72rem; background: #fee2e2; color: #991b1b; padding: 2px 7px; border-radius: 6px; font-weight: 800; border: 1px solid #fca5a5; margin-left: 4px;">ADMIN PANEL</span>
+                </a>
 
-            <!-- Navigation Links -->
-            <ul class="nav-links" id="navLinks">
-                <li>
-                    <a href="index.php" class="<?php echo $current_page === 'index.php' ? 'active' : ''; ?>">
-                        <i class="fa-solid fa-compass me-1"></i> Home
-                    </a>
-                </li>
-                <li>
-                    <a href="properties.php" class="<?php echo $current_page === 'properties.php' ? 'active' : ''; ?>">
-                        <i class="fa-solid fa-building me-1"></i> Properties
-                    </a>
-                </li>
-                <li>
-                    <a href="explore-map.php" class="<?php echo $current_page === 'explore-map.php' ? 'active' : ''; ?>" style="font-weight: 700;">
-                        <i class="fa-solid fa-map-location-dot me-1 text-primary"></i> Explore Map
-                        <span style="background: #ef4444; color: #fff; font-size: 0.65rem; font-weight: 800; padding: 1px 5px; border-radius: 10px; margin-left: 3px; vertical-align: middle;">LIVE</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="about.php" class="<?php echo $current_page === 'about.php' ? 'active' : ''; ?>">
-                        About Us
-                    </a>
-                </li>
-                <li>
-                    <a href="contact.php" class="<?php echo $current_page === 'contact.php' ? 'active' : ''; ?>">
-                        Contact
-                    </a>
-                </li>
+                <!-- Dedicated Admin Navigation Links -->
+                <ul class="nav-links" id="navLinks">
+                    <li>
+                        <a href="admin-dashboard.php" class="<?php echo $current_page === 'admin-dashboard.php' ? 'active' : ''; ?>" style="font-weight: 700;">
+                            <i class="fa-solid fa-gauge-high me-1 text-danger"></i> Admin Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a href="admin-dashboard.php#propertiesTable" style="font-weight: 600;">
+                            <i class="fa-solid fa-building me-1"></i> Manage Properties
+                        </a>
+                    </li>
+                    <li>
+                        <a href="admin-dashboard.php#usersTable" style="font-weight: 600;">
+                            <i class="fa-solid fa-users me-1"></i> Manage Users
+                        </a>
+                    </li>
+                    <li>
+                        <a href="admin-dashboard.php#revenueTable" style="font-weight: 600;">
+                            <i class="fa-solid fa-chart-line me-1"></i> Platform Revenue
+                        </a>
+                    </li>
+                    <li>
+                        <a href="index.php" target="_blank" style="font-weight: 600; color: #0284c7;">
+                            <i class="fa-solid fa-arrow-up-right-from-square me-1"></i> View Live Site
+                        </a>
+                    </li>
+                </ul>
+            <?php else: ?>
+                <!-- Standard Public / User Brand Logo -->
+                <a href="index.php" class="brand-logo">
+                    <div class="logo-icon">
+                        <i class="fa-solid fa-house-chimney"></i>
+                    </div>
+                    <span>Rent<span class="accent-text">Near</span></span>
+                </a>
 
-                <?php if (is_logged_in()): ?>
-                    <?php if ($user['role'] === 'owner'): ?>
-                        <li>
-                            <a href="owner-dashboard.php" class="<?php echo $current_page === 'owner-dashboard.php' ? 'active' : ''; ?>">
-                                <i class="fa-solid fa-chart-pie me-1"></i> Owner Portal
-                            </a>
-                        </li>
-                    <?php elseif ($user['role'] === 'renter'): ?>
-                        <li>
-                            <a href="renter-dashboard.php" class="<?php echo $current_page === 'renter-dashboard.php' ? 'active' : ''; ?>">
-                                <i class="fa-solid fa-heart me-1"></i> Saved Listings
-                            </a>
-                        </li>
-                    <?php elseif ($user['role'] === 'admin'): ?>
-                        <li>
-                            <a href="admin-dashboard.php" class="<?php echo $current_page === 'admin-dashboard.php' ? 'active' : ''; ?>">
-                                <i class="fa-solid fa-shield-halved me-1"></i> Admin Panel
-                            </a>
-                        </li>
+                <!-- Standard Navigation Links -->
+                <ul class="nav-links" id="navLinks">
+                    <li>
+                        <a href="index.php" class="<?php echo $current_page === 'index.php' ? 'active' : ''; ?>">
+                            <i class="fa-solid fa-compass me-1"></i> Home
+                        </a>
+                    </li>
+                    <li>
+                        <a href="properties.php" class="<?php echo $current_page === 'properties.php' ? 'active' : ''; ?>">
+                            <i class="fa-solid fa-building me-1"></i> Properties
+                        </a>
+                    </li>
+                    <li>
+                        <a href="explore-map.php" class="<?php echo $current_page === 'explore-map.php' ? 'active' : ''; ?>" style="font-weight: 700;">
+                            <i class="fa-solid fa-map-location-dot me-1 text-primary"></i> Explore Map
+                            <span style="background: #ef4444; color: #fff; font-size: 0.65rem; font-weight: 800; padding: 1px 5px; border-radius: 10px; margin-left: 3px; vertical-align: middle;">LIVE</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="about.php" class="<?php echo $current_page === 'about.php' ? 'active' : ''; ?>">
+                            About Us
+                        </a>
+                    </li>
+                    <li>
+                        <a href="contact.php" class="<?php echo $current_page === 'contact.php' ? 'active' : ''; ?>">
+                            Contact
+                        </a>
+                    </li>
+
+                    <?php if (is_logged_in()): ?>
+                        <?php if ($user['role'] === 'owner'): ?>
+                            <li>
+                                <a href="owner-dashboard.php" class="<?php echo $current_page === 'owner-dashboard.php' ? 'active' : ''; ?>">
+                                    <i class="fa-solid fa-chart-pie me-1"></i> Owner Portal
+                                </a>
+                            </li>
+                        <?php elseif ($user['role'] === 'renter'): ?>
+                            <li>
+                                <a href="renter-dashboard.php" class="<?php echo $current_page === 'renter-dashboard.php' ? 'active' : ''; ?>">
+                                    <i class="fa-solid fa-heart me-1"></i> Saved Listings
+                                </a>
+                            </li>
+                        <?php endif; ?>
                     <?php endif; ?>
-                <?php endif; ?>
-            </ul>
+                </ul>
+            <?php endif; ?>
 
             <!-- Navigation Action Buttons / User Profile Dropdown -->
             <div class="nav-actions">
@@ -107,6 +142,10 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     <?php if ($user['role'] === 'owner'): ?>
                         <a href="add-property.php" class="btn btn-primary btn-sm">
                             <i class="fa-solid fa-plus"></i> Post Property
+                        </a>
+                    <?php elseif ($user['role'] === 'admin'): ?>
+                        <a href="admin-dashboard.php" class="btn btn-danger btn-sm" style="background: #dc2626; border-color: #b91c1c; font-weight: 700;">
+                            <i class="fa-solid fa-shield-halved"></i> Admin Panel
                         </a>
                     <?php endif; ?>
 

@@ -69,54 +69,72 @@ $current_script = basename($_SERVER['PHP_SELF']);
 $logged_user = function_exists('current_user') ? current_user() : null;
 ?>
 <nav class="mobile-bottom-nav">
-    <a href="index.php" class="mobile-nav-item <?php echo $current_script === 'index.php' ? 'active' : ''; ?>">
-        <i class="fa-solid fa-house"></i>
-        <span>Home</span>
-    </a>
+    <?php if (is_logged_in() && $logged_user['role'] === 'admin'): ?>
+        <a href="admin-dashboard.php" class="mobile-nav-item <?php echo $current_script === 'admin-dashboard.php' ? 'active' : ''; ?>">
+            <i class="fa-solid fa-gauge-high text-danger"></i>
+            <span>Dashboard</span>
+        </a>
+        <a href="admin-dashboard.php#propertiesTable" class="mobile-nav-item">
+            <i class="fa-solid fa-building"></i>
+            <span>Properties</span>
+        </a>
+        <a href="admin-dashboard.php#usersTable" class="mobile-nav-item">
+            <i class="fa-solid fa-users"></i>
+            <span>Users</span>
+        </a>
+        <a href="profile.php" class="mobile-nav-item <?php echo $current_script === 'profile.php' ? 'active' : ''; ?>">
+            <i class="fa-solid fa-user-shield"></i>
+            <span>Profile</span>
+        </a>
+        <a href="logout.php" class="mobile-nav-item" style="color: #ef4444;">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+            <span>Sign Out</span>
+        </a>
+    <?php else: ?>
+        <a href="index.php" class="mobile-nav-item <?php echo $current_script === 'index.php' ? 'active' : ''; ?>">
+            <i class="fa-solid fa-house"></i>
+            <span>Home</span>
+        </a>
 
-    <a href="explore-map.php" class="mobile-nav-item <?php echo $current_script === 'explore-map.php' ? 'active' : ''; ?>">
-        <i class="fa-solid fa-map-location-dot"></i>
-        <span>Map</span>
-    </a>
+        <a href="explore-map.php" class="mobile-nav-item <?php echo $current_script === 'explore-map.php' ? 'active' : ''; ?>">
+            <i class="fa-solid fa-map-location-dot"></i>
+            <span>Map</span>
+        </a>
 
-    <a href="<?php echo is_logged_in() ? ($logged_user['role'] === 'owner' ? 'add-property.php' : 'owner-dashboard.php') : 'login.php?redirect=add-property.php'; ?>" class="mobile-nav-item post-btn-item">
-        <div class="post-circle">
-            <i class="fa-solid fa-plus"></i>
-        </div>
-        <span>Post Ad</span>
-    </a>
+        <a href="<?php echo is_logged_in() ? ($logged_user['role'] === 'owner' ? 'add-property.php' : 'owner-dashboard.php') : 'login.php?redirect=add-property.php'; ?>" class="mobile-nav-item post-btn-item">
+            <div class="post-circle">
+                <i class="fa-solid fa-plus"></i>
+            </div>
+            <span>Post Ad</span>
+        </a>
 
-    <?php if (is_logged_in()): ?>
-        <?php if ($logged_user['role'] === 'owner'): ?>
-            <a href="owner-dashboard.php" class="mobile-nav-item <?php echo $current_script === 'owner-dashboard.php' ? 'active' : ''; ?>">
-                <i class="fa-solid fa-chart-pie"></i>
-                <span>Portal</span>
+        <?php if (is_logged_in()): ?>
+            <?php if ($logged_user['role'] === 'owner'): ?>
+                <a href="owner-dashboard.php" class="mobile-nav-item <?php echo $current_script === 'owner-dashboard.php' ? 'active' : ''; ?>">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span>Portal</span>
+                </a>
+            <?php elseif ($logged_user['role'] === 'renter'): ?>
+                <a href="renter-dashboard.php" class="mobile-nav-item <?php echo $current_script === 'renter-dashboard.php' ? 'active' : ''; ?>">
+                    <i class="fa-solid fa-heart"></i>
+                    <span>Saved</span>
+                </a>
+            <?php endif; ?>
+
+            <a href="profile.php" class="mobile-nav-item <?php echo $current_script === 'profile.php' ? 'active' : ''; ?>">
+                <i class="fa-solid fa-user"></i>
+                <span>Profile</span>
             </a>
-        <?php elseif ($logged_user['role'] === 'renter'): ?>
-            <a href="renter-dashboard.php" class="mobile-nav-item <?php echo $current_script === 'renter-dashboard.php' ? 'active' : ''; ?>">
+        <?php else: ?>
+            <a href="login.php" class="mobile-nav-item <?php echo $current_script === 'login.php' ? 'active' : ''; ?>">
                 <i class="fa-solid fa-heart"></i>
                 <span>Saved</span>
             </a>
-        <?php elseif ($logged_user['role'] === 'admin'): ?>
-            <a href="admin-dashboard.php" class="mobile-nav-item <?php echo $current_script === 'admin-dashboard.php' ? 'active' : ''; ?>">
-                <i class="fa-solid fa-shield-halved"></i>
-                <span>Admin</span>
+            <a href="login.php" class="mobile-nav-item <?php echo $current_script === 'login.php' ? 'active' : ''; ?>">
+                <i class="fa-solid fa-user"></i>
+                <span>Login</span>
             </a>
         <?php endif; ?>
-
-        <a href="profile.php" class="mobile-nav-item <?php echo $current_script === 'profile.php' ? 'active' : ''; ?>">
-            <i class="fa-solid fa-user"></i>
-            <span>Profile</span>
-        </a>
-    <?php else: ?>
-        <a href="login.php" class="mobile-nav-item <?php echo $current_script === 'login.php' ? 'active' : ''; ?>">
-            <i class="fa-solid fa-heart"></i>
-            <span>Saved</span>
-        </a>
-        <a href="login.php" class="mobile-nav-item <?php echo $current_script === 'login.php' ? 'active' : ''; ?>">
-            <i class="fa-solid fa-user"></i>
-            <span>Login</span>
-        </a>
     <?php endif; ?>
 </nav>
 
