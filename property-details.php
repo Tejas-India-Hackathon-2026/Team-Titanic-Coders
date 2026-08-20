@@ -494,6 +494,18 @@ require_once __DIR__ . '/includes/header.php';
                             </form>
                         </div>
 
+                        <!-- Trust & Safety Guarantee Badge Box -->
+                        <div style="margin-top: 1.5rem; background: #f0fdf4; border: 1.5px solid #86efac; border-radius: var(--radius-md); padding: 1rem; font-size: 0.82rem;">
+                            <div style="font-weight: 800; color: #166534; margin-bottom: 0.4rem; display: flex; align-items: center; gap: 6px;">
+                                <i class="fa-solid fa-shield-halved text-success"></i> RentNear Safety & Trust Guarantee
+                            </div>
+                            <ul style="margin: 0; padding-left: 1.2rem; color: #166534; line-height: 1.5;">
+                                <li><strong>Zero Brokerage:</strong> No hidden agent commission.</li>
+                                <li><strong>Direct Landlord:</strong> Call & WhatsApp directly.</li>
+                                <li><strong>DigiLocker Priority:</strong> Verified renters get 3x faster response.</li>
+                            </ul>
+                        </div>
+
                     </div>
                 </div>
             <?php endif; ?>

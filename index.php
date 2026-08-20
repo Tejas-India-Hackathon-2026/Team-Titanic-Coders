@@ -580,6 +580,73 @@ function showAllIndia(btnElement) {
             <?php endforeach; ?>
         </div>
     </div>
+<!-- Trust, Safety & Verification Assurance Section -->
+<section class="section" style="background: linear-gradient(180deg, #f8fafc 0%, #edf2f7 100%); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
+    <div class="container">
+        <div class="section-header text-center" style="max-width: 720px; margin: 0 auto 3rem;">
+            <div style="display: inline-flex; align-items: center; gap: 6px; background: #dcfce7; color: #166534; padding: 0.35rem 1rem; border-radius: 20px; font-weight: 800; font-size: 0.85rem; margin-bottom: 0.75rem; border: 1.5px solid #bbf7d0;">
+                <i class="fa-solid fa-shield-halved text-success"></i> 100% Trust, Safety & Verified Shield
+            </div>
+            <h2 class="section-title">Rent With Complete Confidence</h2>
+            <p class="section-subtitle">How RentNear protects landlords, students, and family tenants from fake brokers, scams, and spam.</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem;">
+            
+            <!-- Trust Pillar 1: Golden Tick Landlords -->
+            <div style="background: #ffffff; border-radius: var(--radius-xl); padding: 1.75rem; border: 1.5px solid #fde68a; box-shadow: 0 10px 25px rgba(245, 158, 11, 0.08); transition: var(--transition);">
+                <div style="width: 48px; height: 48px; border-radius: 12px; background: #fef3c7; color: #b45309; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 1rem;">
+                    <?php echo render_verified_badge(false, 24); ?>
+                </div>
+                <h4 style="font-size: 1.1rem; font-weight: 800; color: #0f172a; margin-bottom: 0.5rem;">
+                    Golden Tick Verified Landlords
+                </h4>
+                <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; margin: 0;">
+                    Government ID & property ownership checked. Eliminates fake property brokers and phishing scams.
+                </p>
+            </div>
+
+            <!-- Trust Pillar 2: DigiLocker e-KYC Tenants -->
+            <div style="background: #ffffff; border-radius: var(--radius-xl); padding: 1.75rem; border: 1.5px solid #86efac; box-shadow: 0 10px 25px rgba(22, 163, 74, 0.08); transition: var(--transition);">
+                <div style="width: 48px; height: 48px; border-radius: 12px; background: #dcfce7; color: #16a34a; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 1rem;">
+                    <i class="fa-solid fa-id-card-clip"></i>
+                </div>
+                <h4 style="font-size: 1.1rem; font-weight: 800; color: #0f172a; margin-bottom: 0.5rem;">
+                    DigiLocker & Govt e-KYC
+                </h4>
+                <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; margin: 0;">
+                    Tenants authenticate via UIDAI Aadhaar or College/Work ID. Police-verification ready and trusted by owners.
+                </p>
+            </div>
+
+            <!-- Trust Pillar 3: Zero Brokerage Direct Connect -->
+            <div style="background: #ffffff; border-radius: var(--radius-xl); padding: 1.75rem; border: 1.5px solid #c7d2fe; box-shadow: 0 10px 25px rgba(79, 70, 229, 0.08); transition: var(--transition);">
+                <div style="width: 48px; height: 48px; border-radius: 12px; background: #e0e7ff; color: #4338ca; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 1rem;">
+                    <i class="fa-solid fa-handshake-simple"></i>
+                </div>
+                <h4 style="font-size: 1.1rem; font-weight: 800; color: #0f172a; margin-bottom: 0.5rem;">
+                    Zero Brokerage (0% Dalal Fee)
+                </h4>
+                <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; margin: 0;">
+                    Direct call and instant WhatsApp connection between landlord and tenant. Save 1 full month of broker commission.
+                </p>
+            </div>
+
+            <!-- Trust Pillar 4: OTP & Cyber Defense -->
+            <div style="background: #ffffff; border-radius: var(--radius-xl); padding: 1.75rem; border: 1.5px solid #cbd5e1; box-shadow: 0 10px 25px rgba(15, 23, 42, 0.06); transition: var(--transition);">
+                <div style="width: 48px; height: 48px; border-radius: 12px; background: #f1f5f9; color: #0f172a; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 1rem;">
+                    <i class="fa-solid fa-mobile-screen-button"></i>
+                </div>
+                <h4 style="font-size: 1.1rem; font-weight: 800; color: #0f172a; margin-bottom: 0.5rem;">
+                    2-Step OTP & Cyber Shield
+                </h4>
+                <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; margin: 0;">
+                    10-digit mobile limits, OTP verification, strong password security (Abc@#$25), and SQL-injection defense.
+                </p>
+            </div>
+
+        </div>
+    </div>
 </section>
 
 <!-- How It Works Section -->

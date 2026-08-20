@@ -47,6 +47,22 @@ if (isset($_GET['toggle_owner_verify']) && is_numeric($_GET['toggle_owner_verify
     exit;
 }
 
+// Handle Toggle Renter DigiLocker KYC Verification by Admin
+if (isset($_GET['toggle_renter_verify']) && is_numeric($_GET['toggle_renter_verify'])) {
+    $renterId = (int)$_GET['toggle_renter_verify'];
+    $stmtR = $pdo->prepare("SELECT is_verified FROM renters WHERE id = ?");
+    $stmtR->execute([$renterId]);
+    $currVer = (int)$stmtR->fetchColumn();
+    $newVer = $currVer ? 0 : 1;
+    $verTime = $newVer ? date('Y-m-d H:i:s') : null;
+    $mockAadhaar = $newVer ? 'XXXX-XXXX-' . rand(1000, 9999) : null;
+    $docType = $newVer ? 'DigiLocker Aadhaar (Admin Verified)' : null;
+    $pdo->prepare("UPDATE renters SET is_verified = ?, verified_at = ?, digilocker_aadhaar = ?, document_type = ? WHERE id = ?")->execute([$newVer, $verTime, $mockAadhaar, $docType, $renterId]);
+    set_flash_message('success', 'Renter DigiLocker status updated to ' . ($newVer ? '🛡️ DigiLocker Verified' : 'Standard Unverified') . '!');
+    header("Location: admin-dashboard.php#usersTable");
+    exit;
+}
+
 // Fetch Platform Stats from Separate Tables
 $totalOwners = (int)$pdo->query("SELECT COUNT(*) FROM owners")->fetchColumn();
 $totalRenters = (int)$pdo->query("SELECT COUNT(*) FROM renters")->fetchColumn();
@@ -421,9 +437,9 @@ require_once __DIR__ . '/includes/header.php';
                             <th>Renter ID</th>
                             <th>Tenant Profile</th>
                             <th>Contact Info</th>
-                            <th>Occupation & Profession</th>
-                            <th>Preferred City</th>
+                            <th>Occupation & City</th>
                             <th>Activity</th>
+                            <th>DigiLocker Status</th>
                             <th>Registered Date</th>
                             <th style="text-align: right;">Admin Action</th>
                         </tr>
@@ -438,7 +454,10 @@ require_once __DIR__ . '/includes/header.php';
                                             <?php echo strtoupper(substr($r['name'], 0, 1)); ?>
                                         </div>
                                         <div>
-                                            <strong style="color: #0f172a;"><?php echo htmlspecialchars($r['name']); ?></strong><br>
+                                            <strong style="color: #0f172a; display: inline-flex; align-items: center; gap: 4px;">
+                                                <?php echo htmlspecialchars($r['name']); ?>
+                                                <?php if (!empty($r['is_verified']) && (int)$r['is_verified'] === 1) echo render_renter_verified_badge(false, 14); ?>
+                                            </strong><br>
                                             <span style="font-size: 0.75rem; color: var(--text-muted);">Tenant Account</span>
                                         </div>
                                     </div>
@@ -448,12 +467,10 @@ require_once __DIR__ . '/includes/header.php';
                                     <i class="fa-solid fa-phone text-muted me-1"></i> <?php echo htmlspecialchars($r['phone']); ?>
                                 </td>
                                 <td>
-                                    <span class="badge" style="background: #f1f5f9; color: #334155; border: 1px solid #e2e8f0; font-weight: 600;">
+                                    <span class="badge" style="background: #f1f5f9; color: #334155; border: 1px solid #e2e8f0; font-weight: 600; margin-bottom: 2px;">
                                         <?php echo htmlspecialchars(!empty($r['occupation']) ? $r['occupation'] : 'Student / Working'); ?>
-                                    </span>
-                                </td>
-                                <td>
-                                    <strong><?php echo htmlspecialchars(!empty($r['preferred_city']) ? $r['preferred_city'] : 'Pan India'); ?></strong>
+                                    </span><br>
+                                    <small style="color: #64748b; font-weight: 700;">📍 <?php echo htmlspecialchars(!empty($r['preferred_city']) ? $r['preferred_city'] : 'Pan India'); ?></small>
                                 </td>
                                 <td>
                                     <span class="badge badge-warning" style="font-weight: 700; margin-bottom: 2px; display: inline-flex;">
@@ -462,6 +479,18 @@ require_once __DIR__ . '/includes/header.php';
                                     <span style="font-size: 0.75rem; color: var(--text-muted);">
                                         <i class="fa-solid fa-envelope me-1"></i> <?php echo $r['inquiries_count']; ?> Inquiries
                                     </span>
+                                </td>
+                                <td>
+                                    <?php if (!empty($r['is_verified']) && (int)$r['is_verified'] === 1): ?>
+                                        <a href="admin-dashboard.php?toggle_renter_verify=<?php echo $r['id']; ?>" class="badge badge-success" style="text-decoration: none; cursor: pointer; background: #dcfce7; color: #166534; border: 1px solid #86efac; padding: 4px 8px; font-weight: 800;" title="Click to Revoke DigiLocker Verification">
+                                            <?php echo render_renter_verified_badge(false, 13); ?> DigiLocker Verified ✕
+                                        </a><br>
+                                        <small style="font-family: monospace; font-size: 0.7rem; color: #15803d;"><?php echo htmlspecialchars($r['digilocker_aadhaar'] ?? 'XXXX-XXXX-8921'); ?></small>
+                                    <?php else: ?>
+                                        <a href="admin-dashboard.php?toggle_renter_verify=<?php echo $r['id']; ?>" class="badge badge-secondary" style="text-decoration: none; cursor: pointer; padding: 4px 8px; font-weight: 700; background: #f8fafc; border: 1px dashed #cbd5e1; color: #64748b;" title="Click to Grant DigiLocker Verified Status">
+                                            <i class="fa-solid fa-plus-circle"></i> Grant DigiLocker KYC
+                                        </a>
+                                    <?php endif; ?>
                                 </td>
                                 <td><?php echo date('d M Y', strtotime($r['created_at'])); ?></td>
                                 <td style="text-align: right;">
