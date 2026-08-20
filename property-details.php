@@ -30,6 +30,18 @@ if (!$property) {
     exit;
 }
 
+// If property is rented, only the Owner or Admin can view it
+$isViewerOwnerOrAdmin = is_logged_in() && (
+    (user_role() === 'owner' && (int)current_user()['id'] === (int)$property['owner_id']) ||
+    user_role() === 'admin'
+);
+
+if ($property['status'] === 'rented' && !$isViewerOwnerOrAdmin) {
+    set_flash_message('error', 'This property has already been rented out and is no longer available to renters.');
+    header("Location: properties.php");
+    exit;
+}
+
 // Increment Views Count
 $pdo->prepare("UPDATE properties SET views_count = views_count + 1 WHERE id = ?")->execute([$property_id]);
 

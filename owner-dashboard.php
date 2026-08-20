@@ -7,6 +7,22 @@ require_once __DIR__ . '/includes/auth_check.php';
 require_owner();
 $user = current_user();
 
+// Handle 1-Click Status Toggle (Available <-> Rented)
+if (isset($_GET['toggle_status']) && !empty($_GET['prop_id'])) {
+    $propId = (int)$_GET['prop_id'];
+    $targetStatus = $_GET['toggle_status'] === 'rented' ? 'rented' : 'available';
+    $updateStmt = $pdo->prepare("UPDATE properties SET status = :status WHERE id = :id AND owner_id = :owner_id");
+    $updateStmt->execute([':status' => $targetStatus, ':id' => $propId, ':owner_id' => $user['id']]);
+    
+    if ($targetStatus === 'rented') {
+        set_flash_message('success', 'Property marked as Rented Out! It is now hidden from public search and renters.');
+    } else {
+        set_flash_message('success', 'Property marked as Available! It is now live for all renters and map discovery.');
+    }
+    header("Location: owner-dashboard.php");
+    exit;
+}
+
 // Fetch Owner's Properties
 $stmtProps = $pdo->prepare("
     SELECT * FROM properties 
@@ -30,11 +46,13 @@ $inquiries = $stmtInquiries->fetchAll();
 // Compute Statistics
 $totalProps = count($properties);
 $activeProps = 0;
+$rentedProps = 0;
 $premiumProps = 0;
 $totalViews = 0;
 
 foreach ($properties as $p) {
     if ($p['status'] === 'available') $activeProps++;
+    else $rentedProps++;
     if ($p['is_premium'] == 1) $premiumProps++;
     $totalViews += (int)$p['views_count'];
 }
@@ -171,23 +189,23 @@ require_once __DIR__ . '/includes/header.php';
                             <th>Property</th>
                             <th>City / Area</th>
                             <th>Monthly Rent</th>
-                            <th>Views</th>
-                            <th>Visibility Status</th>
+                            <th>Vacancy Status</th>
+                            <th>Promotion</th>
                             <th style="text-align: right;">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php foreach ($properties as $prop): ?>
-                            <tr>
+                            <tr style="<?php echo $prop['status'] === 'rented' ? 'background: #fff8f8;' : ''; ?>">
                                 <td>
                                     <div style="display: flex; align-items: center; gap: 0.85rem;">
-                                        <img src="<?php echo htmlspecialchars(get_property_image($prop['image'])); ?>" alt="" style="width: 54px; height: 54px; border-radius: var(--radius-sm); object-fit: cover;">
+                                        <img src="<?php echo htmlspecialchars(get_property_image($prop['image'])); ?>" alt="" style="width: 54px; height: 54px; border-radius: var(--radius-sm); object-fit: cover; <?php echo $prop['status'] === 'rented' ? 'opacity: 0.7; filter: grayscale(40%);' : ''; ?>">
                                         <div>
                                             <a href="property-details.php?id=<?php echo $prop['id']; ?>" style="font-weight: 700; color: var(--dark); display: block;">
                                                 <?php echo htmlspecialchars($prop['title']); ?>
                                             </a>
                                             <span style="font-size: 0.75rem; color: var(--text-muted);">
-                                                <?php echo htmlspecialchars($prop['property_type']); ?> • <?php echo htmlspecialchars($prop['furnishing']); ?>
+                                                <?php echo htmlspecialchars($prop['property_type']); ?> • <?php echo htmlspecialchars($prop['furnishing']); ?> • <i class="fa-solid fa-eye me-1"></i><?php echo $prop['views_count']; ?> views
                                             </span>
                                         </div>
                                     </div>
@@ -201,24 +219,36 @@ require_once __DIR__ . '/includes/header.php';
                                     <span style="font-size: 0.75rem; color: var(--text-muted);">Dep: <?php echo format_inr($prop['deposit']); ?></span>
                                 </td>
                                 <td>
-                                    <span class="badge badge-secondary" style="background: var(--bg-alt); color: var(--dark);">
-                                        <i class="fa-solid fa-eye me-1"></i> <?php echo $prop['views_count']; ?>
-                                    </span>
+                                    <?php if ($prop['status'] === 'available'): ?>
+                                        <span class="badge badge-success" style="font-weight: 700; font-size: 0.76rem; display: inline-flex; margin-bottom: 0.35rem;">
+                                            <i class="fa-solid fa-circle-check"></i> Available (Live)
+                                        </span><br>
+                                        <a href="owner-dashboard.php?toggle_status=rented&prop_id=<?php echo $prop['id']; ?>" class="btn btn-secondary btn-sm" style="font-size: 0.72rem; padding: 0.2rem 0.55rem; color: #dc2626; border-color: #fecaca; background: #fff5f5;" title="Mark as rented (hidden from renters)" onclick="return confirm('Mark this property as Rented Out? It will be hidden from renters and search.');">
+                                            <i class="fa-solid fa-lock"></i> Mark Rented
+                                        </a>
+                                    <?php else: ?>
+                                        <span class="badge" style="background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; font-weight: 700; font-size: 0.76rem; display: inline-flex; margin-bottom: 0.35rem;">
+                                            <i class="fa-solid fa-circle-xmark"></i> Rented Out (Hidden)
+                                        </span><br>
+                                        <a href="owner-dashboard.php?toggle_status=available&prop_id=<?php echo $prop['id']; ?>" class="btn btn-secondary btn-sm" style="font-size: 0.72rem; padding: 0.2rem 0.55rem; color: #15803d; border-color: #bbf7d0; background: #f0fdf4;" title="Mark as available again" onclick="return confirm('Make this property Available again? It will be live for renters.');">
+                                            <i class="fa-solid fa-unlock"></i> Mark Available
+                                        </a>
+                                    <?php endif; ?>
                                 </td>
                                 <td>
                                     <?php if ($prop['is_premium']): ?>
                                         <span class="badge badge-premium">
-                                            <i class="fa-solid fa-star"></i> Featured (⭐ Active)
+                                            <i class="fa-solid fa-star"></i> Featured
                                         </span>
                                     <?php else: ?>
-                                        <a href="payment.php?property_id=<?php echo $prop['id']; ?>" class="btn btn-premium btn-sm" style="font-size: 0.78rem; padding: 0.35rem 0.65rem;">
-                                            <i class="fa-solid fa-bolt"></i> Upgrade to ⭐ ₹99
+                                        <a href="payment.php?property_id=<?php echo $prop['id']; ?>" class="btn btn-premium btn-sm" style="font-size: 0.74rem; padding: 0.3rem 0.55rem;">
+                                            <i class="fa-solid fa-bolt"></i> Boost ₹99
                                         </a>
                                     <?php endif; ?>
                                 </td>
                                 <td style="text-align: right;">
                                     <div style="display: inline-flex; gap: 0.35rem;">
-                                        <a href="property-details.php?id=<?php echo $prop['id']; ?>" class="btn btn-secondary btn-sm" title="Preview Listing">
+                                        <a href="property-details.php?id=<?php echo $prop['id']; ?>" class="btn btn-secondary btn-sm" title="View Property Details">
                                             <i class="fa-solid fa-arrow-up-right-from-square"></i>
                                         </a>
                                         <a href="edit-property.php?id=<?php echo $prop['id']; ?>" class="btn btn-secondary btn-sm" title="Edit Property">
