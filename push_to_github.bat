@@ -25,7 +25,7 @@ if not exist "%GIT_CMD%" (
 echo [1/3] Staging all files and committing...
 "%GIT_CMD%" init
 "%GIT_CMD%" add .
-"%GIT_CMD%" commit -m "Update RentNear: 1-Month Short Stays, Room Booking Token Payments, UI Overhaul, and Explore Map" 2>nul
+"%GIT_CMD%" commit -m "Update RentNear: Verified Owner Blue Tick, 1-Month Stays, Room Booking Token Payments, and Explore Map" 2>nul
 "%GIT_CMD%" branch -M main
 
 echo.

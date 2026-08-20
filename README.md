@@ -1,117 +1,146 @@
-# RentNear – Online Property Rental Platform
+# 🏠 RentNear – Smart Rental & Local Room Discovery Platform
 
-> **“Find Your Next Place with RentNear.”**
+> **“Find Your Next Place with RentNear – Verified Rooms, Flexible Stays & Interactive Maps.”**  
+> **Submitted for:** [Tejas India Hackathon 2026](https://github.com/Tejas-India-Hackathon-2026/Team-Titanic-Coders) | **Team:** Team Titanic Coders
 
-RentNear is a fullstack web application designed to connect property owners with potential renters directly. It features role-based access, multi-facet property search and filtering, property listing management, and an interactive **₹99 Mock Payment system** for Premium Featured Listing upgrades.
-
----
-
-## 🌟 Key Features
-
-### 1. 🧑‍💼 Tenant / Renter Portal
-- **Smart Search & Filters**: Filter by City (Bengaluru, Mumbai, Delhi NCR, Pune, Hyderabad), BHK Configuration (1 RK, 1 BHK, 2 BHK, 3 BHK, Villa, Studio), Price Range Slider (₹10,000 – ₹1,00,000+), Furnishing status, and Amenities checklist.
-- **Direct Owner Connect**: Call owner directly (`tel:`), instant WhatsApp chat with pre-filled message, or submit an inquiry message with expected move-in date.
-- **Wishlist / Saved Properties**: Bookmark favorite listings with 1-click heart button and track sent inquiries.
-
-### 2. 🏠 Property Owner Portal
-- **Post Rental Listings**: Add listings with photos, floor area, rent, deposit, amenities checklist, and instant live image preview.
-- **Listing Management**: View total views count, edit listing details, or remove properties.
-- **⭐ Premium Upgrade (₹99)**: Upgrade any listing to **Featured Status** via the interactive Mock Payment gateway.
-
-### 3. 💳 Mock Payment Gateway (₹99 Premium Upgrade)
-- Realistic simulated payment portal supporting **UPI (QR Code scanning)**, **Debit/Credit Card**, and **Net Banking**.
-- Dynamic transaction reference generation (`MOCK_TXN_XXXXXX`).
-- Realistic bank authorization loader.
-- Automatic database activation of the **⭐ Featured Ribbon** and top search ranking for 60 days.
-- Printable / downloadable **Official Tax Invoice & Payment Receipt**.
-
-### 4. 🛡️ Administrator Panel
-- Metrics dashboard: Total registered users, total properties, active premium properties, and cumulative ₹99 revenue collected.
-- Manage all platform properties with 1-click Premium toggle or deletion.
-- User management table with role badges.
+[![PHP CI](https://github.com/Tejas-India-Hackathon-2026/Team-Titanic-Coders/actions/workflows/php.yml/badge.svg)](https://github.com/Tejas-India-Hackathon-2026/Team-Titanic-Coders/actions/workflows/php.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Hackathon](https://img.shields.io/badge/Hackathon-Tejas_India_2026-orange.svg)](https://github.com/Tejas-India-Hackathon-2026)
 
 ---
 
-## 🚀 How to Run with XAMPP (Apache Port 80, MySQL Port 3306)
+## 🏆 Project Overview & Team Contributions
 
-Since your **XAMPP Apache (Port 80/443)** and **MySQL (Port 3306)** are already active:
+**RentNear** is an all-in-one PropTech web application crafted by **Team Titanic Coders** to solve real-world housing and rental discovery challenges across Tier-1, Tier-2, and Tier-3 cities in India (including Jamui, Patna, Kota, New Delhi, Pune, Bengaluru, and beyond).
 
-1. **Direct Browser Access (XAMPP Apache)**:
-   Simply open your browser and go to:
+---
+
+## 🌟 Key Innovations & Major Contributions
+
+### 1. 🗺️ Interactive Live Explore Map (`explore-map.php`)
+- **Full-Screen Split Map**: Side-by-side split layout with OpenStreetMap and Leaflet.js.
+- **Custom Teardrop Price Pins**: Custom teardrop markers showing exact room prices, vacancy indicator pulses, and interactive pin-card synchronization.
+- **City Switcher Pills**: 1-click smooth animated map fly-to for Jamui (Bihar), Kota, New Delhi, Pune, Patna, and Bengaluru.
+- **GPS Location Detection**: "Near Me" GPS locator to instantly discover rooms closest to the user.
+
+### 2. 📍 Interactive Map Pinpoint Location Picker (`add-property.php`, `edit-property.php`)
+- Landlords can click anywhere on the live interactive map or use **"Detect My GPS Location"** to save exact latitude & longitude coordinates for their room listings.
+
+### 3. ⏱️ 1-Month Short Stays & Flexible Renting
+- Dedicated housing mode for competitive exam aspirants (UPSC/SSC/IIT-JEE/NEET in Jamui, Kota, Delhi, Patna), college interns, and temporary workers.
+- Filter by **"1 Month Only (Short Stay / No Long Lock-in)"**, **"3 Months"**, or **"11 Months (Standard Agreement)"**.
+- Amber gold `⏱️ 1-Mo Stay` badges across catalog cards and property detail overviews.
+
+### 4. 💳 Room Booking & Refundable Token Advance Payments (`booking-payment.php`, `booking-receipt.php`)
+- **Online Room Lock**: Renters can pay a small refundable token advance (₹500, ₹1,000, or full month rent) to reserve and hold a room online.
+- **Simulated Multi-Gateway Checkout**: Supports UPI (Google Pay, PhonePe, Paytm, BHIM), Credit/Debit Cards, and NetBanking.
+- **Official Booking Vouchers**: Generates verified printable receipts (`RN-BOOK-XXXXXX`) with property details, landlord contact, and **1-Click WhatsApp Landlord Connect**.
+- **Sync With Dashboards**: Landlords instantly see `🟢 ₹1,000 Token Paid & Reserved` badges on received inquiries in `owner-dashboard.php`.
+
+### 5. 🔵 Instagram-Style Verified Owner Blue Tick
+- **Trust & Anti-Fraud Badging**: Verified scalloped Blue Tick verification badge (`#0095f6`) displayed next to verified landlords across:
+  - Property details sidebar profile card (`🛡️ Govt ID & Property Verified Owner`)
+  - Property catalog cards
+  - Explore Map sidebar and popups
+  - Renter and Owner dashboards
+  - Official booking receipt vouchers
+
+### 6. ⭐ Owner Listing Boost & Premium Upgrades (₹99)
+- Property owners can boost listings to **⭐ Featured Status** via interactive payment simulation.
+- Generates official tax invoices with instant database promotion for 60 days.
+
+### 7. 🎨 Complete Site-Wide UI/UX Overhaul
+- Upgraded typography with Google Fonts (*Plus Jakarta Sans*).
+- Indigo and amber gradient system, multi-level drop shadows, glassmorphism topbars, and sticky responsive bottom mobile navigation bar.
+
+---
+
+## 🚀 How to Run Locally with XAMPP
+
+Since **XAMPP Apache (Port 80/443)** and **MySQL (Port 3306)** are configured:
+
+1. **Direct Browser Access (XAMPP Apache)**:  
+   Open your browser and navigate to:  
    👉 **[http://localhost/Rentnear/](http://localhost/Rentnear/)**
 
-2. **1-Click Built-in Server (Alternative)**:
-   Double click [`start_server.bat`](file:///c:/Users/kumar/OneDrive/Desktop/Rentnear/start_server.bat) or run:
+2. **PHP Built-in Server Alternative**:
    ```cmd
    C:\xampp\php\php.exe -S localhost:8000
    ```
-   Then open: **[http://localhost:8000](http://localhost:8000)**
+   Then visit: **[http://localhost:8000](http://localhost:8000)**
 
 ---
 
-## 🔑 Pre-seeded Demo Accounts
+## 🔑 Pre-Seeded Demo Credentials
 
-Use the **1-Click Demo Fill** buttons on the login page or enter credentials manually:
+Use the **1-Click Demo Fill** buttons on `login.php` or enter manually:
 
-| Role | Email | Password | Permissions |
+| Role | Email | Password | Access / Capabilities |
 | :--- | :--- | :--- | :--- |
-| **Owner** | `owner@rentnear.com` | `owner123` | Post & manage listings, upgrade to Premium ₹99, view tenant inquiries |
-| **Renter** | `renter@rentnear.com` | `renter123` | Search, filter, contact owners, save favorites, send inquiries |
-| **Admin** | `admin@rentnear.com` | `admin123` | View revenue, manage all users, toggle listing statuses |
+| **Owner** | `owner@rentnear.com` | `owner123` | Post & edit rooms, pinpoint GPS map location, view token-paid inquiries, boost listings |
+| **Renter** | `renter@rentnear.com` | `renter123` | Search map, filter 1-month stays, submit inquiries, pay booking token, download receipts |
+| **Admin** | `admin@rentnear.com` | `admin123` | System metrics, revenue tracking, user management, global listing moderation |
 
 ---
 
-## 🗄️ Database Options
+## 🗄️ Database Setup
 
-1. **SQLite (Default / Zero Setup)**:
+1. **SQLite (Default / Zero Configuration)**:
    - Stored in `database/rentnear.sqlite`.
-   - Auto-migrated and auto-seeded on first run without needing any database configuration.
-2. **MySQL / XAMPP**:
-   - Schema script available at `database/database.sql`.
-   - To switch to MySQL, open `config/db.php` and set `$db_type = 'mysql'`.
+   - Automatically migrated and seeded with local single rooms, PG bed spaces, 1 RKs, 1 BHK & 2 BHK flats across Jamui, Kota, Delhi, Pune, Bengaluru.
+2. **MySQL / MariaDB (Optional)**:
+   - Schema file available in `database/database.sql`.
+   - Set `$db_type = 'mysql'` in `config/db.php`.
 
 ---
 
-## 📁 Project Architecture
+## 📁 Repository Structure
 
 ```
 Rentnear/
 ├── config/
-│   ├── db.php               # PDO connection (auto SQLite / MySQL)
-│   └── setup_db.php         # Schema migrator & sample seeder
+│   ├── db.php               # PDO Database handler (SQLite & MySQL)
+│   └── setup_db.php         # Auto-migration & demo data seeder
 ├── database/
 │   ├── database.sql         # MySQL schema export
-│   └── rentnear.sqlite      # SQLite database file (auto-generated)
+│   └── rentnear.sqlite      # SQLite database file
 ├── includes/
-│   ├── header.php           # Global responsive navigation
-│   ├── footer.php           # Global footer with quick demo links
-│   ├── auth_check.php       # Role middleware & session helpers
-│   └── functions.php        # Formatting & currency helpers (₹)
+│   ├── header.php           # Global responsive navigation bar
+│   ├── footer.php           # Global footer with quick demo shortcuts
+│   ├── auth_check.php       # Role-based middleware & sessions
+│   └── functions.php        # Formatting, currency (₹), & verified badge helpers
 ├── assets/
 │   ├── css/
-│   │   ├── style.css        # Responsive styling & components
-│   │   └── payment.css      # Mock payment & invoice styling
+│   │   ├── style.css        # Core stylesheet, glassmorphism & typography
+│   │   └── payment.css      # Payment portal & tax invoice styling
 │   └── js/
-│       ├── main.js          # Search, filters, and wishlist AJAX
-│       └── payment.js       # Mock payment gateway simulation
+│       ├── main.js          # Dynamic filter & wishlist AJAX
+│       └── payment.js       # Mock gateway simulation
 ├── api/
-│   ├── process_payment.php  # ₹99 Premium transaction handler
-│   └── toggle_favorite.php  # Wishlist AJAX endpoint
-├── index.php                # Homepage & featured showcase
-├── properties.php           # Catalog with multi-facet filters
-├── property-details.php     # Detailed view with owner contact
-├── login.php                # Auth login with 1-click demo filler
-├── register.php             # User registration (Owner vs Renter)
-├── logout.php               # Session termination
-├── owner-dashboard.php      # Owner control center
-├── add-property.php         # New property listing form
-├── edit-property.php        # Property edit form
-├── delete-property.php      # Property deletion handler
-├── renter-dashboard.php     # Tenant wishlist & inquiries
-├── admin-dashboard.php      # Platform admin panel & revenue stats
-├── payment.php              # ₹99 Premium checkout portal
-├── payment-success.php      # Transaction success & invoice receipt
-├── about.php                # Project background & architecture
-├── contact.php              # Support ticket form & FAQs
-└── start_server.bat         # 1-Click launcher
+│   ├── process_payment.php  # ₹99 Featured listing upgrade endpoint
+│   ├── process_booking_payment.php # Room booking token payment endpoint
+│   └── toggle_favorite.php  # Wishlist bookmarking endpoint
+├── index.php                # Homepage with hero search & featured rooms
+├── explore-map.php          # Interactive full-screen OpenStreetMap & Leaflet UI
+├── properties.php           # Catalog with multi-facet filters & 1-month stay selector
+├── property-details.php     # Comprehensive details, owner blue tick, & booking CTA
+├── booking-payment.php      # Room reservation checkout with simulated gateways
+├── booking-receipt.php      # Official verified printable booking voucher
+├── add-property.php         # New room listing form with GPS map pin picker
+├── edit-property.php        # Property edit form with coordinate updater
+├── owner-dashboard.php      # Owner control center with token payment alerts
+├── renter-dashboard.php     # Renter dashboard with saved rooms & booking receipts
+├── admin-dashboard.php      # Administrative revenue & moderation panel
+├── payment.php              # ₹99 Featured upgrade checkout
+├── payment-success.php      # Featured upgrade invoice
+├── push_to_github.bat       # 1-Click repository sync script
+└── composer.json            # Automated CI/CD dependency configuration
 ```
+
+---
+
+## 👥 Hackathon Team & Contributions
+
+* **Repository**: [Tejas-India-Hackathon-2026/Team-Titanic-Coders](https://github.com/Tejas-India-Hackathon-2026/Team-Titanic-Coders)
+* **Team**: **Team Titanic Coders**
+* **Project**: **RentNear** – Empowering affordable and transparent rental housing in India.
