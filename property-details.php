@@ -307,9 +307,12 @@ require_once __DIR__ . '/includes/header.php';
                             <?php echo strtoupper(substr($property['owner_name'], 0, 1)); ?>
                         </div>
                         <div>
-                            <h4 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.2rem;"><?php echo htmlspecialchars($property['owner_name']); ?></h4>
-                            <p style="font-size: 0.8rem; color: var(--text-muted);">
-                                <i class="fa-solid fa-shield-check text-success"></i> Verified Property Owner
+                            <h4 style="font-size: 1.12rem; font-weight: 800; margin-bottom: 0.2rem; display: flex; align-items: center; gap: 4px;">
+                                <?php echo htmlspecialchars($property['owner_name']); ?>
+                                <?php echo render_verified_badge(false, 19); ?>
+                            </h4>
+                            <p style="font-size: 0.78rem; color: #0284c7; font-weight: 700; display: flex; align-items: center; gap: 4px; margin: 0;">
+                                <i class="fa-solid fa-shield-check text-primary"></i> Govt ID & Property Verified Owner
                             </p>
                         </div>
                     </div>

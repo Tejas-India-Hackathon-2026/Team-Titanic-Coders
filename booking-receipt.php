@@ -90,7 +90,10 @@ require_once __DIR__ . '/includes/header.php';
             </div>
             <div>
                 <span style="font-size: 0.72rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px;">Landlord / Owner Details</span>
-                <h4 style="font-size: 1.05rem; font-weight: 800; color: #0f172a; margin: 0.2rem 0;"><?php echo htmlspecialchars($payment['owner_name']); ?></h4>
+                <h4 style="font-size: 1.05rem; font-weight: 800; color: #0f172a; margin: 0.2rem 0; display: flex; align-items: center; gap: 4px;">
+                    <?php echo htmlspecialchars($payment['owner_name']); ?>
+                    <?php echo render_verified_badge(false, 16); ?>
+                </h4>
                 <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0;">
                     <i class="fa-solid fa-phone"></i> <?php echo htmlspecialchars($payment['owner_phone']); ?><br>
                     <i class="fa-solid fa-envelope"></i> <?php echo htmlspecialchars($payment['owner_email']); ?>

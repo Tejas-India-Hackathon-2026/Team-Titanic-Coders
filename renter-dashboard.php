@@ -172,7 +172,7 @@ require_once __DIR__ . '/includes/header.php';
                                     <?php endif; ?>
                                 </div>
                                 <div style="display: flex; gap: 1rem; font-size: 0.85rem; color: var(--text-muted); flex-wrap: wrap; margin-top: 3px;">
-                                    <span>Owner: <strong><?php echo htmlspecialchars($inq['owner_name']); ?></strong> (<?php echo htmlspecialchars($inq['owner_phone']); ?>)</span>
+                                    <span>Owner: <strong style="color: var(--dark);"><?php echo htmlspecialchars($inq['owner_name']); ?></strong> <?php echo render_verified_badge(false, 13); ?> (<?php echo htmlspecialchars($inq['owner_phone']); ?>)</span>
                                     <span>Rent: <strong><?php echo format_inr($inq['property_price']); ?>/mo</strong></span>
                                     <?php if (!empty($inq['move_in_date'])): ?>
                                         <span>Target Move-in: <strong><?php echo date('d M Y', strtotime($inq['move_in_date'])); ?></strong></span>

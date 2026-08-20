@@ -50,7 +50,10 @@ require_once __DIR__ . '/includes/header.php';
     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;">
         <div>
             <span class="badge badge-role mb-1">Owner Portal</span>
-            <h1 style="font-size: 2rem; font-weight: 800;">Welcome back, <?php echo htmlspecialchars($user['name']); ?></h1>
+            <h1 style="font-size: 2rem; font-weight: 800; display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                Welcome back, <?php echo htmlspecialchars($user['name']); ?> 
+                <?php echo render_verified_badge(true, 22); ?>
+            </h1>
             <p style="color: var(--text-muted);">Manage your rental properties, tenant inquiries, and premium featured promotions.</p>
         </div>
         <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">

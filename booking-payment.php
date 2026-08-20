@@ -88,7 +88,7 @@ require_once __DIR__ . '/includes/header.php';
                     </div>
                     <div>
                         <span style="color: var(--text-muted); display: block; font-size: 0.75rem;">Owner / Landlord</span>
-                        <strong><?php echo htmlspecialchars($property['owner_name']); ?></strong>
+                        <strong style="display: inline-flex; align-items: center; gap: 3px;"><?php echo htmlspecialchars($property['owner_name']); ?> <?php echo render_verified_badge(false, 14); ?></strong>
                     </div>
                 </div>
             </div>

@@ -505,13 +505,13 @@ foreach ($properties as $p) {
                             </div>
 
                             <div class="property-card-body">
-                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
-                                    <div class="property-location">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem; flex-wrap: wrap;">
+                                    <div class="property-location" style="margin: 0;">
                                         <i class="fa-solid fa-location-dot text-danger"></i>
                                         <span><?php echo htmlspecialchars($prop['location'] . ', ' . $prop['city']); ?></span>
                                     </div>
-                                    <span style="font-size: 0.72rem; font-weight: 700; color: #16a34a; background: #dcfce7; padding: 0.15rem 0.5rem; border-radius: 4px; display: inline-flex; align-items: center; gap: 0.25rem;">
-                                        <span style="width: 6px; height: 6px; border-radius: 50%; background: #22c55e;"></span> Vacant / Available
+                                    <span style="font-size: 0.74rem; color: #475569; display: inline-flex; align-items: center; gap: 2px;">
+                                        <?php echo htmlspecialchars($prop['owner_name']); ?> <?php echo render_verified_badge(false, 13); ?>
                                     </span>
                                 </div>
                                 <h3 class="property-title">

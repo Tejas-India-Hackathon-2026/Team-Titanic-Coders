@@ -274,6 +274,11 @@ function initialize_database($pdo) {
         $pdo->exec("ALTER TABLE properties ADD COLUMN stay_duration VARCHAR(50) DEFAULT '1 Month (Short Stay Allowed)'");
     } catch (Exception $e) {}
 
+    // Auto-migration for Owner Instagram Blue Tick Verification
+    try {
+        $pdo->exec("ALTER TABLE owners ADD COLUMN is_verified TINYINT(1) DEFAULT 1");
+    } catch (Exception $e) {}
+
     // Check if initial seeding is needed
     $ownerCountStmt = $pdo->query("SELECT COUNT(*) FROM owners");
     $ownerCount = (int)$ownerCountStmt->fetchColumn();
