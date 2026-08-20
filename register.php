@@ -92,25 +92,25 @@ require_once __DIR__ . '/includes/header.php';
             </div>
         <?php endif; ?>
 
-        <form action="register.php" method="POST">
+        <form action="register.php" method="POST" id="registerForm">
             
             <!-- Role Selector Tabs -->
             <div class="form-group mb-3">
-                <label>Select Account Type:</label>
+                <label style="font-weight: 700;">Select Account Type:</label>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
-                    <label style="border: 2px solid <?php echo $selectedRole === 'renter' ? 'var(--primary)' : 'var(--border-color)'; ?>; padding: 0.75rem; border-radius: var(--radius-md); text-align: center; cursor: pointer; background: <?php echo $selectedRole === 'renter' ? 'var(--primary-light)' : '#fff'; ?>;">
-                        <input type="radio" name="role" value="renter" <?php echo $selectedRole === 'renter' ? 'checked' : ''; ?> style="display: none;" onchange="this.form.submit();">
-                        <i class="fa-solid fa-user-tag" style="font-size: 1.25rem; color: var(--primary); display: block; margin-bottom: 0.25rem;"></i>
-                        <strong style="display: block; font-size: 0.95rem;">Tenant / Renter</strong>
+                    <div id="roleCardRenter" onclick="selectRole('renter')" style="border: 2px solid <?php echo $selectedRole === 'renter' ? 'var(--primary)' : 'var(--border-color)'; ?>; padding: 0.85rem; border-radius: var(--radius-md); text-align: center; cursor: pointer; background: <?php echo $selectedRole === 'renter' ? 'var(--primary-light)' : '#fff'; ?>; box-shadow: <?php echo $selectedRole === 'renter' ? '0 4px 12px rgba(79, 70, 229, 0.18)' : 'none'; ?>; transition: all 0.2s ease;">
+                        <input type="radio" name="role" id="roleInputRenter" value="renter" <?php echo $selectedRole === 'renter' ? 'checked' : ''; ?> style="display: none;">
+                        <i class="fa-solid fa-user-tag" style="font-size: 1.35rem; color: var(--primary); display: block; margin-bottom: 0.35rem;"></i>
+                        <strong style="display: block; font-size: 0.95rem; color: var(--dark);">Tenant / Renter</strong>
                         <span style="font-size: 0.75rem; color: var(--text-muted);">Saved in `renters` table</span>
-                    </label>
+                    </div>
 
-                    <label style="border: 2px solid <?php echo $selectedRole === 'owner' ? 'var(--primary)' : 'var(--border-color)'; ?>; padding: 0.75rem; border-radius: var(--radius-md); text-align: center; cursor: pointer; background: <?php echo $selectedRole === 'owner' ? 'var(--primary-light)' : '#fff'; ?>;">
-                        <input type="radio" name="role" value="owner" <?php echo $selectedRole === 'owner' ? 'checked' : ''; ?> style="display: none;" onchange="this.form.submit();">
-                        <i class="fa-solid fa-house-chimney-user" style="font-size: 1.25rem; color: var(--primary); display: block; margin-bottom: 0.25rem;"></i>
-                        <strong style="display: block; font-size: 0.95rem;">Property Owner</strong>
+                    <div id="roleCardOwner" onclick="selectRole('owner')" style="border: 2px solid <?php echo $selectedRole === 'owner' ? 'var(--primary)' : 'var(--border-color)'; ?>; padding: 0.85rem; border-radius: var(--radius-md); text-align: center; cursor: pointer; background: <?php echo $selectedRole === 'owner' ? 'var(--primary-light)' : '#fff'; ?>; box-shadow: <?php echo $selectedRole === 'owner' ? '0 4px 12px rgba(79, 70, 229, 0.18)' : 'none'; ?>; transition: all 0.2s ease;">
+                        <input type="radio" name="role" id="roleInputOwner" value="owner" <?php echo $selectedRole === 'owner' ? 'checked' : ''; ?> style="display: none;">
+                        <i class="fa-solid fa-house-chimney-user" style="font-size: 1.35rem; color: var(--primary); display: block; margin-bottom: 0.35rem;"></i>
+                        <strong style="display: block; font-size: 0.95rem; color: var(--dark);">Property Owner</strong>
                         <span style="font-size: 0.75rem; color: var(--text-muted);">Saved in `owners` table</span>
-                    </label>
+                    </div>
                 </div>
             </div>
 
@@ -150,5 +150,38 @@ require_once __DIR__ . '/includes/header.php';
         </div>
     </div>
 </div>
+
+<script>
+function selectRole(role) {
+    var renterCard = document.getElementById('roleCardRenter');
+    var ownerCard = document.getElementById('roleCardOwner');
+    var renterInput = document.getElementById('roleInputRenter');
+    var ownerInput = document.getElementById('roleInputOwner');
+
+    if (role === 'owner') {
+        ownerInput.checked = true;
+        renterInput.checked = false;
+        
+        ownerCard.style.borderColor = 'var(--primary)';
+        ownerCard.style.backgroundColor = 'var(--primary-light)';
+        ownerCard.style.boxShadow = '0 4px 12px rgba(79, 70, 229, 0.18)';
+        
+        renterCard.style.borderColor = 'var(--border-color)';
+        renterCard.style.backgroundColor = '#fff';
+        renterCard.style.boxShadow = 'none';
+    } else {
+        renterInput.checked = true;
+        ownerInput.checked = false;
+        
+        renterCard.style.borderColor = 'var(--primary)';
+        renterCard.style.backgroundColor = 'var(--primary-light)';
+        renterCard.style.boxShadow = '0 4px 12px rgba(79, 70, 229, 0.18)';
+        
+        ownerCard.style.borderColor = 'var(--border-color)';
+        ownerCard.style.backgroundColor = '#fff';
+        ownerCard.style.boxShadow = 'none';
+    }
+}
+</script>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>
