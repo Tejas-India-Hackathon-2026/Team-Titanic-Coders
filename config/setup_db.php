@@ -469,7 +469,7 @@ function seed_sample_data($pdo) {
             'bedrooms' => 2,
             'bathrooms' => 2,
             'area_sqft' => 1100,
-            'image' => 'https://images.unsplash.com/photo-1502005229762-ee1b2b8ab98f?auto=format&fit=crop&w=1200&q=80',
+            'image' => 'https://images.unsplash.com/photo-1502005097973-6a7082348e28?auto=format&fit=crop&w=1200&q=80',
             'amenities' => 'Covered Parking,Lift,Power Backup,Rainwater Harvesting,Park View',
             'is_premium' => 0,
             'views_count' => 115
