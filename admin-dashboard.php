@@ -398,7 +398,7 @@ require_once __DIR__ . '/includes/header.php';
                                 </td>
                                 <td><?php echo date('d M Y', strtotime($o['created_at'])); ?></td>
                                 <td style="text-align: right;">
-                                    <a href="delete-user.php?role=owner&id=<?php echo $o['id']; ?>" class="btn btn-danger btn-sm" title="Permanently Delete Owner Account" onclick="return confirm('⚠️ WARNING: Delete owner <?php echo addslashes($o['name']); ?>? This will permanently erase this owner and all their properties and inquiries!');">
+                                    <a href="delete-user.php?role=owner&id=<?php echo $o['id']; ?>" class="btn btn-danger btn-sm" title="Permanently Delete Owner Account" onclick="return confirm('⚠️ Delete owner <?php echo addslashes($o['name']); ?>? This will permanently erase this owner and all their properties and inquiries!');">
                                         <i class="fa-solid fa-trash"></i> Delete
                                     </a>
                                 </td>

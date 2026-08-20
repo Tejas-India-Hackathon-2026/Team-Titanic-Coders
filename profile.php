@@ -371,7 +371,7 @@ require_once __DIR__ . '/includes/header.php';
 
                 <!-- Account Info Box -->
                 <div style="margin-top: 1.5rem; background: var(--bg-alt); padding: 1rem; border-radius: var(--radius-md); font-size: 0.8rem; color: var(--dark-muted);">
-                    <div><strong>Member Since:</strong> <?php echo date('d M Y', strtotime($user['created_at'])); ?></div>
+                    <div><strong>Member Since:</strong> <?php echo date('d M Y', strtotime($user['created_at'] ?? 'now')); ?></div>
                     <div class="mt-1"><strong>Database Table:</strong> <code><?php echo $table; ?></code> (ID: #<?php echo $user['id']; ?>)</div>
                 </div>
             </div>
