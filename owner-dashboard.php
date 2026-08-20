@@ -203,16 +203,26 @@ require_once __DIR__ . '/includes/header.php';
             <p style="color: var(--text-muted); font-size: 0.9rem;">No inquiries received yet. Once renters message you from your listings, they will show up here.</p>
         <?php else: ?>
             <div style="display: flex; flex-direction: column; gap: 1rem;">
-                <?php foreach ($inquiries as $inq): ?>
-                    <div style="background: var(--bg-alt); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                <?php foreach ($inquiries as $inq): 
+                    $cleanPhone = preg_replace('/[^0-9]/', '', $inq['phone']);
+                    $isTokenPaid = ($inq['booking_status'] ?? '') === 'token_paid';
+                ?>
+                    <div style="background: var(--bg-alt); padding: 1.25rem; border-radius: var(--radius-md); border: 1.5px solid <?php echo $isTokenPaid ? '#a7f3d0' : 'var(--border-color)'; ?>;">
                         <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.6rem;">
                             <div>
-                                <h4 style="font-size: 1rem; font-weight: 700; margin-bottom: 0.2rem;">
-                                    <?php echo htmlspecialchars($inq['name']); ?> 
-                                    <span style="font-weight: 400; font-size: 0.85rem; color: var(--text-muted);">inquired for</span> 
-                                    <strong style="color: var(--primary);"><?php echo htmlspecialchars($inq['property_title']); ?></strong>
-                                </h4>
-                                <div style="display: flex; gap: 1rem; font-size: 0.85rem; color: var(--dark-muted); flex-wrap: wrap;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                                    <h4 style="font-size: 1rem; font-weight: 700; margin: 0;">
+                                        <?php echo htmlspecialchars($inq['name']); ?> 
+                                        <span style="font-weight: 400; font-size: 0.85rem; color: var(--text-muted);">inquired for</span> 
+                                        <strong style="color: var(--primary);"><?php echo htmlspecialchars($inq['property_title']); ?></strong>
+                                    </h4>
+                                    <?php if ($isTokenPaid): ?>
+                                        <span class="badge badge-success" style="font-size: 0.72rem;">
+                                            <i class="fa-solid fa-circle-check"></i> ₹<?php echo number_format($inq['token_amount'] ?? 1000); ?> Token Paid & Reserved
+                                        </span>
+                                    <?php endif; ?>
+                                </div>
+                                <div style="display: flex; gap: 1rem; font-size: 0.85rem; color: var(--dark-muted); flex-wrap: wrap; margin-top: 3px;">
                                     <span><i class="fa-solid fa-phone me-1"></i> <a href="tel:<?php echo htmlspecialchars($inq['phone']); ?>"><?php echo htmlspecialchars($inq['phone']); ?></a></span>
                                     <?php if (!empty($inq['email'])): ?>
                                         <span><i class="fa-solid fa-envelope me-1"></i> <a href="mailto:<?php echo htmlspecialchars($inq['email']); ?>"><?php echo htmlspecialchars($inq['email']); ?></a></span>
@@ -220,12 +230,15 @@ require_once __DIR__ . '/includes/header.php';
                                     <?php if (!empty($inq['move_in_date'])): ?>
                                         <span><i class="fa-solid fa-calendar me-1"></i> Move-in: <?php echo date('d M Y', strtotime($inq['move_in_date'])); ?></span>
                                     <?php endif; ?>
+                                    <?php if (!empty($inq['transaction_id'])): ?>
+                                        <span style="font-family: monospace; color: #4338ca; font-weight: 700;">Txn: <?php echo htmlspecialchars($inq['transaction_id']); ?></span>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                             <span style="font-size: 0.75rem; color: var(--text-muted);"><?php echo time_ago($inq['created_at']); ?></span>
                         </div>
 
-                        <div style="background: #fff; padding: 0.85rem; border-radius: var(--radius-sm); font-size: 0.9rem; color: var(--dark); border-left: 3px solid var(--primary);">
+                        <div style="background: #fff; padding: 0.85rem; border-radius: var(--radius-sm); font-size: 0.9rem; color: var(--dark); border-left: 3px solid <?php echo $isTokenPaid ? '#10b981' : 'var(--primary)'; ?>;">
                             "<?php echo htmlspecialchars($inq['message']); ?>"
                         </div>
 
@@ -234,7 +247,12 @@ require_once __DIR__ . '/includes/header.php';
                                 <a href="tel:<?php echo htmlspecialchars($inq['phone']); ?>" class="btn btn-secondary btn-sm">
                                     <i class="fa-solid fa-phone"></i> Call Back
                                 </a>
-                                <a href="https://wa.me/<?php echo $cleanPhone; ?>" target="_blank" class="btn btn-secondary btn-sm" style="background: #25D366; color: #fff; border: none;">
+                                <?php 
+                                $waReplyMsg = $isTokenPaid 
+                                    ? urlencode("Hi " . $inq['name'] . ", thank you for paying the room booking token advance on RentNear for '" . $inq['property_title'] . "'! Let's schedule your move-in.") 
+                                    : urlencode("Hi " . $inq['name'] . ", regarding your inquiry for '" . $inq['property_title'] . "' on RentNear, when would you like to visit?");
+                                ?>
+                                <a href="https://wa.me/<?php echo $cleanPhone; ?>?text=<?php echo $waReplyMsg; ?>" target="_blank" class="btn btn-secondary btn-sm" style="background: #25D366; color: #fff; border: none;">
                                     <i class="fa-brands fa-whatsapp"></i> Reply on WhatsApp
                                 </a>
                             </div>

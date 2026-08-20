@@ -252,6 +252,23 @@ function initialize_database($pdo) {
         $pdo->exec("ALTER TABLE properties ADD COLUMN landmark VARCHAR(255) DEFAULT ''");
     } catch (Exception $e) {}
 
+    // Auto-migration for Renter Booking Payments & Token Advance
+    try {
+        $pdo->exec("ALTER TABLE payments ADD COLUMN renter_id INT DEFAULT NULL");
+    } catch (Exception $e) {}
+    try {
+        $pdo->exec("ALTER TABLE payments ADD COLUMN inquiry_id INT DEFAULT NULL");
+    } catch (Exception $e) {}
+    try {
+        $pdo->exec("ALTER TABLE inquiries ADD COLUMN booking_status VARCHAR(50) DEFAULT 'pending'");
+    } catch (Exception $e) {}
+    try {
+        $pdo->exec("ALTER TABLE inquiries ADD COLUMN token_amount DECIMAL(10, 2) DEFAULT NULL");
+    } catch (Exception $e) {}
+    try {
+        $pdo->exec("ALTER TABLE inquiries ADD COLUMN transaction_id VARCHAR(100) DEFAULT NULL");
+    } catch (Exception $e) {}
+
     // Check if initial seeding is needed
     $ownerCountStmt = $pdo->query("SELECT COUNT(*) FROM owners");
     $ownerCount = (int)$ownerCountStmt->fetchColumn();

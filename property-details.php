@@ -310,7 +310,12 @@ require_once __DIR__ . '/includes/header.php';
                     </div>
 
                     <!-- Direct Connect Buttons -->
-                    <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.75rem;">
+                    <div style="display: flex; flex-direction: column; gap: 0.65rem; margin-bottom: 1.25rem;">
+                        <!-- Instant Reserve Room / Pay Token Button -->
+                        <a href="booking-payment.php?property_id=<?php echo $property_id; ?>" class="btn btn-premium" style="width: 100%; font-size: 0.92rem; padding: 0.75rem; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);">
+                            <i class="fa-solid fa-credit-card"></i> Pay Token & Reserve Room (₹1,000)
+                        </a>
+
                         <a href="tel:<?php echo htmlspecialchars($property['owner_phone']); ?>" class="btn btn-primary" style="width: 100%;">
                             <i class="fa-solid fa-phone"></i> Call Owner: <?php echo htmlspecialchars($property['owner_phone']); ?>
                         </a>
@@ -326,11 +331,17 @@ require_once __DIR__ . '/includes/header.php';
 
                     <!-- Direct Inquiry Form -->
                     <div style="border-top: 1px solid var(--border-light); padding-top: 1.25rem;">
-                        <h5 style="font-size: 1rem; font-weight: 700; margin-bottom: 1rem;">Send Booking Inquiry</h5>
+                        <h5 style="font-size: 1rem; font-weight: 700; margin-bottom: 0.85rem;">Send Inquiry to Owner</h5>
 
                         <?php if ($inquirySuccess): ?>
-                            <div class="alert alert-success" style="font-size: 0.85rem; padding: 0.75rem;">
-                                <i class="fa-solid fa-check-circle me-1"></i> Your inquiry has been sent to the owner!
+                            <div class="alert alert-success" style="font-size: 0.85rem; padding: 0.85rem; flex-direction: column; align-items: flex-start; gap: 0.5rem;">
+                                <div><i class="fa-solid fa-check-circle me-1"></i> <strong>Inquiry Sent to Owner!</strong></div>
+                                <p style="font-size: 0.8rem; margin: 0; color: #065f46;">
+                                    Liked this room? Reserve it right now by paying a small refundable token advance before someone else books it!
+                                </p>
+                                <a href="booking-payment.php?property_id=<?php echo $property_id; ?>" class="btn btn-primary btn-sm mt-1" style="width: 100%; font-size: 0.82rem;">
+                                    <i class="fa-solid fa-credit-card"></i> Pay Token & Lock Room Now &rarr;
+                                </a>
                             </div>
                         <?php endif; ?>
 
