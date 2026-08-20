@@ -239,6 +239,7 @@ require_once __DIR__ . '/includes/header.php';
                         <th>Operating City</th>
                         <th>Listings</th>
                         <th>Registered Date</th>
+                        <th style="text-align: right;">Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -251,6 +252,11 @@ require_once __DIR__ . '/includes/header.php';
                             <td><?php echo htmlspecialchars(!empty($o['city']) ? $o['city'] : 'Pan India'); ?></td>
                             <td><span class="badge badge-info"><?php echo $o['props_count']; ?> properties</span></td>
                             <td><?php echo date('d M Y', strtotime($o['created_at'])); ?></td>
+                            <td style="text-align: right;">
+                                <a href="delete-user.php?role=owner&id=<?php echo $o['id']; ?>" class="btn btn-danger btn-sm" title="Permanently Delete Owner Account" onclick="return confirm('⚠️ WARNING: Delete owner <?php echo addslashes($o['name']); ?>? This will permanently erase this owner and all their properties and inquiries!');">
+                                    <i class="fa-solid fa-trash"></i> Delete
+                                </a>
+                            </td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
@@ -279,6 +285,7 @@ require_once __DIR__ . '/includes/header.php';
                         <th>Preferred City</th>
                         <th>Saved Items</th>
                         <th>Registered Date</th>
+                        <th style="text-align: right;">Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -292,6 +299,11 @@ require_once __DIR__ . '/includes/header.php';
                             <td><?php echo htmlspecialchars(!empty($r['preferred_city']) ? $r['preferred_city'] : 'Bengaluru'); ?></td>
                             <td><span class="badge badge-warning"><?php echo $r['saved_count']; ?> saved</span></td>
                             <td><?php echo date('d M Y', strtotime($r['created_at'])); ?></td>
+                            <td style="text-align: right;">
+                                <a href="delete-user.php?role=renter&id=<?php echo $r['id']; ?>" class="btn btn-danger btn-sm" title="Permanently Delete Renter Account" onclick="return confirm('⚠️ Delete renter <?php echo addslashes($r['name']); ?> permanently?');">
+                                    <i class="fa-solid fa-trash"></i> Delete
+                                </a>
+                            </td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>

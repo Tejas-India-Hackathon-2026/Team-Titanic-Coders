@@ -116,6 +116,61 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_password'])) {
     }
 }
 
+// 3. Handle Permanent Account Deletion
+$deleteError = '';
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_account_permanently'])) {
+    $deletePass = $_POST['confirm_delete_password'] ?? '';
+    $deleteConfirm = trim($_POST['confirm_delete_text'] ?? '');
+
+    if (strtoupper($deleteConfirm) !== 'DELETE') {
+        $deleteError = 'Please type DELETE in capital letters to confirm account deletion.';
+    } elseif (!password_verify($deletePass, $user['password'])) {
+        $deleteError = 'Incorrect password. Account deletion aborted for security.';
+    } else {
+        try {
+            $pdo->beginTransaction();
+
+            if ($role === 'owner') {
+                // Delete inquiries for this owner's properties
+                $pdo->prepare("DELETE FROM inquiries WHERE property_id IN (SELECT id FROM properties WHERE owner_id = ?)")->execute([$userId]);
+                // Delete favorites for this owner's properties
+                $pdo->prepare("DELETE FROM favorites WHERE property_id IN (SELECT id FROM properties WHERE owner_id = ?)")->execute([$userId]);
+                // Delete payments
+                $pdo->prepare("DELETE FROM payments WHERE owner_id = ?")->execute([$userId]);
+                // Delete properties
+                $pdo->prepare("DELETE FROM properties WHERE owner_id = ?")->execute([$userId]);
+                // Delete owner record
+                $pdo->prepare("DELETE FROM owners WHERE id = ?")->execute([$userId]);
+            } elseif ($role === 'renter') {
+                // Delete favorites
+                $pdo->prepare("DELETE FROM favorites WHERE renter_id = ?")->execute([$userId]);
+                // Delete inquiries
+                $pdo->prepare("DELETE FROM inquiries WHERE renter_id = ?")->execute([$userId]);
+                // Delete payments
+                $pdo->prepare("DELETE FROM payments WHERE renter_id = ?")->execute([$userId]);
+                // Delete renter record
+                $pdo->prepare("DELETE FROM renters WHERE id = ?")->execute([$userId]);
+            }
+
+            $pdo->commit();
+
+            // Destroy session and logout
+            session_unset();
+            session_destroy();
+            session_start();
+            set_flash_message('success', 'Your account and all associated data have been permanently deleted from RentNear.');
+            header("Location: index.php");
+            exit;
+
+        } catch (Exception $e) {
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+            $deleteError = 'Failed to delete account: ' . $e->getMessage();
+        }
+    }
+}
+
 // Fetch stats
 $totalListed = 0;
 $totalSaved = 0;
@@ -312,6 +367,76 @@ require_once __DIR__ . '/includes/header.php';
                 </div>
             </div>
 
+        </div>
+
+        <!-- 3. Danger Zone / Permanent Account Deletion Card -->
+        <div style="margin-top: 2rem; background: #fff; border-radius: var(--radius-xl); border: 2px solid #fecaca; padding: 2rem; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.08);">
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; border-bottom: 1px solid #fee2e2; padding-bottom: 1rem; margin-bottom: 1.25rem;">
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <div style="width: 42px; height: 42px; border-radius: var(--radius-md); background: #fee2e2; color: #dc2626; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                    <div>
+                        <h3 style="font-size: 1.2rem; font-weight: 800; color: #991b1b; margin: 0;">Danger Zone: Permanent Account Deletion</h3>
+                        <p style="font-size: 0.82rem; color: #7f1d1d; margin: 0;">Irreversible deletion of your login, profile, and all associated platform records.</p>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-danger btn-sm" onclick="document.getElementById('deleteAccountModal').style.display='flex';" style="font-weight: 700;">
+                    <i class="fa-solid fa-trash-can"></i> Delete My Account
+                </button>
+            </div>
+
+            <p style="font-size: 0.85rem; color: #64748b; margin: 0; line-height: 1.5;">
+                <?php if ($role === 'owner'): ?>
+                    <strong>Notice for Property Owners:</strong> Deleting your account will immediately remove all your active listings (<strong><?php echo $totalListed; ?> properties</strong>), tenant inquiries, images, and payment receipts from RentNear.
+                <?php else: ?>
+                    <strong>Notice for Tenants/Renters:</strong> Deleting your account will erase your saved wishlist bookmarks (<strong><?php echo $totalSaved; ?> properties</strong>), sent inquiries, and room booking reservation history.
+                <?php endif; ?>
+            </p>
+
+            <?php if (!empty($deleteError)): ?>
+                <div class="alert alert-danger mt-3" style="font-size: 0.85rem; padding: 0.75rem 1rem;">
+                    <i class="fa-solid fa-circle-exclamation me-1"></i> <?php echo htmlspecialchars($deleteError); ?>
+                </div>
+            <?php endif; ?>
+        </div>
+
+        <!-- Permanent Account Deletion Confirmation Modal -->
+        <div id="deleteAccountModal" style="display: <?php echo !empty($deleteError) ? 'flex' : 'none'; ?>; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); z-index: 9999; align-items: center; justify-content: center; padding: 1rem;">
+            <div style="background: #ffffff; border-radius: var(--radius-xl); max-width: 480px; width: 100%; padding: 2rem; box-shadow: var(--shadow-xl); border: 2px solid #ef4444; animation: popIn 0.2s ease;">
+                <div style="text-align: center; margin-bottom: 1.25rem;">
+                    <div style="width: 56px; height: 56px; border-radius: 50%; background: #fee2e2; color: #dc2626; font-size: 1.6rem; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem;">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </div>
+                    <h3 style="font-size: 1.3rem; font-weight: 800; color: #0f172a; margin-bottom: 0.3rem;">Delete Account Permanently?</h3>
+                    <p style="font-size: 0.85rem; color: #64748b;">
+                        This action is <strong>permanent</strong> and cannot be undone. All your data will be permanently wiped from the database.
+                    </p>
+                </div>
+
+                <form action="profile.php" method="POST">
+                    <input type="hidden" name="delete_account_permanently" value="1">
+
+                    <div class="form-group mb-3">
+                        <label style="font-size: 0.82rem; font-weight: 700; color: #334155;">Confirm Your Current Password <span class="text-danger">*</span></label>
+                        <input type="password" name="confirm_delete_password" class="form-control" placeholder="••••••••" required>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label style="font-size: 0.82rem; font-weight: 700; color: #334155;">Type <span style="color: #dc2626; font-weight: 800;">DELETE</span> in capital letters to confirm <span class="text-danger">*</span></label>
+                        <input type="text" name="confirm_delete_text" class="form-control" placeholder="DELETE" required autocomplete="off">
+                    </div>
+
+                    <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem;">
+                        <button type="button" class="btn btn-secondary" style="flex: 1;" onclick="document.getElementById('deleteAccountModal').style.display='none';">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-danger" style="flex: 1; font-weight: 800;">
+                            <i class="fa-solid fa-trash-can"></i> Delete Account
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
 
     </div>
