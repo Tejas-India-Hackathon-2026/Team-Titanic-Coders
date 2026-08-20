@@ -96,9 +96,14 @@ require_once __DIR__ . '/includes/header.php';
             <h1 style="font-size: 2rem; font-weight: 800;">RentNear Platform Overview</h1>
             <p style="color: var(--text-muted);">Separate backend architecture for Owners (`owners`) and Tenants (`renters`).</p>
         </div>
-        <a href="profile.php" class="btn btn-secondary btn-lg">
-            <i class="fa-solid fa-user-pen"></i> Edit Profile
-        </a>
+        <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+            <a href="profile.php" class="btn btn-secondary btn-lg">
+                <i class="fa-solid fa-user-pen"></i> Edit Profile
+            </a>
+            <a href="logout.php" class="btn btn-danger btn-lg" style="background: #dc2626; border-color: #b91c1c; font-weight: 700;">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
+            </a>
+        </div>
     </div>
 
     <!-- Stats Grid -->
