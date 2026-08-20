@@ -17,12 +17,25 @@ function is_logged_in() {
  */
 function current_user() {
     if (is_logged_in()) {
+        global $pdo;
+        $is_verified = 0;
+        if (isset($_SESSION['user_is_verified'])) {
+            $is_verified = (int)$_SESSION['user_is_verified'];
+        } elseif (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'owner' && isset($pdo)) {
+            try {
+                $st = $pdo->prepare("SELECT is_verified FROM owners WHERE id = ?");
+                $st->execute([$_SESSION['user_id']]);
+                $is_verified = (int)$st->fetchColumn();
+                $_SESSION['user_is_verified'] = $is_verified;
+            } catch (Exception $e) {}
+        }
         return [
-            'id'    => $_SESSION['user_id'],
-            'name'  => $_SESSION['user_name'] ?? 'User',
-            'email' => $_SESSION['user_email'] ?? '',
-            'role'  => $_SESSION['user_role'] ?? 'renter',
-            'phone' => $_SESSION['user_phone'] ?? ''
+            'id'          => $_SESSION['user_id'],
+            'name'        => $_SESSION['user_name'] ?? 'User',
+            'email'       => $_SESSION['user_email'] ?? '',
+            'role'        => $_SESSION['user_role'] ?? 'renter',
+            'phone'       => $_SESSION['user_phone'] ?? '',
+            'is_verified' => $is_verified
         ];
     }
     return null;

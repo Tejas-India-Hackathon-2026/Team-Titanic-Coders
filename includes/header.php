@@ -57,6 +57,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 <li>
                     <a href="explore-map.php" class="<?php echo $current_page === 'explore-map.php' ? 'active' : ''; ?>" style="font-weight: 700;">
                         <i class="fa-solid fa-map-location-dot me-1 text-primary"></i> Explore Map
+                        <span style="background: #ef4444; color: #fff; font-size: 0.65rem; font-weight: 800; padding: 1px 5px; border-radius: 10px; margin-left: 3px; vertical-align: middle;">LIVE</span>
                     </a>
                 </li>
                 <li>
@@ -115,17 +116,30 @@ $current_page = basename($_SERVER['PHP_SELF']);
                             <div class="user-avatar">
                                 <?php echo strtoupper(substr($user['name'], 0, 1)); ?>
                             </div>
-                            <span style="font-weight: 600; font-size: 0.9rem;">
+                            <span style="font-weight: 700; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 4px;">
                                 <?php echo htmlspecialchars(explode(' ', $user['name'])[0]); ?>
+                                <?php if ($user['role'] === 'owner' && !empty($user['is_verified']) && (int)$user['is_verified'] === 1) echo render_verified_badge(false, 14); ?>
                             </span>
                             <i class="fa-solid fa-chevron-down" style="font-size: 0.75rem; color: var(--text-muted);"></i>
                         </button>
 
                         <div class="dropdown-menu" id="userDropdownMenu">
                             <div class="dropdown-header">
-                                <h5><?php echo htmlspecialchars($user['name']); ?></h5>
+                                <h5 style="display: flex; align-items: center; gap: 4px; margin-bottom: 2px;">
+                                    <?php echo htmlspecialchars($user['name']); ?>
+                                    <?php if ($user['role'] === 'owner' && !empty($user['is_verified']) && (int)$user['is_verified'] === 1) echo render_verified_badge(false, 15); ?>
+                                </h5>
                                 <p><?php echo htmlspecialchars($user['email']); ?></p>
-                                <span class="badge badge-role mt-1"><?php echo ucfirst($user['role']); ?> Account</span>
+                                <div style="display: flex; gap: 4px; align-items: center; margin-top: 4px; flex-wrap: wrap;">
+                                    <span class="badge badge-role"><?php echo ucfirst($user['role']); ?> Account</span>
+                                    <?php if ($user['role'] === 'owner'): ?>
+                                        <?php if (!empty($user['is_verified']) && (int)$user['is_verified'] === 1): ?>
+                                            <span class="badge badge-success" style="font-size: 0.68rem;">⭐ Gold Verified</span>
+                                        <?php else: ?>
+                                            <span class="badge badge-secondary" style="font-size: 0.68rem;">Standard Owner</span>
+                                        <?php endif; ?>
+                                    <?php endif; ?>
+                                </div>
                             </div>
 
                             <?php if ($user['role'] === 'owner'): ?>
@@ -135,6 +149,15 @@ $current_page = basename($_SERVER['PHP_SELF']);
                                 <a href="add-property.php" class="dropdown-item">
                                     <i class="fa-solid fa-circle-plus"></i> Add New Property
                                 </a>
+                                <?php if (empty($user['is_verified']) || (int)$user['is_verified'] !== 1): ?>
+                                    <a href="verify-owner.php" class="dropdown-item" style="color: #b45309; font-weight: 700; background: #fffbeb;">
+                                        <i class="fa-solid fa-crown text-warning"></i> Get Golden Tick (₹199)
+                                    </a>
+                                <?php else: ?>
+                                    <a href="verify-receipt.php" class="dropdown-item" style="color: #15803d; font-weight: 700;">
+                                        <i class="fa-solid fa-certificate text-success"></i> VIP Certificate
+                                    </a>
+                                <?php endif; ?>
                             <?php elseif ($user['role'] === 'renter'): ?>
                                 <a href="renter-dashboard.php" class="dropdown-item">
                                     <i class="fa-solid fa-bookmark"></i> My Wishlist & Inquiries
