@@ -1,0 +1,35 @@
+name: RentNear PHP CI
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build & Test
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Set up PHP 8.2 with Extensions
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        extensions: pdo, pdo_mysql, pdo_sqlite, mbstring, json
+        coverage: none
+
+    - name: Validate composer.json
+      run: composer validate --strict
+
+    - name: Check PHP Syntax (Linting)
+      run: find . -type f -name "*.php" -not -path "./vendor/*" -exec php -l {} +
+
+    - name: Verify SQLite Database Initialization
+      run: php config/setup_db.php

@@ -1,0 +1,148 @@
+<?php
+// login.php - User Login with Multi-Table Check (Owners, Renters, Admins)
+require_once __DIR__ . '/config/db.php';
+require_once __DIR__ . '/includes/functions.php';
+require_once __DIR__ . '/includes/auth_check.php';
+
+// Redirect if already logged in
+if (is_logged_in()) {
+    $role = user_role();
+    if ($role === 'owner') header("Location: owner-dashboard.php");
+    elseif ($role === 'admin') header("Location: admin-dashboard.php");
+    else header("Location: index.php");
+    exit;
+}
+
+$error = '';
+$redirect = isset($_GET['redirect']) ? $_GET['redirect'] : '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = sanitize($_POST['email'] ?? '');
+    $password = $_POST['password'] ?? '';
+
+    if (empty($email) || empty($password)) {
+        $error = 'Please enter your email address and password.';
+    } else {
+        $user = null;
+        $role = null;
+
+        // 1. Check in separate 'owners' table
+        $stmtO = $pdo->prepare("SELECT * FROM owners WHERE LOWER(email) = LOWER(:email)");
+        $stmtO->execute([':email' => $email]);
+        $owner = $stmtO->fetch();
+        if ($owner && password_verify($password, $owner['password'])) {
+            $user = $owner;
+            $role = 'owner';
+        }
+
+        // 2. Check in separate 'renters' table
+        if (!$user) {
+            $stmtR = $pdo->prepare("SELECT * FROM renters WHERE LOWER(email) = LOWER(:email)");
+            $stmtR->execute([':email' => $email]);
+            $renter = $stmtR->fetch();
+            if ($renter && password_verify($password, $renter['password'])) {
+                $user = $renter;
+                $role = 'renter';
+            }
+        }
+
+        // 3. Check in separate 'admins' table
+        if (!$user) {
+            $stmtA = $pdo->prepare("SELECT * FROM admins WHERE LOWER(email) = LOWER(:email)");
+            $stmtA->execute([':email' => $email]);
+            $admin = $stmtA->fetch();
+            if ($admin && password_verify($password, $admin['password'])) {
+                $user = $admin;
+                $role = 'admin';
+            }
+        }
+
+        if ($user && $role) {
+            // Set session variables
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['user_name'] = $user['name'];
+            $_SESSION['user_email'] = $user['email'];
+            $_SESSION['user_role'] = $role;
+            $_SESSION['user_phone'] = $user['phone'] ?? '';
+
+            set_flash_message('success', 'Welcome back, ' . $user['name'] . '!');
+
+            if (!empty($redirect)) {
+                header("Location: " . $redirect);
+            } else {
+                if ($role === 'owner') header("Location: owner-dashboard.php");
+                elseif ($role === 'admin') header("Location: admin-dashboard.php");
+                elseif ($role === 'renter') header("Location: renter-dashboard.php");
+                else header("Location: index.php");
+            }
+            exit;
+        } else {
+            $error = 'Invalid email or password. Please try again.';
+        }
+    }
+}
+
+$page_title = "Login to RentNear";
+require_once __DIR__ . '/includes/header.php';
+?>
+
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <div class="auth-header">
+            <div class="brand-logo justify-content-center mb-2" style="justify-content: center;">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-house-chimney"></i>
+                </div>
+            </div>
+            <h2>Sign In to RentNear</h2>
+            <p class="text-muted" style="font-size: 0.9rem; color: var(--text-muted);">Access your Owner portal or Renter account.</p>
+        </div>
+
+        <?php if (!empty($error)): ?>
+            <div class="alert alert-danger" style="font-size: 0.9rem; padding: 0.75rem 1rem;">
+                <i class="fa-solid fa-circle-exclamation me-1"></i> <?php echo htmlspecialchars($error); ?>
+            </div>
+        <?php endif; ?>
+
+        <form action="login.php<?php echo !empty($redirect) ? '?redirect=' . urlencode($redirect) : ''; ?>" method="POST">
+            <div class="form-group">
+                <label for="loginEmail"><i class="fa-solid fa-envelope me-1"></i> Email Address</label>
+                <input type="email" name="email" id="loginEmail" class="form-control" placeholder="name@example.com" required autofocus>
+            </div>
+
+            <div class="form-group">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+                    <label for="loginPassword" style="margin-bottom: 0;"><i class="fa-solid fa-lock me-1"></i> Password</label>
+                    <a href="forgot-password.php" style="font-size: 0.8rem; font-weight: 600; color: var(--primary);">Forgot Password?</a>
+                </div>
+                <input type="password" name="password" id="loginPassword" class="form-control" placeholder="••••••••" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;">
+                <i class="fa-solid fa-right-to-bracket"></i> Sign In
+            </button>
+        </form>
+
+        <!-- 1-Click Demo Buttons for Fast Evaluation -->
+        <div class="demo-account-box">
+            <h6><i class="fa-solid fa-wand-magic-sparkles"></i> 1-Click Demo Credentials:</h6>
+            <div class="demo-btn-group">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="fillDemoCredentials('owner')">
+                    <i class="fa-solid fa-key"></i> Fill Owner
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="fillDemoCredentials('renter')">
+                    <i class="fa-solid fa-key"></i> Fill Renter
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="fillDemoCredentials('admin')">
+                    <i class="fa-solid fa-key"></i> Fill Admin
+                </button>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 1.5rem; font-size: 0.9rem; color: var(--text-muted);">
+            Don't have an account? <a href="register.php" style="font-weight: 700;">Sign up for free</a>
+        </div>
+    </div>
+</div>
+
+<?php require_once __DIR__ . '/includes/footer.php'; ?>

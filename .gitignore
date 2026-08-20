@@ -1,0 +1,16 @@
+# RentNear .gitignore
+
+# OS generated files
+Thumbs.db
+.DS_Store
+*.tmp
+
+# Local logs
+*.log
+
+# VS Code / IDE configs
+.vscode/
+.idea/
+
+# SQLite Database (optional - keep database.sql as template)
+# database/rentnear.sqlite

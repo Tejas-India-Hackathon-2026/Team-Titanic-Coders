@@ -1,0 +1,27 @@
+{
+    "name": "titanic-coders/rentnear",
+    "description": "RentNear - Online Property & Local Room Rental Platform (Tejas India Hackathon 2026)",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Team Titanic Coders",
+            "homepage": "https://github.com/Tejas-India-Hackathon-2026/Team-Titanic-Coders"
+        }
+    ],
+    "require": {
+        "php": ">=8.0",
+        "ext-pdo": "*",
+        "ext-pdo_mysql": "*",
+        "ext-pdo_sqlite": "*"
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true
+    },
+    "scripts": {
+        "lint": "find . -name '*.php' -not -path './vendor/*' -exec php -l {} \\;",
+        "test": "php config/setup_db.php"
+    }
+}
