@@ -1,7 +1,19 @@
 <?php
-// includes/auth_check.php - Session and Role Based Access Control
+// includes/auth_check.php - Session, Cyber Security Hardening & Role Based Access Control
 
+// Cyber Defense: HTTP Security Headers
+if (!headers_sent()) {
+    header("X-Frame-Options: SAMEORIGIN");
+    header("X-Content-Type-Options: nosniff");
+    header("X-XSS-Protection: 1; mode=block");
+    header("Referrer-Policy: strict-origin-when-cross-origin");
+}
+
+// Cyber Defense: Secure Cookie Flags (HttpOnly & SameSite)
 if (session_status() === PHP_SESSION_NONE) {
+    ini_set('session.cookie_httponly', '1');
+    ini_set('session.use_only_cookies', '1');
+    ini_set('session.cookie_samesite', 'Lax');
     session_start();
 }
 

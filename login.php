@@ -24,67 +24,84 @@ $error = '';
 $redirect = isset($_GET['redirect']) ? $_GET['redirect'] : '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = sanitize($_POST['email'] ?? '');
-    $password = $_POST['password'] ?? '';
-
-    if (empty($email) || empty($password)) {
-        $error = 'Please enter your email address and password.';
+    // Cyber Defense: Brute-Force Bot Rate-Limiter (Max 5 attempts / 60 seconds)
+    $failedAttempts = $_SESSION['login_fail_count'] ?? 0;
+    $lastFailTime   = $_SESSION['login_fail_time'] ?? 0;
+    
+    if ($failedAttempts >= 5 && (time() - $lastFailTime) < 60) {
+        $remainingSec = 60 - (time() - $lastFailTime);
+        $error = "⚠️ Too many failed attempts. Security Cooldown active: Please wait {$remainingSec}s before trying again.";
     } else {
-        $user = null;
-        $role = null;
+        $email = sanitize($_POST['email'] ?? '');
+        $password = $_POST['password'] ?? '';
 
-        // 1. Check in separate 'owners' table
-        $stmtO = $pdo->prepare("SELECT * FROM owners WHERE LOWER(email) = LOWER(:email)");
-        $stmtO->execute([':email' => $email]);
-        $owner = $stmtO->fetch();
-        if ($owner && password_verify($password, $owner['password'])) {
-            $user = $owner;
-            $role = 'owner';
-        }
-
-        // 2. Check in separate 'renters' table
-        if (!$user) {
-            $stmtR = $pdo->prepare("SELECT * FROM renters WHERE LOWER(email) = LOWER(:email)");
-            $stmtR->execute([':email' => $email]);
-            $renter = $stmtR->fetch();
-            if ($renter && password_verify($password, $renter['password'])) {
-                $user = $renter;
-                $role = 'renter';
-            }
-        }
-
-        // 3. Check in separate 'admins' table
-        if (!$user) {
-            $stmtA = $pdo->prepare("SELECT * FROM admins WHERE LOWER(email) = LOWER(:email)");
-            $stmtA->execute([':email' => $email]);
-            $admin = $stmtA->fetch();
-            if ($admin && password_verify($password, $admin['password'])) {
-                $user = $admin;
-                $role = 'admin';
-            }
-        }
-
-        if ($user && $role) {
-            // Set session variables
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['user_name'] = $user['name'];
-            $_SESSION['user_email'] = $user['email'];
-            $_SESSION['user_role'] = $role;
-            $_SESSION['user_phone'] = $user['phone'] ?? '';
-
-            set_flash_message('success', 'Welcome back, ' . $user['name'] . '!');
-
-            if (!empty($redirect)) {
-                header("Location: " . $redirect);
-            } else {
-                if ($role === 'owner') header("Location: owner-dashboard.php");
-                elseif ($role === 'admin') header("Location: admin-dashboard.php");
-                elseif ($role === 'renter') header("Location: renter-dashboard.php");
-                else header("Location: index.php");
-            }
-            exit;
+        if (empty($email) || empty($password)) {
+            $error = 'Please enter your email address and password.';
         } else {
-            $error = 'Invalid email or password. Please try again.';
+            $user = null;
+            $role = null;
+
+            // 1. Check in separate 'owners' table
+            $stmtO = $pdo->prepare("SELECT * FROM owners WHERE LOWER(email) = LOWER(:email)");
+            $stmtO->execute([':email' => $email]);
+            $owner = $stmtO->fetch();
+            if ($owner && password_verify($password, $owner['password'])) {
+                $user = $owner;
+                $role = 'owner';
+            }
+
+            // 2. Check in separate 'renters' table
+            if (!$user) {
+                $stmtR = $pdo->prepare("SELECT * FROM renters WHERE LOWER(email) = LOWER(:email)");
+                $stmtR->execute([':email' => $email]);
+                $renter = $stmtR->fetch();
+                if ($renter && password_verify($password, $renter['password'])) {
+                    $user = $renter;
+                    $role = 'renter';
+                }
+            }
+
+            // 3. Check in separate 'admins' table
+            if (!$user) {
+                $stmtA = $pdo->prepare("SELECT * FROM admins WHERE LOWER(email) = LOWER(:email)");
+                $stmtA->execute([':email' => $email]);
+                $admin = $stmtA->fetch();
+                if ($admin && password_verify($password, $admin['password'])) {
+                    $user = $admin;
+                    $role = 'admin';
+                }
+            }
+
+            if ($user && $role) {
+                // Reset failed attempts on success
+                unset($_SESSION['login_fail_count']);
+                unset($_SESSION['login_fail_time']);
+
+                // Set session variables
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['user_name'] = $user['name'];
+                $_SESSION['user_email'] = $user['email'];
+                $_SESSION['user_role'] = $role;
+                $_SESSION['user_phone'] = $user['phone'] ?? '';
+
+                set_flash_message('success', 'Welcome back, ' . $user['name'] . '!');
+
+                if (!empty($redirect)) {
+                    header("Location: " . $redirect);
+                } else {
+                    if ($role === 'owner') header("Location: owner-dashboard.php");
+                    elseif ($role === 'admin') header("Location: admin-dashboard.php");
+                    elseif ($role === 'renter') header("Location: renter-dashboard.php");
+                    else header("Location: index.php");
+                }
+                exit;
+            } else {
+                // Track failed attempt
+                $_SESSION['login_fail_count'] = ($failedAttempts >= 5 && (time() - $lastFailTime) >= 60) ? 1 : ($failedAttempts + 1);
+                $_SESSION['login_fail_time']  = time();
+
+                $error = 'Invalid email or password. Please try again.';
+            }
         }
     }
 }
