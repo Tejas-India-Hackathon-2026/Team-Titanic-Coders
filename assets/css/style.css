@@ -354,15 +354,15 @@ h1, h2, h3, h4, h5, h6 {
     background: #fff;
     min-width: 220px;
     border-radius: var(--radius-md);
-    box-shadow: var(--shadow-xl);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18), 0 4px 10px rgba(0, 0, 0, 0.08);
     border: 1px solid var(--border-color);
     padding: 0.5rem 0;
     display: none;
-    z-index: 1050;
+    z-index: 9999;
 }
 
 .dropdown-menu.show {
-    display: block;
+    display: block !important;
     animation: dropdownFade 0.2s ease;
 }
 

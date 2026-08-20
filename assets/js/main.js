@@ -2,19 +2,23 @@
  * RentNear - Main JavaScript Bundle
  */
 
-// Global User Profile Dropdown Toggle
+// 1. Global User Profile Dropdown Toggle
 window.toggleUserDropdown = function(e) {
     if (e) {
-        e.preventDefault();
-        e.stopPropagation();
+        if (typeof e.stopPropagation === 'function') e.stopPropagation();
     }
     const menu = document.getElementById('userDropdownMenu');
     if (menu) {
-        menu.classList.toggle('show');
+        if (menu.classList.contains('show')) {
+            menu.classList.remove('show');
+        } else {
+            menu.classList.add('show');
+        }
     }
 };
 
-document.addEventListener('click', (e) => {
+// Global outside click handler to close user dropdown
+document.addEventListener('click', function(e) {
     const userMenu = document.getElementById('userDropdownMenu');
     const userBtn = document.getElementById('userDropdownBtn');
     if (userMenu && userMenu.classList.contains('show')) {
@@ -25,11 +29,7 @@ document.addEventListener('click', (e) => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. User Dropdown Menu Event Binding
-    const userBtn = document.getElementById('userDropdownBtn');
-    if (userBtn) {
-        userBtn.addEventListener('click', window.toggleUserDropdown);
-    }
+    // 2. Mobile Menu Drawer Toggle
 
     // 2. Mobile Menu Drawer Toggle
     const mobileToggle = document.getElementById('mobileMenuToggle');
