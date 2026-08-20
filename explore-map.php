@@ -190,20 +190,22 @@ foreach ($properties as $p) {
                                 <?php endif; ?>
                             </div>
                             <div class="map-card-body">
-                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.2rem;">
-                                    <span style="font-size: 0.72rem; font-weight: 700; color: #16a34a;">🟢 Vacant</span>
-                                    <span style="font-size: 0.72rem; color: var(--text-muted);"><?php echo htmlspecialchars($item['furnishing']); ?></span>
-                                </div>
-                                <h4 class="map-card-title">
-                                    <a href="property-details.php?id=<?php echo $item['id']; ?>" target="_blank"><?php echo htmlspecialchars($item['title']); ?></a>
-                                </h4>
-                                <div class="map-card-loc">
-                                    <i class="fa-solid fa-location-dot text-danger"></i> <?php echo htmlspecialchars($item['location'] . ', ' . $item['city']); ?>
+                                <div>
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+                                        <span style="font-size: 0.7rem; font-weight: 800; color: #16a34a;">🟢 VACANT</span>
+                                        <span style="font-size: 0.7rem; color: var(--text-muted);"><?php echo htmlspecialchars($item['furnishing']); ?></span>
+                                    </div>
+                                    <h4 class="map-card-title" title="<?php echo htmlspecialchars($item['title']); ?>">
+                                        <a href="property-details.php?id=<?php echo $item['id']; ?>" target="_blank"><?php echo htmlspecialchars($item['title']); ?></a>
+                                    </h4>
+                                    <div class="map-card-loc">
+                                        <i class="fa-solid fa-location-dot text-danger"></i> <?php echo htmlspecialchars($item['location'] . ', ' . $item['city']); ?>
+                                    </div>
                                 </div>
                                 <div class="map-card-footer">
-                                    <span class="badge badge-info" style="font-size: 0.7rem;"><?php echo htmlspecialchars($item['property_type']); ?></span>
-                                    <span class="badge badge-role" style="font-size: 0.7rem;"><?php echo htmlspecialchars($item['tenant_preference']); ?></span>
-                                    <a href="property-details.php?id=<?php echo $item['id']; ?>" class="btn btn-primary btn-sm" style="padding: 0.2rem 0.6rem; font-size: 0.72rem; margin-left: auto;">
+                                    <span class="badge badge-info" style="font-size: 0.68rem; padding: 2px 6px;"><?php echo htmlspecialchars($item['property_type']); ?></span>
+                                    <span class="badge badge-role" style="font-size: 0.68rem; padding: 2px 6px;"><?php echo htmlspecialchars($item['tenant_preference']); ?></span>
+                                    <a href="property-details.php?id=<?php echo $item['id']; ?>" target="_blank" class="btn btn-primary btn-sm" style="padding: 0.2rem 0.6rem; font-size: 0.72rem; margin-left: auto;" onclick="event.stopPropagation();">
                                         Details &rarr;
                                     </a>
                                 </div>
@@ -233,6 +235,7 @@ foreach ($properties as $p) {
     display: flex;
     flex-direction: column;
     height: calc(100vh - 72px);
+    min-height: 560px;
     overflow: hidden;
     background: #f8fafc;
 }
@@ -240,8 +243,9 @@ foreach ($properties as $p) {
 .explore-top-bar {
     background: #fff;
     border-bottom: 1px solid var(--border-color);
-    padding: 0.75rem 1.5rem;
+    padding: 0.6rem 1.25rem;
     z-index: 100;
+    flex-shrink: 0;
 }
 
 .explore-top-container {
@@ -249,12 +253,12 @@ foreach ($properties as $p) {
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
-    gap: 0.75rem;
+    gap: 0.6rem;
 }
 
 .explore-city-pills {
     display: flex;
-    gap: 0.4rem;
+    gap: 0.35rem;
     flex-wrap: wrap;
     align-items: center;
 }
@@ -263,9 +267,9 @@ foreach ($properties as $p) {
     background: #f1f5f9;
     border: 1px solid #e2e8f0;
     color: #334155;
-    padding: 0.3rem 0.75rem;
+    padding: 0.25rem 0.65rem;
     border-radius: 20px;
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     font-weight: 700;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -283,8 +287,10 @@ foreach ($properties as $p) {
 
 .explore-split-layout {
     display: grid;
-    grid-template-columns: 420px 1fr;
+    grid-template-columns: 440px 1fr;
     flex: 1;
+    min-height: 0;
+    height: 100%;
     overflow: hidden;
     position: relative;
 }
@@ -295,19 +301,24 @@ foreach ($properties as $p) {
     display: flex;
     flex-direction: column;
     height: 100%;
+    min-height: 0;
     overflow: hidden;
+    z-index: 10;
 }
 
 .explore-filter-box {
-    padding: 1rem;
+    padding: 0.85rem 1rem;
     border-bottom: 1px solid var(--border-color);
     background: #f8fafc;
+    flex-shrink: 0;
 }
 
 .explore-cards-list {
     flex: 1;
+    min-height: 0;
     overflow-y: auto;
-    padding: 1rem;
+    -webkit-overflow-scrolling: touch;
+    padding: 0.85rem;
     display: flex;
     flex-direction: column;
     gap: 0.85rem;
@@ -315,77 +326,95 @@ foreach ($properties as $p) {
 
 .map-property-card {
     display: flex;
+    flex-direction: row;
+    min-height: 115px;
+    height: 115px;
+    flex-shrink: 0; /* CRITICAL: Prevents cards from collapsing/squishing */
     background: #fff;
-    border: 1px solid var(--border-color);
+    border: 1.5px solid var(--border-color);
     border-radius: var(--radius-md);
     overflow: hidden;
     cursor: pointer;
     transition: all 0.2s ease;
-    box-shadow: var(--shadow-sm);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
 }
 
 .map-property-card:hover, .map-property-card.active-pin {
     border-color: var(--primary);
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(79, 70, 229, 0.15);
+    box-shadow: 0 6px 16px rgba(79, 70, 229, 0.18);
+    background: #fdfefe;
 }
 
 .map-property-card.is-premium {
-    border-left: 3.5px solid #d97706;
+    border-left: 4px solid #d97706;
 }
 
 .map-card-thumb {
     width: 125px;
+    min-width: 125px;
+    max-width: 125px;
+    height: 100%;
     position: relative;
     flex-shrink: 0;
+    background: #e2e8f0;
+    overflow: hidden;
 }
 
 .map-card-thumb img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    display: block;
 }
 
 .map-card-price {
     position: absolute;
-    bottom: 6px;
-    left: 6px;
-    background: rgba(15, 23, 42, 0.85);
+    bottom: 5px;
+    left: 5px;
+    background: rgba(15, 23, 42, 0.88);
     color: #fff;
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     font-weight: 800;
     padding: 2px 6px;
     border-radius: 4px;
     backdrop-filter: blur(4px);
+    white-space: nowrap;
 }
 
 .map-card-price span {
-    font-size: 0.65rem;
+    font-size: 0.62rem;
     font-weight: normal;
 }
 
 .map-card-badge {
     position: absolute;
-    top: 6px;
-    left: 6px;
-    font-size: 0.62rem;
+    top: 5px;
+    left: 5px;
+    font-size: 0.6rem;
     padding: 2px 5px;
+    white-space: nowrap;
 }
 
 .map-card-body {
-    padding: 0.75rem;
+    padding: 0.6rem 0.75rem;
     flex: 1;
+    min-width: 0;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    overflow: hidden;
 }
 
 .map-card-title {
     font-size: 0.88rem;
     font-weight: 700;
-    line-height: 1.3;
-    margin: 0 0 0.25rem 0;
+    line-height: 1.25;
+    margin: 0;
     color: var(--dark);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .map-card-title a {
@@ -394,9 +423,9 @@ foreach ($properties as $p) {
 }
 
 .map-card-loc {
-    font-size: 0.76rem;
+    font-size: 0.74rem;
     color: var(--text-muted);
-    margin-bottom: 0.4rem;
+    margin: 0.15rem 0;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -406,7 +435,8 @@ foreach ($properties as $p) {
     display: flex;
     align-items: center;
     gap: 0.3rem;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    margin-top: auto;
 }
 
 .explore-map-canvas-container {
