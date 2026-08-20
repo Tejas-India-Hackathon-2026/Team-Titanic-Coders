@@ -93,7 +93,7 @@ require_once __DIR__ . '/includes/header.php';
         <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
             <?php if (!$isOwnerVerified): ?>
                 <a href="verify-owner.php" class="btn btn-primary btn-lg" style="background: linear-gradient(135deg, #f59e0b, #d97706); border: none; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4); color: #fff; font-weight: 800;">
-                    <?php echo render_verified_badge(false, 16); ?> Get Golden Tick (₹199)
+                    <i class="fa-solid fa-shield-check me-1"></i> Verify with DigiLocker / Golden Tick
                 </a>
             <?php endif; ?>
             <a href="profile.php" class="btn btn-secondary btn-lg">
@@ -114,15 +114,15 @@ require_once __DIR__ . '/includes/header.php';
                 </div>
                 <div>
                     <h4 style="font-size: 1.12rem; font-weight: 800; color: #0f172a; margin: 0 0 0.2rem 0;">
-                        Get the Luxury <span style="color: #b45309;">Golden Tick Verified</span> Badge (₹199 / Year)
+                        Landlord <span style="color: #b45309;">DigiLocker & Govt e-KYC</span> Verification
                     </h4>
                     <p style="font-size: 0.86rem; color: #78350f; margin: 0;">
-                        Display the iconic VIP Golden Tick next to your name across all listings, eliminate fraud concerns, and get up to 5x more tenant calls!
+                        Verify via UIDAI Aadhaar or Property Electricity Bill to display the Golden Tick, build 100% tenant trust, and get 5x more inquiries!
                     </p>
                 </div>
             </div>
             <a href="verify-owner.php" class="btn btn-primary" style="background: linear-gradient(135deg, #f59e0b, #d97706); border: none; font-weight: 800; padding: 0.65rem 1.4rem; box-shadow: 0 4px 14px rgba(245, 158, 11, 0.4); color: #fff;">
-                <i class="fa-solid fa-lock me-1"></i> Get Golden Tick (₹199)
+                <i class="fa-solid fa-shield-check me-1"></i> Verify with DigiLocker Now &rarr;
             </a>
         </div>
     <?php endif; ?>

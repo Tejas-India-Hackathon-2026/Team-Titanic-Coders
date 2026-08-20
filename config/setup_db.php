@@ -17,6 +17,8 @@ function initialize_database($pdo) {
                 city VARCHAR(100) DEFAULT '',
                 avatar VARCHAR(255) DEFAULT 'assets/images/default-avatar.png',
                 is_verified TINYINT(1) NOT NULL DEFAULT 0,
+                digilocker_aadhaar VARCHAR(50) DEFAULT NULL,
+                document_type VARCHAR(50) DEFAULT NULL,
                 verified_at DATETIME DEFAULT NULL,
                 verification_txn_id VARCHAR(100) DEFAULT NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
