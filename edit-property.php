@@ -238,15 +238,10 @@ require_once __DIR__ . '/includes/header.php';
 
                     <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 1rem;">
                         <div class="form-group">
-                            <label>City <span class="text-danger">*</span></label>
-                            <select name="city" class="form-select" required>
-                                <?php 
-                                $cityList = ['Jamui', 'Patna', 'New Delhi', 'Pune', 'Bengaluru', 'Kota', 'Jaipur', 'Lucknow', 'Mumbai', 'Hyderabad', 'Gurugram', 'Noida', 'Gaya', 'Bhagalpur', 'Muzaffarpur', 'Ranchi', 'Ahmedabad', 'Kolkata', 'Chennai', 'Chandigarh', 'Indore', 'Bhopal', 'Dehradun'];
-                                foreach ($cityList as $c): 
-                                ?>
-                                    <option value="<?php echo $c; ?>" <?php echo (strtolower($property['city']) === strtolower($c)) ? 'selected' : ''; ?>><?php echo $c; ?></option>
-                                <?php endforeach; ?>
-                            </select>
+                            <label><i class="fa-solid fa-city me-1"></i> City / District (All India) <span class="text-danger">*</span></label>
+                            <input type="text" name="city" id="editInputCity" class="form-control" list="editPropCityDatalist" placeholder="Type or select City / District (e.g. Jamui, Patna, Pune, Delhi)..." value="<?php echo htmlspecialchars($property['city']); ?>" required autocomplete="off">
+                            <?php echo render_indian_city_datalist('editPropCityDatalist'); ?>
+                            <small style="color: var(--text-muted); font-size: 0.76rem;">Type to search across 700+ Indian districts & cities</small>
                         </div>
 
                         <div class="form-group">

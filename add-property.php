@@ -214,31 +214,10 @@ require_once __DIR__ . '/includes/header.php';
 
                     <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 1rem;">
                         <div class="form-group">
-                            <label>City <span class="text-danger">*</span></label>
-                            <select name="city" class="form-select" required>
-                                <option value="">Select City / District</option>
-                                <option value="Jamui">Jamui (Bihar)</option>
-                                <option value="Patna">Patna</option>
-                                <option value="New Delhi">New Delhi</option>
-                                <option value="Bengaluru">Bengaluru</option>
-                                <option value="Pune">Pune</option>
-                                <option value="Mumbai">Mumbai</option>
-                                <option value="Hyderabad">Hyderabad</option>
-                                <option value="Gurugram">Gurugram</option>
-                                <option value="Noida">Noida</option>
-                                <option value="Kota">Kota</option>
-                                <option value="Jaipur">Jaipur</option>
-                                <option value="Patna">Patna</option>
-                                <option value="Lucknow">Lucknow</option>
-                                <option value="Ahmedabad">Ahmedabad</option>
-                                <option value="Kolkata">Kolkata</option>
-                                <option value="Chennai">Chennai</option>
-                                <option value="Chandigarh">Chandigarh</option>
-                                <option value="Indore">Indore</option>
-                                <option value="Bhopal">Bhopal</option>
-                                <option value="Ranchi">Ranchi</option>
-                                <option value="Dehradun">Dehradun</option>
-                            </select>
+                            <label><i class="fa-solid fa-city me-1"></i> City / District (All India) <span class="text-danger">*</span></label>
+                            <input type="text" name="city" id="inputCity" class="form-control" list="addPropCityDatalist" placeholder="Type or select City / District (e.g. Jamui, Patna, Pune, Delhi)..." value="<?php echo htmlspecialchars($city ?? ''); ?>" required autocomplete="off">
+                            <?php echo render_indian_city_datalist('addPropCityDatalist'); ?>
+                            <small style="color: var(--text-muted); font-size: 0.76rem;">Type any letter to search 700+ Indian districts & cities</small>
                         </div>
 
                         <div class="form-group">

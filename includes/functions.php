@@ -298,9 +298,274 @@ function get_property_coordinates($location, $city, $id = 0) {
         return ['lat' => 17.3850 + $offset, 'lng' => 78.4867 - $offset];
     }
 
-    // Fallback: Default India Coordinates
+    // Comprehensive National Indian Cities Coordinates Dictionary
+    $cityCoords = [
+        'gaya' => [24.7914, 85.0002],
+        'bhagalpur' => [25.2425, 86.9842],
+        'muzaffarpur' => [26.1209, 85.3647],
+        'darbhanga' => [26.1542, 85.8918],
+        'purnia' => [25.7771, 87.4753],
+        'begusarai' => [25.4182, 86.1272],
+        'munger' => [25.3757, 86.4744],
+        'samastipur' => [25.8629, 85.7811],
+        'sasaram' => [24.9535, 84.0321],
+        'bihar sharif' => [25.1982, 85.5149],
+        'arrah' => [25.5560, 84.6603],
+        'bhojpur' => [25.5560, 84.6603],
+        'noida' => [28.5355, 77.3910],
+        'greater noida' => [28.4744, 77.5040],
+        'ghaziabad' => [28.6692, 77.4538],
+        'gurugram' => [28.4595, 77.0266],
+        'faridabad' => [28.4089, 77.3178],
+        'kanpur' => [26.4499, 80.3319],
+        'varanasi' => [25.3176, 82.9739],
+        'agra' => [27.1767, 78.0081],
+        'prayagraj' => [25.4358, 81.8463],
+        'allahabad' => [25.4358, 81.8463],
+        'meerut' => [28.9845, 77.7064],
+        'bareilly' => [28.3670, 79.4304],
+        'aligarh' => [27.8974, 78.0880],
+        'gorakhpur' => [26.7606, 83.3732],
+        'ayodhya' => [26.7922, 82.1998],
+        'jhansi' => [25.4484, 78.5685],
+        'mathura' => [27.4924, 77.6737],
+        'ahmedabad' => [23.0225, 72.5714],
+        'surat' => [21.1702, 72.8311],
+        'vadodara' => [22.3072, 73.1812],
+        'rajkot' => [22.3039, 70.8022],
+        'bhavnagar' => [21.7645, 72.1519],
+        'jamnagar' => [22.4707, 70.0577],
+        'gandhinagar' => [23.2156, 72.6369],
+        'kolkata' => [22.5726, 88.3639],
+        'howrah' => [22.5958, 88.2636],
+        'durgapur' => [23.5204, 87.3119],
+        'asansol' => [23.6739, 86.9524],
+        'siliguri' => [26.7271, 88.3953],
+        'nagpur' => [21.1458, 79.0882],
+        'thane' => [19.2183, 72.9781],
+        'navi mumbai' => [19.0330, 73.0297],
+        'nashik' => [19.9975, 73.7898],
+        'aurangabad' => [19.8762, 75.3433],
+        'solapur' => [17.6599, 75.9064],
+        'kolhapur' => [16.7050, 74.2433],
+        'bhopal' => [23.2599, 77.4126],
+        'indore' => [22.7196, 75.8577],
+        'gwalior' => [26.2183, 78.1828],
+        'jabalpur' => [23.1815, 79.9864],
+        'ujjain' => [23.1765, 75.7885],
+        'ranchi' => [23.3441, 85.3096],
+        'jamshedpur' => [22.8046, 86.2029],
+        'dhanbad' => [23.7957, 86.4304],
+        'bokaro' => [23.6693, 86.1511],
+        'deoghar' => [24.4826, 86.7001],
+        'bhubaneswar' => [20.2961, 85.8245],
+        'cuttack' => [20.4625, 85.8828],
+        'rourkela' => [22.2604, 84.8536],
+        'puri' => [19.8135, 85.8312],
+        'visakhapatnam' => [17.6868, 83.2185],
+        'vijayawada' => [16.5062, 80.6480],
+        'guntur' => [16.3067, 80.4365],
+        'tirupati' => [13.6288, 79.4192],
+        'warangal' => [17.9689, 79.5941],
+        'chennai' => [13.0827, 80.2707],
+        'coimbatore' => [11.0168, 76.9558],
+        'madurai' => [9.9252, 78.1198],
+        'tiruchirappalli' => [10.7905, 78.7047],
+        'salem' => [11.6643, 78.1460],
+        'kochi' => [9.9312, 76.2673],
+        'thiruvananthapuram' => [8.5241, 76.9366],
+        'kozhikode' => [11.2588, 75.7804],
+        'thrissur' => [10.5276, 76.2144],
+        'chandigarh' => [30.7333, 76.7794],
+        'ludhiana' => [30.9010, 75.8573],
+        'amritsar' => [31.6340, 74.8723],
+        'jalandhar' => [31.3260, 75.5762],
+        'panipat' => [29.3909, 76.9635],
+        'ambala' => [30.3782, 76.7767],
+        'dehradun' => [30.3165, 78.0322],
+        'haridwar' => [29.9457, 78.1642],
+        'rishikesh' => [30.0869, 78.2676],
+        'shimla' => [31.1048, 77.1734],
+        'dharamshala' => [32.2190, 76.3234],
+        'guwahati' => [26.1445, 91.7362],
+        'raipur' => [21.2514, 81.6296],
+        'bilaspur' => [22.0797, 82.1409],
+        'panaji' => [15.4909, 73.8278],
+        'srinagar' => [34.0837, 74.7973],
+        'jammu' => [32.7266, 74.8570],
+        'mysuru' => [12.2958, 76.6394],
+        'mangaluru' => [12.9141, 74.8560],
+        'hubballi' => [15.3647, 75.1240],
+        'jodhpur' => [26.2389, 73.0243],
+        'udaipur' => [24.5854, 73.7125],
+        'ajmer' => [26.4499, 74.6399],
+        'bikaner' => [28.0229, 73.3119]
+    ];
+
+    foreach ($cityCoords as $key => $point) {
+        if (str_contains($c, $key) || str_contains($loc, $key)) {
+            $offset = ($id % 5) * 0.003;
+            return ['lat' => $point[0] + $offset, 'lng' => $point[1] - $offset];
+        }
+    }
+
+    // Fallback: Default India Center
     $hash = abs(crc32($location . $city . $id));
     $latOffset = (($hash % 100) / 2000.0);
     $lngOffset = ((($hash >> 4) % 100) / 2000.0);
     return ['lat' => 24.9200 + $latOffset, 'lng' => 86.2250 + $lngOffset];
 }
+
+/**
+ * Master State-wise & District-wise Indian Cities Dataset
+ */
+function get_indian_cities_by_state() {
+    return [
+        'Bihar' => [
+            'Jamui', 'Patna', 'Gaya', 'Bhagalpur', 'Muzaffarpur', 'Darbhanga', 'Purnia',
+            'Begusarai', 'Munger', 'Samastipur', 'Sasaram (Rohtas)', 'Bihar Sharif (Nalanda)',
+            'Arrah (Bhojpur)', 'Katihar', 'Saharsa', 'Chapra (Saran)', 'Motihari (East Champaran)',
+            'Bettiah (West Champaran)', 'Nawada', 'Buxar', 'Kishanganj', 'Sitamarhi', 'Gopalganj',
+            'Madhubani', 'Siwan', 'Supaul', 'Khagaria', 'Banka', 'Lakhisarai', 'Sheikhpura',
+            'Arwal', 'Jehanabad', 'Bhabua (Kaimur)', 'Sheohar', 'Hajipur (Vaishali)', 'Madhepura', 'Jamui District'
+        ],
+        'Uttar Pradesh' => [
+            'Lucknow', 'Noida', 'Greater Noida', 'Ghaziabad', 'Kanpur', 'Varanasi', 'Agra',
+            'Prayagraj (Allahabad)', 'Meerut', 'Bareilly', 'Aligarh', 'Moradabad', 'Saharanpur',
+            'Gorakhpur', 'Ayodhya (Faizabad)', 'Jhansi', 'Mathura', 'Firozabad', 'Muzaffarnagar',
+            'Rampur', 'Shahjahanpur', 'Farrukhabad', 'Hapur', 'Mirzapur', 'Bulandshahr', 'Sambhal',
+            'Amroha', 'Hardoi', 'Fatehpur', 'Raebareli', 'Orai (Jalaun)', 'Sitapur', 'Bahraich',
+            'Modinagar', 'Unnao', 'Jaunpur', 'Lakhimpur Kheri', 'Hathras', 'Banda', 'Pilibhit',
+            'Barabanki', 'Deoria', 'Lalitpur', 'Mau', 'Ballia', 'Basti', 'Gonda', 'Etawah', 'Sultanpur'
+        ],
+        'Delhi NCR' => [
+            'New Delhi', 'Central Delhi', 'North Delhi', 'South Delhi', 'East Delhi', 'West Delhi',
+            'North East Delhi', 'South West Delhi', 'North West Delhi', 'Dwarka', 'Rohini', 'Saket',
+            'Laxmi Nagar', 'Mukherjee Nagar', 'Karol Bagh', 'Hauz Khas', 'Connaught Place', 'Janakpuri',
+            'Pitampura', 'Mayur Vihar', 'Vasant Kunj', 'Gurugram', 'Noida', 'Greater Noida', 'Faridabad', 'Ghaziabad'
+        ],
+        'Maharashtra' => [
+            'Mumbai', 'Pune', 'Nagpur', 'Thane', 'Navi Mumbai', 'Nashik', 'Chhatrapati Sambhajinagar (Aurangabad)',
+            'Solapur', 'Amravati', 'Kolhapur', 'Nanded', 'Sangli', 'Jalgaon', 'Akola', 'Latur',
+            'Dhule', 'Ahmednagar', 'Chandrapur', 'Parbhani', 'Jalna', 'Panvel', 'Satara', 'Beed',
+            'Yavatmal', 'Gondia', 'Wardha', 'Dharashiv (Osmanabad)', 'Kalyan-Dombivli', 'Vasai-Virar', 'Mira-Bhayandar', 'Ratnagiri'
+        ],
+        'Karnataka' => [
+            'Bengaluru', 'Mysuru', 'Hubballi-Dharwad', 'Mangaluru', 'Belagavi', 'Davanagere',
+            'Ballari', 'Vijayapura', 'Shivamogga', 'Tumakuru', 'Raichur', 'Bidar', 'Hosapete',
+            'Gadag', 'Hassan', 'Udupi', 'Kalaburagi (Gulbarga)', 'Chitradurga', 'Kolar', 'Mandya', 'Chikkamagaluru'
+        ],
+        'Rajasthan' => [
+            'Kota', 'Jaipur', 'Jodhpur', 'Udaipur', 'Bikaner', 'Ajmer', 'Bhilwara', 'Alwar',
+            'Sikar', 'Bharatpur', 'Pali', 'Sri Ganganagar', 'Beawar', 'Hanumangarh', 'Tonk',
+            'Dausa', 'Chittorgarh', 'Churu', 'Jhunjhunu', 'Sawai Madhopur', 'Nagaur', 'Barmer', 'Jaisalmer'
+        ],
+        'Gujarat' => [
+            'Ahmedabad', 'Surat', 'Vadodara', 'Rajkot', 'Bhavnagar', 'Jamnagar', 'Junagadh',
+            'Gandhinagar', 'Anand', 'Navsari', 'Morbi', 'Nadiad', 'Surendranagar', 'Bharuch',
+            'Mehsana', 'Bhuj', 'Porbandar', 'Vapi', 'Valsad', 'Palanpur', 'Godhra', 'Veraval', 'Patan'
+        ],
+        'West Bengal' => [
+            'Kolkata', 'Howrah', 'Durgapur', 'Asansol', 'Siliguri', 'Bardhaman', 'Malda',
+            'Baharampur', 'Habra', 'Kharagpur', 'Shantipur', 'Dankuni', 'Dhulian', 'Ranaghat',
+            'Haldia', 'Darjeeling', 'Jalpaiguri', 'Cooch Behar', 'Purulia', 'Bankura', 'Krishnanagar'
+        ],
+        'Madhya Pradesh' => [
+            'Bhopal', 'Indore', 'Jabalpur', 'Gwalior', 'Ujjain', 'Sagar', 'Dewas', 'Satna',
+            'Ratlam', 'Rewa', 'Murwara (Katni)', 'Singrauli', 'Burhanpur', 'Khandwa', 'Bhind',
+            'Chhindwara', 'Guna', 'Shivpuri', 'Vidisha', 'Damoh', 'Mandsaur', 'Khargone', 'Neemuch', 'Hoshangabad'
+        ],
+        'Punjab & Haryana' => [
+            'Chandigarh', 'Ludhiana', 'Amritsar', 'Jalandhar', 'Patiala', 'Bathinda', 'Hoshiarpur',
+            'Mohali', 'Pathankot', 'Faridabad', 'Gurugram', 'Panipat', 'Ambala', 'Yamunanagar',
+            'Rohtak', 'Hisar', 'Karnal', 'Sonipat', 'Panchkula', 'Sirsa', 'Bhiwani', 'Bahadurgarh', 'Jind', 'Rewari'
+        ],
+        'Tamil Nadu' => [
+            'Chennai', 'Coimbatore', 'Madurai', 'Tiruchirappalli', 'Salem', 'Tiruppur', 'Erode',
+            'Tirunelveli', 'Vellore', 'Thoothukudi', 'Dindigul', 'Thanjavur', 'Ranipet', 'Sivakasi',
+            'Karur', 'Udhagamandalam (Ooty)', 'Hosur', 'Nagercoil', 'Kanchipuram', 'Cuddalore', 'Kumbakonam'
+        ],
+        'Telangana & Andhra Pradesh' => [
+            'Hyderabad', 'Warangal', 'Nizamabad', 'Karimnagar', 'Khammam', 'Ramagundam', 'Mahbubnagar', 'Nalgonda',
+            'Visakhapatnam', 'Vijayawada', 'Guntur', 'Nellore', 'Kurnool', 'Kakinada', 'Rajamahendravaram',
+            'Kadapa', 'Tirupati', 'Anantapur', 'Vizianagaram', 'Eluru', 'Ongole', 'Nandyal', 'Machilipatnam', 'Chittoor'
+        ],
+        'Kerala' => [
+            'Thiruvananthapuram', 'Kochi', 'Kozhikode', 'Kollam', 'Thrissur', 'Kannur',
+            'Alappuzha', 'Kottayam', 'Palakkad', 'Malappuram', 'Manjeri', 'Thalassery', 'Ponnani', 'Kasaragod'
+        ],
+        'Jharkhand' => [
+            'Ranchi', 'Jamshedpur', 'Dhanbad', 'Bokaro Steel City', 'Deoghar', 'Phusro',
+            'Hazaribagh', 'Giridih', 'Ramgarh', 'Medininagar (Daltonganj)', 'Chirkunda', 'Dumka', 'Chaibasa', 'Jhumri Telaiya'
+        ],
+        'Odisha' => [
+            'Bhubaneswar', 'Cuttack', 'Rourkela', 'Berhampur', 'Sambalpur', 'Puri',
+            'Balasore', 'Bhadrak', 'Baripada', 'Jharsuguda', 'Bargarh', 'Jeypore', 'Angul'
+        ],
+        'Uttarakhand & Himachal Pradesh' => [
+            'Dehradun', 'Haridwar', 'Roorkee', 'Haldwani', 'Rudrapur', 'Rishikesh', 'Kashipur', 'Nainital', 'Mussoorie',
+            'Shimla', 'Dharamshala', 'Solan', 'Mandi', 'Kullu', 'Manali', 'Baddi', 'Palampur'
+        ],
+        'Assam & North-East' => [
+            'Guwahati', 'Silchar', 'Dibrugarh', 'Jorhat', 'Nagaon', 'Tinsukia', 'Tezpur',
+            'Shillong', 'Agartala', 'Imphal', 'Aizawl', 'Kohima', 'Dimapur', 'Gangtok', 'Itanagar'
+        ],
+        'Other States & UTs' => [
+            'Raipur', 'Bilaspur', 'Durg-Bhilai', 'Korba', 'Rajnandgaon', 'Jagdalpur',
+            'Panaji (Goa)', 'Margao', 'Vasco da Gama', 'Mapusa', 'Srinagar (J&K)', 'Jammu',
+            'Anantnag', 'Puducherry', 'Port Blair (Andaman)'
+        ]
+    ];
+}
+
+/**
+ * Returns Flat Sorted List of All Unique Indian Cities & Districts
+ */
+function get_all_indian_cities() {
+    static $flatList = null;
+    if ($flatList !== null) return $flatList;
+
+    $byState = get_indian_cities_by_state();
+    $list = [];
+    foreach ($byState as $state => $cities) {
+        foreach ($cities as $c) {
+            $list[] = $c;
+        }
+    }
+    sort($list, SORT_STRING | SORT_FLAG_CASE);
+    $flatList = array_values(array_unique($list));
+    return $flatList;
+}
+
+/**
+ * Generate Datalist for Instant Type-to-Search on any City Input
+ */
+function render_indian_city_datalist($id = 'indianCitiesList') {
+    $cities = get_all_indian_cities();
+    $html = '<datalist id="' . htmlspecialchars($id) . '">';
+    foreach ($cities as $city) {
+        $html .= '<option value="' . htmlspecialchars($city) . '">';
+    }
+    $html .= '</datalist>';
+    return $html;
+}
+
+/**
+ * Render Grouped <optgroup> HTML for Select Dropdowns
+ */
+function render_indian_city_select_options($selectedCity = '') {
+    $byState = get_indian_cities_by_state();
+    $html = '';
+    $selLower = strtolower(trim((string)$selectedCity));
+
+    foreach ($byState as $state => $cities) {
+        $html .= '<optgroup label="📍 ' . htmlspecialchars($state) . '">';
+        foreach ($cities as $c) {
+            $isSelected = ($selLower === strtolower($c)) ? 'selected' : '';
+            $html .= '<option value="' . htmlspecialchars($c) . '" ' . $isSelected . '>' . htmlspecialchars($c) . '</option>';
+        }
+        $html .= '</optgroup>';
+    }
+    return $html;
+}
+

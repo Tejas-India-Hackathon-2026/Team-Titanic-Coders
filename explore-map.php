@@ -161,10 +161,17 @@ foreach ($properties as $p) {
                 <form id="mapFilterForm" action="explore-map.php" method="GET">
                     <div class="search-input-wrap">
                         <i class="fa-solid fa-magnifying-glass search-ico"></i>
-                        <input type="text" name="search" id="liveSearchInput" class="form-control explore-search-input" placeholder="Search locality, college, area..." value="<?php echo htmlspecialchars($search); ?>" oninput="applyClientFilter()">
+                        <input type="text" name="search" id="liveSearchInput" class="form-control explore-search-input" placeholder="Search locality, landmark, area..." value="<?php echo htmlspecialchars($search); ?>" oninput="applyClientFilter()">
                         <?php if (!empty($search)): ?>
                             <a href="explore-map.php" class="clear-search-btn" title="Clear Search">&times;</a>
                         <?php endif; ?>
+                    </div>
+
+                    <!-- Searchable City / District Selector (All India) -->
+                    <div class="search-input-wrap" style="margin-top: 0.5rem;">
+                        <i class="fa-solid fa-city search-ico"></i>
+                        <input type="text" name="city" id="mapCityInput" class="form-control explore-search-input" list="mapCityDatalist" placeholder="Jump to City / District (e.g. Jamui, Patna, Delhi, Pune)..." value="<?php echo htmlspecialchars($city); ?>" autocomplete="off" onchange="document.getElementById('mapFilterForm').submit();">
+                        <?php echo render_indian_city_datalist('mapCityDatalist'); ?>
                     </div>
 
                     <div class="filter-dropdowns-row">

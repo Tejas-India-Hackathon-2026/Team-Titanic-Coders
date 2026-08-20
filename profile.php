@@ -239,11 +239,12 @@ require_once __DIR__ . '/includes/header.php';
                     <?php if ($role === 'owner'): ?>
                         <div class="form-group">
                             <label>Owner Operating Address</label>
-                            <input type="text" name="extra1" class="form-control" placeholder="e.g. Indiranagar, Office 402" value="<?php echo htmlspecialchars($user['address'] ?? ''); ?>">
+                            <input type="text" name="extra1" class="form-control" placeholder="e.g. Main Market, Station Road" value="<?php echo htmlspecialchars($user['address'] ?? ''); ?>">
                         </div>
                         <div class="form-group">
-                            <label>Primary Operating City</label>
-                            <input type="text" name="extra2" class="form-control" placeholder="e.g. Bengaluru" value="<?php echo htmlspecialchars($user['city'] ?? ''); ?>">
+                            <label><i class="fa-solid fa-city me-1"></i> Primary Operating City / District</label>
+                            <input type="text" name="extra2" class="form-control" list="profileCityDatalist" placeholder="e.g. Jamui, Patna, Delhi, Pune" value="<?php echo htmlspecialchars($user['city'] ?? ''); ?>" autocomplete="off">
+                            <?php echo render_indian_city_datalist('profileCityDatalist'); ?>
                         </div>
                     <?php elseif ($role === 'renter'): ?>
                         <div class="form-group">
@@ -251,8 +252,9 @@ require_once __DIR__ . '/includes/header.php';
                             <input type="text" name="extra1" class="form-control" placeholder="e.g. Software Engineer, Doctor, Student" value="<?php echo htmlspecialchars($user['occupation'] ?? ''); ?>">
                         </div>
                         <div class="form-group">
-                            <label>Preferred Rental City</label>
-                            <input type="text" name="extra2" class="form-control" placeholder="e.g. Pune, Mumbai, Bengaluru" value="<?php echo htmlspecialchars($user['preferred_city'] ?? ''); ?>">
+                            <label><i class="fa-solid fa-city me-1"></i> Preferred Rental City / District</label>
+                            <input type="text" name="extra2" class="form-control" list="profileCityDatalist" placeholder="e.g. Jamui, Patna, Pune, Bengaluru" value="<?php echo htmlspecialchars($user['preferred_city'] ?? ''); ?>" autocomplete="off">
+                            <?php echo render_indian_city_datalist('profileCityDatalist'); ?>
                         </div>
                     <?php endif; ?>
 

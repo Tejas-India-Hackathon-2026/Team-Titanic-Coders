@@ -80,27 +80,11 @@ while ($p = $stmtAllProps->fetch()) {
                         <input type="text" name="search" class="form-control" placeholder="e.g. Indiranagar, Balcony, Sea View">
                     </div>
 
-                    <!-- City Select -->
+                    <!-- City / District Search -->
                     <div class="form-group-search">
-                        <label><i class="fa-solid fa-location-dot"></i> City / Location</label>
-                        <select name="city" class="form-select">
-                            <option value="">All Cities (Pan India)</option>
-                            <option value="Jamui">⭐ Jamui (Local Rooms Available)</option>
-                            <option value="New Delhi">New Delhi / NCR</option>
-                            <option value="Bengaluru">Bengaluru</option>
-                            <option value="Pune">Pune</option>
-                            <option value="Mumbai">Mumbai</option>
-                            <option value="Hyderabad">Hyderabad</option>
-                            <option value="Gurugram">Gurugram</option>
-                            <option value="Noida">Noida</option>
-                            <option value="Kota">Kota (Coaching Hub)</option>
-                            <option value="Jaipur">Jaipur</option>
-                            <option value="Patna">Patna</option>
-                            <option value="Lucknow">Lucknow</option>
-                            <option value="Ahmedabad">Ahmedabad</option>
-                            <option value="Kolkata">Kolkata</option>
-                            <option value="Chennai">Chennai</option>
-                        </select>
+                        <label><i class="fa-solid fa-location-dot"></i> City / District (All India)</label>
+                        <input type="text" name="city" class="form-control" list="heroCityDatalist" placeholder="Type any City / District (e.g. Jamui, Patna, Delhi, Pune)" autocomplete="off">
+                        <?php echo render_indian_city_datalist('heroCityDatalist'); ?>
                     </div>
 
                     <!-- Property Type -->

@@ -162,20 +162,13 @@ foreach ($properties as $p) {
                     <input type="text" name="search" class="form-control" placeholder="e.g. Indiranagar, Metro..." value="<?php echo htmlspecialchars($search); ?>">
                 </div>
 
-                <!-- City -->
+                <!-- City / District Filter (All India Searchable) -->
                 <div class="filter-group">
-                    <label class="filter-title">City / District</label>
-                    <select name="city" class="form-select" onchange="document.getElementById('filterForm').submit();">
-                        <option value="">All Cities / Districts</option>
-                        <?php 
-                        $cities = ['Jamui', 'Patna', 'New Delhi', 'Pune', 'Bengaluru', 'Kota', 'Jaipur', 'Lucknow', 'Mumbai', 'Hyderabad', 'Gurugram', 'Noida', 'Gaya', 'Bhagalpur', 'Muzaffarpur', 'Ranchi', 'Ahmedabad', 'Kolkata', 'Chennai', 'Chandigarh', 'Indore', 'Bhopal', 'Dehradun'];
-                        foreach ($cities as $c): 
-                        ?>
-                            <option value="<?php echo $c; ?>" <?php echo (strtolower($city) === strtolower($c)) ? 'selected' : ''; ?>>
-                                <?php echo $c; ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
+                    <label class="filter-title"><i class="fa-solid fa-city me-1"></i> City / District (All India)</label>
+                    <div style="position: relative;">
+                        <input type="text" name="city" class="form-control" list="propertiesCityDatalist" placeholder="Search City / District (e.g. Jamui, Patna, Delhi, Pune)" value="<?php echo htmlspecialchars($city); ?>" autocomplete="off" onchange="document.getElementById('filterForm').submit();">
+                        <?php echo render_indian_city_datalist('propertiesCityDatalist'); ?>
+                    </div>
                 </div>
 
                 <!-- Price Range Slider -->
