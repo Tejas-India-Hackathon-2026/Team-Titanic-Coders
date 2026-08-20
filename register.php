@@ -57,7 +57,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['verify_registration_o
         set_flash_message('success', 'Account created & mobile verified! Welcome to RentNear.');
 
         if ($role === 'owner') {
-            header("Location: owner-dashboard.php");
+            // Prompt owner to verify documents / Golden Tick
+            header("Location: verify-owner.php?new_signup=1");
         } else {
             // Prompt renter to complete instant DigiLocker KYC
             header("Location: verify-renter.php?new_signup=1");

@@ -32,6 +32,16 @@ require_once __DIR__ . '/includes/header.php';
         </p>
     </div>
 
+    <?php if (isset($_GET['new_signup'])): ?>
+        <div class="alert alert-success" style="max-width: 680px; margin: 0 auto 2rem; border-radius: 12px; padding: 1.25rem; display: flex; align-items: center; gap: 0.75rem; background: #ecfdf5; border: 1.5px solid #a7f3d0; color: #065f46;">
+            <div style="font-size: 1.5rem;"><i class="fa-solid fa-circle-check text-success"></i></div>
+            <div>
+                <strong>🎉 Step 1 & 2 Complete: Account & Mobile OTP Verified!</strong>
+                <p style="margin: 0; font-size: 0.85rem; color: #047857;">Complete Step 3: Verify your landlord identity to get the Golden Tick badge and 3x more tenant inquiries.</p>
+            </div>
+        </div>
+    <?php endif; ?>
+
     <?php if ($isAlreadyVerified): ?>
         <div class="alert alert-success" style="max-width: 640px; margin: 0 auto 2rem; text-align: center; border-radius: 12px; padding: 1.25rem; background: #fffbeb; border: 1.5px solid #fde68a; color: #92400e;">
             <h4 style="font-weight: 800; margin-bottom: 0.25rem; display: flex; align-items: center; justify-content: center; gap: 6px;">

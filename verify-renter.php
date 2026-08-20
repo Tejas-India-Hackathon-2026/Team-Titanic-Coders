@@ -67,6 +67,16 @@ require_once __DIR__ . '/includes/header.php';
         </p>
     </div>
 
+    <?php if (isset($_GET['new_signup'])): ?>
+        <div class="alert alert-success" style="max-width: 720px; margin: 0 auto 2rem; border-radius: 12px; padding: 1.25rem; display: flex; align-items: center; gap: 0.75rem; background: #ecfdf5; border: 1.5px solid #a7f3d0; color: #065f46;">
+            <div style="font-size: 1.5rem;"><i class="fa-solid fa-circle-check text-success"></i></div>
+            <div>
+                <strong>🎉 Step 1 & 2 Complete: Account & Mobile OTP Verified!</strong>
+                <p style="margin: 0; font-size: 0.85rem; color: #047857;">Complete Step 3: Connect your DigiLocker Aadhaar below to get your official Verified Tenant Identity Pass.</p>
+            </div>
+        </div>
+    <?php endif; ?>
+
     <?php if (!empty($successMsg)): ?>
         <div class="alert alert-success" style="max-width: 720px; margin: 0 auto 2rem; border-radius: 12px; padding: 1.25rem;">
             <i class="fa-solid fa-circle-check me-2"></i> <?php echo htmlspecialchars($successMsg); ?>
