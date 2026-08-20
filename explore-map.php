@@ -7,8 +7,9 @@ require_once __DIR__ . '/includes/header.php';
 $search      = isset($_GET['search']) ? trim($_GET['search']) : '';
 $city        = isset($_GET['city']) ? trim($_GET['city']) : '';
 $type        = isset($_GET['type']) ? trim($_GET['type']) : '';
-$tenant_pref = isset($_GET['tenant_preference']) ? trim($_GET['tenant_preference']) : '';
-$max_price   = isset($_GET['max_price']) && is_numeric($_GET['max_price']) ? (float)$_GET['max_price'] : 100000;
+$tenant_pref   = isset($_GET['tenant_preference']) ? trim($_GET['tenant_preference']) : '';
+$stay_duration = isset($_GET['stay_duration']) ? trim($_GET['stay_duration']) : '';
+$max_price     = isset($_GET['max_price']) && is_numeric($_GET['max_price']) ? (float)$_GET['max_price'] : 100000;
 
 // Construct SQL Query
 $sql = "SELECT p.*, o.name as owner_name, o.phone as owner_phone 
@@ -48,6 +49,15 @@ if (!empty($tenant_pref)) {
     }
 }
 
+if (!empty($stay_duration)) {
+    if (stripos($stay_duration, '1 Month') !== false) {
+        $sql .= " AND (p.stay_duration LIKE '%1 Month%' OR p.stay_duration LIKE '%Flexible%')";
+    } else {
+        $sql .= " AND p.stay_duration LIKE :stay_dur";
+        $params[':stay_dur'] = '%' . $stay_duration . '%';
+    }
+}
+
 if ($max_price > 0 && $max_price < 100000) {
     $sql .= " AND p.price <= :max_price";
     $params[':max_price'] = $max_price;
@@ -80,6 +90,7 @@ foreach ($properties as $p) {
         'area_sqft'         => $p['area_sqft'],
         'furnishing'        => $p['furnishing'],
         'tenant_preference' => $p['tenant_preference'] ?? 'Bachelors Allowed',
+        'stay_duration'     => $p['stay_duration'] ?? '1 Month (Short Stay Allowed)',
         'is_premium'        => (int)$p['is_premium'],
         'image'             => get_property_image($p['image']),
         'lat'               => $finalLat,
@@ -109,6 +120,9 @@ foreach ($properties as $p) {
             <nav class="explore-city-pills" aria-label="City switcher">
                 <button type="button" class="city-pill <?php echo strtolower($city) === 'jamui' ? 'active' : ''; ?>" onclick="flyToCity('jamui', [24.9213, 86.2234], 14, this)">
                     📍 Jamui <span class="pill-badge">4</span>
+                </button>
+                <button type="button" class="city-pill <?php echo (stripos($stay_duration, '1 Month') !== false) ? 'active' : ''; ?>" onclick="location.href='explore-map.php?stay_duration=1+Month'" style="background: #fffbeb; color: #b45309; border-color: #fde68a;">
+                    ⏱️ 1-Month Stay
                 </button>
                 <button type="button" class="city-pill <?php echo strtolower($city) === 'new delhi' ? 'active' : ''; ?>" onclick="flyToCity('delhi', [28.6139, 77.2090], 12, this)">
                     📍 New Delhi
@@ -220,6 +234,9 @@ foreach ($properties as $p) {
                                     <div class="meta-tags">
                                         <span class="spec-tag"><?php echo htmlspecialchars($item['property_type']); ?></span>
                                         <span class="pref-tag"><?php echo htmlspecialchars($item['tenant_preference']); ?></span>
+                                        <?php if (stripos($item['stay_duration'] ?? '', '1 Month') !== false): ?>
+                                            <span class="pref-tag" style="background: #fffbeb; color: #b45309; border: 1px solid #fde68a;">⏱️ 1-Mo Stay</span>
+                                        <?php endif; ?>
                                     </div>
                                     <a href="property-details.php?id=<?php echo $item['id']; ?>" target="_blank" class="card-action-btn" onclick="event.stopPropagation();">
                                         View &rarr;

@@ -14,6 +14,7 @@ $premium_only = isset($_GET['filter']) && $_GET['filter'] === 'premium' ? true :
 $sort       = isset($_GET['sort']) ? trim($_GET['sort']) : 'featured';
 $amenities_filter = isset($_GET['amenities']) && is_array($_GET['amenities']) ? $_GET['amenities'] : [];
 $tenant_preference = isset($_GET['tenant_preference']) ? trim($_GET['tenant_preference']) : '';
+$stay_duration     = isset($_GET['stay_duration']) ? trim($_GET['stay_duration']) : '';
 
 // Construct Dynamic SQL Query
 $sql = "SELECT p.*, o.name as owner_name, o.phone as owner_phone 
@@ -60,6 +61,15 @@ if (!empty($tenant_preference)) {
     } else {
         $sql .= " AND p.tenant_preference = :tenant_pref";
         $params[':tenant_pref'] = $tenant_preference;
+    }
+}
+
+if (!empty($stay_duration)) {
+    if (stripos($stay_duration, '1 Month') !== false) {
+        $sql .= " AND (p.stay_duration LIKE '%1 Month%' OR p.stay_duration LIKE '%Flexible%')";
+    } else {
+        $sql .= " AND p.stay_duration LIKE :stay_dur";
+        $params[':stay_dur'] = '%' . $stay_duration . '%';
     }
 }
 
@@ -225,6 +235,18 @@ foreach ($properties as $p) {
                         <option value="Family Only" <?php echo ($tenant_preference === 'Family Only') ? 'selected' : ''; ?>>👨‍👩‍👧 Family Only</option>
                         <option value="Girls Only" <?php echo ($tenant_preference === 'Girls Only') ? 'selected' : ''; ?>>👩 Girls / Female Only</option>
                         <option value="Boys Only" <?php echo ($tenant_preference === 'Boys Only') ? 'selected' : ''; ?>>👨 Boys / Male Only</option>
+                    </select>
+                </div>
+
+                <!-- Stay Duration Filter (1 Month Short Stay) -->
+                <div class="filter-group">
+                    <label class="filter-title">⏱️ Stay Duration / Minimum Lock-in</label>
+                    <select name="stay_duration" class="form-select" onchange="document.getElementById('filterForm').submit();">
+                        <option value="">All Durations (Any Stay)</option>
+                        <option value="1 Month" <?php echo (stripos($stay_duration, '1 Month') !== false) ? 'selected' : ''; ?>>⏱️ 1 Month Only (Short Stay / Exam / Flexible)</option>
+                        <option value="3 Months" <?php echo (stripos($stay_duration, '3 Month') !== false) ? 'selected' : ''; ?>>⏱️ 3 Months Minimum</option>
+                        <option value="6 Months" <?php echo (stripos($stay_duration, '6 Month') !== false) ? 'selected' : ''; ?>>⏱️ 6 Months Minimum</option>
+                        <option value="11 Months" <?php echo (stripos($stay_duration, '11 Month') !== false) ? 'selected' : ''; ?>>⏱️ 11 Months (Standard Annual)</option>
                     </select>
                 </div>
 
@@ -528,6 +550,11 @@ foreach ($properties as $p) {
                                         <?php else: ?>
                                             <span class="badge" style="background: #f8fafc; color: #475569; border: 1px solid #e2e8f0; font-size: 0.72rem;">
                                                 <i class="fa-solid fa-users"></i> Anyone
+                                            </span>
+                                        <?php endif; ?>
+                                        <?php if (stripos($prop['stay_duration'] ?? '', '1 Month') !== false): ?>
+                                            <span class="badge" style="background: #fffbeb; color: #b45309; border: 1px solid #fde68a; font-size: 0.72rem;">
+                                                <i class="fa-solid fa-clock"></i> 1-Mo Stay
                                             </span>
                                         <?php endif; ?>
                                     </div>

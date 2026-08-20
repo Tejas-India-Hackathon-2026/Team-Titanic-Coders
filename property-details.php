@@ -175,7 +175,12 @@ require_once __DIR__ . '/includes/header.php';
                     <div style="background: var(--bg-alt); padding: 1rem; border-radius: var(--radius-md);">
                         <i class="fa-solid fa-user-check" style="font-size: 1.5rem; color: var(--primary); margin-bottom: 0.4rem;"></i>
                         <div style="font-size: 0.8rem; color: var(--text-muted);">Preferred For</div>
-                        <div style="font-weight: 800; font-size: 1rem; color: #4338ca;"><?php echo htmlspecialchars($tenantPref); ?></div>
+                        <div style="font-weight: 800; font-size: 0.95rem; color: #4338ca;"><?php echo htmlspecialchars($tenantPref); ?></div>
+                    </div>
+                    <div style="background: #fffbeb; border: 1px solid #fde68a; padding: 1rem; border-radius: var(--radius-md);">
+                        <i class="fa-solid fa-clock" style="font-size: 1.5rem; color: #b45309; margin-bottom: 0.4rem;"></i>
+                        <div style="font-size: 0.8rem; color: #92400e; font-weight: 700;">Stay Duration</div>
+                        <div style="font-weight: 800; font-size: 0.92rem; color: #b45309;"><?php echo htmlspecialchars($property['stay_duration'] ?? '1 Month (Short Stay)'); ?></div>
                     </div>
                 </div>
             </div>

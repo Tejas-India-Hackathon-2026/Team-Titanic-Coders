@@ -68,6 +68,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
+    $tenant_preference = sanitize($_POST['tenant_preference'] ?? 'Bachelors Allowed');
+    $stay_duration     = sanitize($_POST['stay_duration'] ?? '1 Month (Short Stay Allowed)');
     $landmark          = sanitize($_POST['landmark'] ?? '');
     $latitude          = isset($_POST['latitude']) && is_numeric($_POST['latitude']) ? (float)$_POST['latitude'] : null;
     $longitude         = isset($_POST['longitude']) && is_numeric($_POST['longitude']) ? (float)$_POST['longitude'] : null;
@@ -100,6 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 image = :image,
                 amenities = :amenities,
                 tenant_preference = :tenant_preference,
+                stay_duration = :stay_duration,
                 status = :status
             WHERE id = :id
         ");
@@ -122,6 +125,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ':image'             => $finalImagePath,
             ':amenities'         => $amenities,
             ':tenant_preference' => $tenant_preference,
+            ':stay_duration'     => $stay_duration,
             ':status'            => $status,
             ':id'                => $propId
         ]);
@@ -200,16 +204,29 @@ require_once __DIR__ . '/includes/header.php';
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label>Preferred Tenant Type <span class="text-danger">*</span></label>
-                        <?php $currentPref = $property['tenant_preference'] ?? 'Bachelors Allowed'; ?>
-                        <select name="tenant_preference" class="form-select" required>
-                            <option value="Bachelors Allowed" <?php echo ($currentPref === 'Bachelors Allowed') ? 'selected' : ''; ?>>🎓 Bachelors Allowed (Students & Working)</option>
-                            <option value="Family Only" <?php echo ($currentPref === 'Family Only') ? 'selected' : ''; ?>>👨‍👩‍👧 Family Only</option>
-                            <option value="Anyone" <?php echo ($currentPref === 'Anyone') ? 'selected' : ''; ?>>👥 Anyone (Family or Bachelors)</option>
-                            <option value="Girls Only" <?php echo ($currentPref === 'Girls Only') ? 'selected' : ''; ?>>👩 Girls / Female Only</option>
-                            <option value="Boys Only" <?php echo ($currentPref === 'Boys Only') ? 'selected' : ''; ?>>👨 Boys / Male Only</option>
-                        </select>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label>Preferred Tenant Type <span class="text-danger">*</span></label>
+                            <?php $currentPref = $property['tenant_preference'] ?? 'Bachelors Allowed'; ?>
+                            <select name="tenant_preference" class="form-select" required>
+                                <option value="Bachelors Allowed" <?php echo ($currentPref === 'Bachelors Allowed') ? 'selected' : ''; ?>>🎓 Bachelors Allowed (Students & Working)</option>
+                                <option value="Family Only" <?php echo ($currentPref === 'Family Only') ? 'selected' : ''; ?>>👨‍👩‍👧 Family Only</option>
+                                <option value="Anyone" <?php echo ($currentPref === 'Anyone') ? 'selected' : ''; ?>>👥 Anyone (Family or Bachelors)</option>
+                                <option value="Girls Only" <?php echo ($currentPref === 'Girls Only') ? 'selected' : ''; ?>>👩 Girls / Female Only</option>
+                                <option value="Boys Only" <?php echo ($currentPref === 'Boys Only') ? 'selected' : ''; ?>>👨 Boys / Male Only</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Minimum Stay Duration <span class="text-danger">*</span></label>
+                            <?php $currentStay = $property['stay_duration'] ?? '1 Month (Short Stay Allowed)'; ?>
+                            <select name="stay_duration" class="form-select" required>
+                                <option value="1 Month (Short Stay Allowed)" <?php echo (stripos($currentStay, '1 Month') !== false) ? 'selected' : ''; ?>>⏱️ 1 Month (Short Stay / Flexible)</option>
+                                <option value="3 Months Minimum" <?php echo (stripos($currentStay, '3 Month') !== false) ? 'selected' : ''; ?>>⏱️ 3 Months Minimum</option>
+                                <option value="6 Months Minimum" <?php echo (stripos($currentStay, '6 Month') !== false) ? 'selected' : ''; ?>>⏱️ 6 Months Minimum</option>
+                                <option value="11 Months (Standard)" <?php echo (stripos($currentStay, '11 Month') !== false) ? 'selected' : ''; ?>>⏱️ 11 Months (Standard Agreement)</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 

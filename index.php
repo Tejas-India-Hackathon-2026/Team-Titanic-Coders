@@ -134,6 +134,9 @@ while ($p = $stmtAllProps->fetch()) {
                 <a href="explore-map.php" class="btn btn-secondary" style="background: #ffffff; color: var(--primary); font-weight: 800; border-radius: 30px; padding: 0.55rem 1.4rem; box-shadow: var(--shadow-md); display: inline-flex; align-items: center; gap: 0.4rem; border: 1px solid #c7d2fe;">
                     <i class="fa-solid fa-map-location-dot text-primary"></i> 🗺️ Open Live Explore Map
                 </a>
+                <a href="properties.php?stay_duration=1+Month" class="btn btn-secondary" style="background: #fffbeb; color: #b45309; font-weight: 800; border-radius: 30px; padding: 0.55rem 1.4rem; box-shadow: var(--shadow-md); display: inline-flex; align-items: center; gap: 0.4rem; border: 1.5px solid #fde68a;">
+                    <i class="fa-solid fa-clock"></i> ⏱️ 1-Month Short Stays
+                </a>
                 <a href="explore-map.php?city=Jamui" class="btn btn-secondary" style="background: #ffffff; color: #059669; font-weight: 800; border-radius: 30px; padding: 0.55rem 1.4rem; box-shadow: var(--shadow-md); display: inline-flex; align-items: center; gap: 0.4rem; border: 1px solid #a7f3d0;">
                     📍 Jamui Rooms on Map (4 Vacant)
                 </a>

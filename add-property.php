@@ -55,6 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     $tenant_preference = sanitize($_POST['tenant_preference'] ?? 'Bachelors Allowed');
+    $stay_duration     = sanitize($_POST['stay_duration'] ?? '1 Month (Short Stay Allowed)');
     $landmark          = sanitize($_POST['landmark'] ?? '');
     $latitude          = isset($_POST['latitude']) && is_numeric($_POST['latitude']) ? (float)$_POST['latitude'] : null;
     $longitude         = isset($_POST['longitude']) && is_numeric($_POST['longitude']) ? (float)$_POST['longitude'] : null;
@@ -72,11 +73,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             INSERT INTO properties (
                 owner_id, title, description, property_type, furnishing,
                 location, city, landmark, latitude, longitude, price, deposit, bedrooms, bathrooms,
-                area_sqft, image, amenities, tenant_preference, is_premium, views_count, status
+                area_sqft, image, amenities, tenant_preference, stay_duration, is_premium, views_count, status
             ) VALUES (
                 :owner_id, :title, :description, :property_type, :furnishing,
                 :location, :city, :landmark, :latitude, :longitude, :price, :deposit, :bedrooms, :bathrooms,
-                :area_sqft, :image, :amenities, :tenant_preference, :is_premium, 0, 'available'
+                :area_sqft, :image, :amenities, :tenant_preference, :stay_duration, :is_premium, 0, 'available'
             )
         ");
 
@@ -99,6 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ':image'             => $finalImagePath,
             ':amenities'         => $amenities,
             ':tenant_preference' => $tenant_preference,
+            ':stay_duration'     => $stay_duration,
             ':is_premium'        => 0 // Default 0 until paid
         ]);
 
@@ -181,15 +183,26 @@ require_once __DIR__ . '/includes/header.php';
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label>Preferred Tenant Type <span class="text-danger">*</span></label>
-                        <select name="tenant_preference" class="form-select" required>
-                            <option value="Bachelors Allowed" selected>🎓 Bachelors Allowed (Students & Working)</option>
-                            <option value="Family Only">👨‍👩‍👧 Family Only</option>
-                            <option value="Anyone">👥 Anyone (Family or Bachelors)</option>
-                            <option value="Girls Only">👩 Girls / Female Only</option>
-                            <option value="Boys Only">👨 Boys / Male Only</option>
-                        </select>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label>Preferred Tenant Type <span class="text-danger">*</span></label>
+                            <select name="tenant_preference" class="form-select" required>
+                                <option value="Bachelors Allowed" selected>🎓 Bachelors Allowed (Students & Working)</option>
+                                <option value="Family Only">👨‍👩‍👧 Family Only</option>
+                                <option value="Anyone">👥 Anyone (Family or Bachelors)</option>
+                                <option value="Girls Only">👩 Girls / Female Only</option>
+                                <option value="Boys Only">👨 Boys / Male Only</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Minimum Stay Duration <span class="text-danger">*</span></label>
+                            <select name="stay_duration" class="form-select" required>
+                                <option value="1 Month (Short Stay Allowed)" selected>⏱️ 1 Month (Short Stay / Students / Flexible)</option>
+                                <option value="3 Months Minimum">⏱️ 3 Months Minimum</option>
+                                <option value="6 Months Minimum">⏱️ 6 Months Minimum</option>
+                                <option value="11 Months (Standard)">⏱️ 11 Months (Standard Agreement)</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 

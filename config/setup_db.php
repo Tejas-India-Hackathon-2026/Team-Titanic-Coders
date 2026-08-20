@@ -269,6 +269,11 @@ function initialize_database($pdo) {
         $pdo->exec("ALTER TABLE inquiries ADD COLUMN transaction_id VARCHAR(100) DEFAULT NULL");
     } catch (Exception $e) {}
 
+    // Auto-migration for Minimum Stay / 1-Month Flexible Stay
+    try {
+        $pdo->exec("ALTER TABLE properties ADD COLUMN stay_duration VARCHAR(50) DEFAULT '1 Month (Short Stay Allowed)'");
+    } catch (Exception $e) {}
+
     // Check if initial seeding is needed
     $ownerCountStmt = $pdo->query("SELECT COUNT(*) FROM owners");
     $ownerCount = (int)$ownerCountStmt->fetchColumn();
