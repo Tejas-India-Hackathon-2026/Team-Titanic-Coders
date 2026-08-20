@@ -20,6 +20,20 @@ if (isset($_GET['toggle_premium']) && is_numeric($_GET['toggle_premium'])) {
     exit;
 }
 
+// Handle Toggle Owner Golden Tick Verification by Admin
+if (isset($_GET['toggle_owner_verify']) && is_numeric($_GET['toggle_owner_verify'])) {
+    $ownerId = (int)$_GET['toggle_owner_verify'];
+    $stmtO = $pdo->prepare("SELECT is_verified FROM owners WHERE id = ?");
+    $stmtO->execute([$ownerId]);
+    $currVer = (int)$stmtO->fetchColumn();
+    $newVer = $currVer ? 0 : 1;
+    $verTime = $newVer ? date('Y-m-d H:i:s') : null;
+    $pdo->prepare("UPDATE owners SET is_verified = ?, verified_at = ? WHERE id = ?")->execute([$newVer, $verTime, $ownerId]);
+    set_flash_message('success', 'Owner Golden Tick status updated to ' . ($newVer ? '⭐ Gold Verified' : 'Standard Unverified') . '!');
+    header("Location: admin-dashboard.php#usersTable");
+    exit;
+}
+
 // Fetch Platform Stats from Separate Tables
 $totalOwners = (int)$pdo->query("SELECT COUNT(*) FROM owners")->fetchColumn();
 $totalRenters = (int)$pdo->query("SELECT COUNT(*) FROM renters")->fetchColumn();
@@ -42,24 +56,29 @@ $recentPayments = $stmtPayments->fetchAll();
 
 // Fetch All Properties
 $stmtAllProps = $pdo->query("
-    SELECT p.*, o.name as owner_name, o.email as owner_email 
+    SELECT p.*, o.name as owner_name, o.email as owner_email, o.is_verified as owner_is_verified 
     FROM properties p 
     JOIN owners o ON p.owner_id = o.id 
     ORDER BY p.id DESC
 ");
 $allProperties = $stmtAllProps->fetchAll();
 
-// Fetch All Owners from dedicated 'owners' table
+// Fetch All Owners from dedicated 'owners' table with property stats
 $stmtOwners = $pdo->query("
-    SELECT o.*, (SELECT COUNT(*) FROM properties WHERE owner_id = o.id) as props_count 
+    SELECT o.*, 
+           (SELECT COUNT(*) FROM properties WHERE owner_id = o.id) as props_count,
+           (SELECT COUNT(*) FROM properties WHERE owner_id = o.id AND status = 'available') as active_props_count,
+           (SELECT COUNT(*) FROM properties WHERE owner_id = o.id AND status = 'rented') as rented_props_count
     FROM owners o 
     ORDER BY o.id DESC
 ");
 $allOwners = $stmtOwners->fetchAll();
 
-// Fetch All Renters from dedicated 'renters' table
+// Fetch All Renters from dedicated 'renters' table with activity stats
 $stmtRenters = $pdo->query("
-    SELECT r.*, (SELECT COUNT(*) FROM favorites WHERE renter_id = r.id) as saved_count 
+    SELECT r.*, 
+           (SELECT COUNT(*) FROM favorites WHERE renter_id = r.id) as saved_count,
+           (SELECT COUNT(*) FROM inquiries WHERE renter_id = r.id) as inquiries_count
     FROM renters r 
     ORDER BY r.id DESC
 ");
@@ -75,7 +94,7 @@ require_once __DIR__ . '/includes/header.php';
         <div>
             <span class="badge badge-warning mb-1"><i class="fa-solid fa-shield-halved"></i> Super Administrator</span>
             <h1 style="font-size: 2rem; font-weight: 800;">RentNear Platform Overview</h1>
-            <p style="color: var(--text-muted);">Dedicated backend database for Owners (`owners`) and Tenants (`renters`).</p>
+            <p style="color: var(--text-muted);">Separate backend architecture for Owners (`owners`) and Tenants (`renters`).</p>
         </div>
         <a href="profile.php" class="btn btn-secondary btn-lg">
             <i class="fa-solid fa-user-pen"></i> Edit Profile
@@ -86,7 +105,7 @@ require_once __DIR__ . '/includes/header.php';
     <div class="dashboard-grid-stats">
         <div class="stat-card">
             <div class="stat-card-info">
-                <p>Total Revenue (₹99 Upgrades)</p>
+                <p>Total Platform Revenue</p>
                 <h4 style="color: var(--success);"><?php echo format_inr($totalRevenue); ?></h4>
             </div>
             <div class="stat-card-icon" style="background: var(--success-light); color: var(--success);"><i class="fa-solid fa-indian-rupee-sign"></i></div>
@@ -110,9 +129,9 @@ require_once __DIR__ . '/includes/header.php';
 
         <div class="stat-card">
             <div class="stat-card-info">
-                <p>Database Records</p>
-                <h4 style="font-size: 1.3rem; margin-top: 0.3rem;">
-                    <span style="color: #2563eb;"><?php echo $totalOwners; ?> Owners</span> / <span style="color: #10b981;"><?php echo $totalRenters; ?> Renters</span>
+                <p>Separated User Accounts</p>
+                <h4 style="font-size: 1.25rem; margin-top: 0.3rem;">
+                    <span style="color: #4f46e5;"><?php echo $totalOwners; ?> Landlords</span> &nbsp;|&nbsp; <span style="color: #059669;"><?php echo $totalRenters; ?> Tenants</span>
                 </h4>
             </div>
             <div class="stat-card-icon"><i class="fa-solid fa-database"></i></div>
@@ -122,7 +141,7 @@ require_once __DIR__ . '/includes/header.php';
     <!-- Recent Payments & Revenue Ledger -->
     <div id="revenueTable" style="background: #fff; border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: 1.5rem; margin-bottom: 2.5rem; box-shadow: var(--shadow-sm); scroll-margin-top: 80px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
-            <h3 style="font-size: 1.25rem; font-weight: 800;"><i class="fa-solid fa-receipt text-primary me-1"></i> Recent ₹99 Payment Transactions</h3>
+            <h3 style="font-size: 1.25rem; font-weight: 800;"><i class="fa-solid fa-receipt text-primary me-1"></i> Recent Payment Transactions</h3>
             <span class="badge badge-success">Mock Gateway Active</span>
         </div>
 
@@ -131,8 +150,8 @@ require_once __DIR__ . '/includes/header.php';
                 <thead>
                     <tr>
                         <th>Transaction ID</th>
-                        <th>Property Owner</th>
-                        <th>Boosted Property</th>
+                        <th>User / Owner</th>
+                        <th>Associated Property</th>
                         <th>Amount</th>
                         <th>Method</th>
                         <th>Date & Time</th>
@@ -141,7 +160,7 @@ require_once __DIR__ . '/includes/header.php';
                 </thead>
                 <tbody>
                     <?php if (empty($recentPayments)): ?>
-                        <tr><td colspan="7" style="text-align: center; color: var(--text-muted);">No payment transactions recorded yet.</td></tr>
+                        <tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 2rem;">No payment transactions recorded yet.</td></tr>
                     <?php else: ?>
                         <?php foreach ($recentPayments as $pay): ?>
                             <tr>
@@ -150,9 +169,9 @@ require_once __DIR__ . '/includes/header.php';
                                     <strong><?php echo htmlspecialchars($pay['owner_name']); ?></strong><br>
                                     <span style="font-size: 0.75rem; color: var(--text-muted);"><?php echo htmlspecialchars($pay['owner_email']); ?></span>
                                 </td>
-                                <td><?php echo htmlspecialchars($pay['property_title']); ?></td>
+                                <td><?php echo !empty($pay['property_title']) ? htmlspecialchars($pay['property_title']) : '<span style="color: var(--text-muted);">Account Verification</span>'; ?></td>
                                 <td><strong style="color: var(--primary);"><?php echo format_inr($pay['amount']); ?></strong></td>
-                                <td><span class="badge badge-role"><?php echo htmlspecialchars($pay['payment_method']); ?></span></td>
+                                <td><span class="badge badge-role"><?php echo htmlspecialchars($pay['payment_method'] ?? 'UPI'); ?></span></td>
                                 <td><?php echo date('d M Y, h:i A', strtotime($pay['created_at'])); ?></td>
                                 <td><span class="badge badge-success"><?php echo htmlspecialchars($pay['status']); ?></span></td>
                             </tr>
@@ -165,7 +184,10 @@ require_once __DIR__ . '/includes/header.php';
 
     <!-- All Properties Management -->
     <div id="propertiesTable" style="background: #fff; border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: 1.5rem; margin-bottom: 2.5rem; box-shadow: var(--shadow-sm); scroll-margin-top: 80px;">
-        <h3 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 1.25rem;"><i class="fa-solid fa-list-check text-primary me-1"></i> Manage All Properties (<?php echo count($allProperties); ?>)</h3>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.5rem;">
+            <h3 style="font-size: 1.25rem; font-weight: 800;"><i class="fa-solid fa-list-check text-primary me-1"></i> Manage All Rental Properties (<?php echo count($allProperties); ?>)</h3>
+            <span style="font-size: 0.85rem; color: var(--text-muted);">Full system control</span>
+        </div>
 
         <div class="table-responsive">
             <table class="table">
@@ -173,10 +195,11 @@ require_once __DIR__ . '/includes/header.php';
                     <tr>
                         <th>ID</th>
                         <th>Property</th>
-                        <th>Owner</th>
-                        <th>City</th>
+                        <th>Owner & Verification</th>
+                        <th>City / Area</th>
                         <th>Rent</th>
-                        <th>Premium</th>
+                        <th>Status</th>
+                        <th>Featured</th>
                         <th style="text-align: right;">Action</th>
                     </tr>
                 </thead>
@@ -189,28 +212,42 @@ require_once __DIR__ . '/includes/header.php';
                                 <span style="font-size: 0.75rem; color: var(--text-muted);"><?php echo htmlspecialchars($prop['property_type']); ?> • <?php echo htmlspecialchars($prop['furnishing']); ?></span>
                             </td>
                             <td>
-                                <?php echo htmlspecialchars($prop['owner_name']); ?><br>
+                                <strong><?php echo htmlspecialchars($prop['owner_name']); ?></strong>
+                                <?php if (!empty($prop['owner_is_verified']) && (int)$prop['owner_is_verified'] === 1) echo render_verified_badge(false, 14); ?>
+                                <br>
                                 <span style="font-size: 0.75rem; color: var(--text-muted);"><?php echo htmlspecialchars($prop['owner_email']); ?></span>
                             </td>
-                            <td><?php echo htmlspecialchars($prop['city']); ?></td>
-                            <td><strong><?php echo format_inr($prop['price']); ?></strong></td>
+                            <td>
+                                <strong><?php echo htmlspecialchars($prop['city']); ?></strong><br>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);"><?php echo htmlspecialchars($prop['location']); ?></span>
+                            </td>
+                            <td><strong><?php echo format_inr($prop['price']); ?></strong>/mo</td>
+                            <td>
+                                <?php if ($prop['status'] === 'available'): ?>
+                                    <span class="badge badge-success" style="font-size: 0.72rem;">🟢 Available</span>
+                                <?php else: ?>
+                                    <span class="badge" style="background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; font-size: 0.72rem;">🔴 Rented Out</span>
+                                <?php endif; ?>
+                            </td>
                             <td>
                                 <?php if ($prop['is_premium']): ?>
-                                    <span class="badge badge-premium">⭐ Yes</span>
+                                    <span class="badge badge-premium">⭐ Featured</span>
                                 <?php else: ?>
                                     <span class="badge badge-secondary" style="background: var(--bg-alt); color: var(--text-muted);">Standard</span>
                                 <?php endif; ?>
                             </td>
                             <td style="text-align: right;">
-                                <a href="admin-dashboard.php?toggle_premium=<?php echo $prop['id']; ?>" class="btn btn-secondary btn-sm" title="Toggle Premium Status">
-                                    <i class="fa-solid fa-crown"></i>
-                                </a>
-                                <a href="edit-property.php?id=<?php echo $prop['id']; ?>" class="btn btn-secondary btn-sm" title="Edit">
-                                    <i class="fa-solid fa-pen"></i>
-                                </a>
-                                <a href="delete-property.php?id=<?php echo $prop['id']; ?>" class="btn btn-danger btn-sm" title="Delete" onclick="return confirm('Delete this property permanently?');">
-                                    <i class="fa-solid fa-trash"></i>
-                                </a>
+                                <div style="display: inline-flex; gap: 0.25rem;">
+                                    <a href="admin-dashboard.php?toggle_premium=<?php echo $prop['id']; ?>" class="btn btn-secondary btn-sm" title="Toggle Premium Status">
+                                        <i class="fa-solid fa-crown"></i>
+                                    </a>
+                                    <a href="edit-property.php?id=<?php echo $prop['id']; ?>" class="btn btn-secondary btn-sm" title="Edit">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </a>
+                                    <a href="delete-property.php?id=<?php echo $prop['id']; ?>" class="btn btn-danger btn-sm" title="Delete" onclick="return confirm('Delete this property permanently?');">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </a>
+                                </div>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -219,98 +256,233 @@ require_once __DIR__ . '/includes/header.php';
         </div>
     </div>
 
-    <!-- 1. Dedicated Owners Table Section -->
-    <div id="usersTable" style="background: #fff; border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: 1.5rem; margin-bottom: 2.5rem; box-shadow: var(--shadow-sm); scroll-margin-top: 80px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
-            <h3 style="font-size: 1.25rem; font-weight: 800; color: #1e1b4b;">
-                <i class="fa-solid fa-house-chimney-user text-primary me-1"></i> Registered Property Owners (Database: <code>owners</code> table)
-            </h3>
-            <span class="badge badge-role"><?php echo count($allOwners); ?> Owners</span>
+    <!-- ========================================== -->
+    <!-- DEDICATED SEPARATE USER MANAGEMENT SECTION -->
+    <!-- ========================================== -->
+    <div id="usersTable" style="scroll-margin-top: 80px;">
+        
+        <!-- User Type Switcher Tabs -->
+        <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+            <button type="button" id="tabBtnOwners" class="btn btn-primary" onclick="switchUserTab('owners')" style="display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 700; padding: 0.75rem 1.5rem; border-radius: var(--radius-lg);">
+                <i class="fa-solid fa-house-chimney-user"></i> 
+                <span>Property Landlords / Owners</span>
+                <span class="badge" style="background: rgba(255,255,255,0.25); color: #fff; margin-left: 4px;"><?php echo count($allOwners); ?></span>
+            </button>
+
+            <button type="button" id="tabBtnRenters" class="btn btn-secondary" onclick="switchUserTab('renters')" style="display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 700; padding: 0.75rem 1.5rem; border-radius: var(--radius-lg);">
+                <i class="fa-solid fa-user-group" style="color: #059669;"></i> 
+                <span>Tenants / Renters</span>
+                <span class="badge badge-success" style="margin-left: 4px;"><?php echo count($allRenters); ?></span>
+            </button>
         </div>
 
-        <div class="table-responsive">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Owner ID</th>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Phone</th>
-                        <th>Operating City</th>
-                        <th>Listings</th>
-                        <th>Registered Date</th>
-                        <th style="text-align: right;">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($allOwners as $o): ?>
+        <!-- 1. Dedicated PROPERTY OWNERS Panel (`owners` table) -->
+        <div id="ownersSection" style="background: #fff; border-radius: var(--radius-lg); border: 2px solid #e0e7ff; padding: 1.75rem; margin-bottom: 2.5rem; box-shadow: var(--shadow-sm);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; border-bottom: 1px solid var(--border-light); padding-bottom: 1rem;">
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <div style="width: 42px; height: 42px; border-radius: var(--radius-md); background: #eef2ff; color: #4f46e5; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+                        <i class="fa-solid fa-house-chimney-user"></i>
+                    </div>
+                    <div>
+                        <h3 style="font-size: 1.25rem; font-weight: 800; color: #1e1b4b; margin: 0;">
+                            Registered Property Owners
+                        </h3>
+                        <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">Database table: <code>owners</code> &bull; Manages room listings and receives tenant leads</p>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <span class="badge" style="background: #eef2ff; color: #4338ca; border: 1px solid #c7d2fe; font-size: 0.8rem; padding: 0.4rem 0.8rem;">
+                        Total: <strong><?php echo count($allOwners); ?> Landlords</strong>
+                    </span>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
                         <tr>
-                            <td>#<?php echo $o['id']; ?></td>
-                            <td><strong><?php echo htmlspecialchars($o['name']); ?></strong></td>
-                            <td><?php echo htmlspecialchars($o['email']); ?></td>
-                            <td><?php echo htmlspecialchars($o['phone']); ?></td>
-                            <td><?php echo htmlspecialchars(!empty($o['city']) ? $o['city'] : 'Pan India'); ?></td>
-                            <td><span class="badge badge-info"><?php echo $o['props_count']; ?> properties</span></td>
-                            <td><?php echo date('d M Y', strtotime($o['created_at'])); ?></td>
-                            <td style="text-align: right;">
-                                <a href="delete-user.php?role=owner&id=<?php echo $o['id']; ?>" class="btn btn-danger btn-sm" title="Permanently Delete Owner Account" onclick="return confirm('⚠️ WARNING: Delete owner <?php echo addslashes($o['name']); ?>? This will permanently erase this owner and all their properties and inquiries!');">
-                                    <i class="fa-solid fa-trash"></i> Delete
-                                </a>
-                            </td>
+                            <th>Owner ID</th>
+                            <th>Landlord Profile</th>
+                            <th>Contact Info</th>
+                            <th>Operating City / Address</th>
+                            <th>Listings Count</th>
+                            <th>Golden Tick Status</th>
+                            <th>Registered Date</th>
+                            <th style="text-align: right;">Admin Actions</th>
                         </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($allOwners as $o): ?>
+                            <tr>
+                                <td><strong>#<?php echo $o['id']; ?></strong></td>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 0.65rem;">
+                                        <div class="user-avatar" style="width: 36px; height: 36px; font-size: 0.85rem; flex-shrink: 0; background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);">
+                                            <?php echo strtoupper(substr($o['name'], 0, 1)); ?>
+                                        </div>
+                                        <div>
+                                            <strong style="color: #0f172a; display: flex; align-items: center; gap: 3px;">
+                                                <?php echo htmlspecialchars($o['name']); ?>
+                                                <?php if (!empty($o['is_verified']) && (int)$o['is_verified'] === 1) echo render_verified_badge(false, 14); ?>
+                                            </strong>
+                                            <span style="font-size: 0.75rem; color: var(--text-muted);">Owner Account</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <i class="fa-solid fa-envelope text-muted me-1"></i> <?php echo htmlspecialchars($o['email']); ?><br>
+                                    <i class="fa-solid fa-phone text-muted me-1"></i> <?php echo htmlspecialchars($o['phone']); ?>
+                                </td>
+                                <td>
+                                    <strong><?php echo htmlspecialchars(!empty($o['city']) ? $o['city'] : 'Pan India'); ?></strong><br>
+                                    <span style="font-size: 0.75rem; color: var(--text-muted);"><?php echo htmlspecialchars(!empty($o['address']) ? $o['address'] : 'Main City Area'); ?></span>
+                                </td>
+                                <td>
+                                    <span class="badge badge-info" style="font-weight: 700;">
+                                        <?php echo $o['props_count']; ?> Total
+                                    </span>
+                                    <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 2px;">
+                                        🟢 <?php echo $o['active_props_count']; ?> Live &bull; 🔴 <?php echo $o['rented_props_count']; ?> Rented
+                                    </div>
+                                </td>
+                                <td>
+                                    <?php if (!empty($o['is_verified']) && (int)$o['is_verified'] === 1): ?>
+                                        <span class="badge badge-success" style="background: #fef3c7; color: #b45309; border: 1px solid #fde68a; font-weight: 800; display: inline-flex; margin-bottom: 4px;">
+                                            <i class="fa-solid fa-certificate"></i> ⭐ Gold Verified
+                                        </span><br>
+                                        <a href="admin-dashboard.php?toggle_owner_verify=<?php echo $o['id']; ?>" class="btn btn-secondary btn-sm" style="font-size: 0.7rem; padding: 0.15rem 0.45rem; color: #dc2626;" onclick="return confirm('Revoke Golden Tick verification for this owner?');">
+                                            Revoke Tick
+                                        </a>
+                                    <?php else: ?>
+                                        <span class="badge badge-secondary" style="font-size: 0.72rem; display: inline-flex; margin-bottom: 4px;">
+                                            Standard
+                                        </span><br>
+                                        <a href="admin-dashboard.php?toggle_owner_verify=<?php echo $o['id']; ?>" class="btn btn-secondary btn-sm" style="font-size: 0.7rem; padding: 0.15rem 0.45rem; color: #b45309; background: #fffbeb; border-color: #fde68a; font-weight: 700;" onclick="return confirm('Grant Golden Tick verification to this owner?');">
+                                            ⭐ Grant Golden Tick
+                                        </a>
+                                    <?php endif; ?>
+                                </td>
+                                <td><?php echo date('d M Y', strtotime($o['created_at'])); ?></td>
+                                <td style="text-align: right;">
+                                    <a href="delete-user.php?role=owner&id=<?php echo $o['id']; ?>" class="btn btn-danger btn-sm" title="Permanently Delete Owner Account" onclick="return confirm('⚠️ WARNING: Delete owner <?php echo addslashes($o['name']); ?>? This will permanently erase this owner and all their properties and inquiries!');">
+                                        <i class="fa-solid fa-trash"></i> Delete
+                                    </a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
 
-    <!-- 2. Dedicated Renters Table Section -->
-    <div style="background: #fff; border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: 1.5rem; box-shadow: var(--shadow-sm);">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
-            <h3 style="font-size: 1.25rem; font-weight: 800; color: #065f46;">
-                <i class="fa-solid fa-user-group text-success me-1"></i> Registered Tenants / Renters (Database: <code>renters</code> table)
-            </h3>
-            <span class="badge badge-success"><?php echo count($allRenters); ?> Renters</span>
-        </div>
+        <!-- 2. Dedicated TENANTS / RENTERS Panel (`renters` table) -->
+        <div id="rentersSection" style="background: #fff; border-radius: var(--radius-lg); border: 2px solid #dcfce7; padding: 1.75rem; margin-bottom: 2.5rem; box-shadow: var(--shadow-sm); display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; border-bottom: 1px solid var(--border-light); padding-bottom: 1rem;">
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <div style="width: 42px; height: 42px; border-radius: var(--radius-md); background: #f0fdf4; color: #16a34a; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+                        <i class="fa-solid fa-user-group"></i>
+                    </div>
+                    <div>
+                        <h3 style="font-size: 1.25rem; font-weight: 800; color: #065f46; margin: 0;">
+                            Registered Tenants / Renters
+                        </h3>
+                        <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">Database table: <code>renters</code> &bull; Explores rooms, saves favorites, and sends booking inquiries</p>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <span class="badge" style="background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; font-size: 0.8rem; padding: 0.4rem 0.8rem;">
+                        Total: <strong><?php echo count($allRenters); ?> Tenants</strong>
+                    </span>
+                </div>
+            </div>
 
-        <div class="table-responsive">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Renter ID</th>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Phone</th>
-                        <th>Occupation</th>
-                        <th>Preferred City</th>
-                        <th>Saved Items</th>
-                        <th>Registered Date</th>
-                        <th style="text-align: right;">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($allRenters as $r): ?>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
                         <tr>
-                            <td>#<?php echo $r['id']; ?></td>
-                            <td><strong><?php echo htmlspecialchars($r['name']); ?></strong></td>
-                            <td><?php echo htmlspecialchars($r['email']); ?></td>
-                            <td><?php echo htmlspecialchars($r['phone']); ?></td>
-                            <td><?php echo htmlspecialchars(!empty($r['occupation']) ? $r['occupation'] : 'Professional'); ?></td>
-                            <td><?php echo htmlspecialchars(!empty($r['preferred_city']) ? $r['preferred_city'] : 'Bengaluru'); ?></td>
-                            <td><span class="badge badge-warning"><?php echo $r['saved_count']; ?> saved</span></td>
-                            <td><?php echo date('d M Y', strtotime($r['created_at'])); ?></td>
-                            <td style="text-align: right;">
-                                <a href="delete-user.php?role=renter&id=<?php echo $r['id']; ?>" class="btn btn-danger btn-sm" title="Permanently Delete Renter Account" onclick="return confirm('⚠️ Delete renter <?php echo addslashes($r['name']); ?> permanently?');">
-                                    <i class="fa-solid fa-trash"></i> Delete
-                                </a>
-                            </td>
+                            <th>Renter ID</th>
+                            <th>Tenant Profile</th>
+                            <th>Contact Info</th>
+                            <th>Occupation & Profession</th>
+                            <th>Preferred City</th>
+                            <th>Activity</th>
+                            <th>Registered Date</th>
+                            <th style="text-align: right;">Admin Action</th>
                         </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($allRenters as $r): ?>
+                            <tr>
+                                <td><strong>#<?php echo $r['id']; ?></strong></td>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 0.65rem;">
+                                        <div class="user-avatar" style="width: 36px; height: 36px; font-size: 0.85rem; flex-shrink: 0; background: linear-gradient(135deg, #10b981 0%, #047857 100%);">
+                                            <?php echo strtoupper(substr($r['name'], 0, 1)); ?>
+                                        </div>
+                                        <div>
+                                            <strong style="color: #0f172a;"><?php echo htmlspecialchars($r['name']); ?></strong><br>
+                                            <span style="font-size: 0.75rem; color: var(--text-muted);">Tenant Account</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <i class="fa-solid fa-envelope text-muted me-1"></i> <?php echo htmlspecialchars($r['email']); ?><br>
+                                    <i class="fa-solid fa-phone text-muted me-1"></i> <?php echo htmlspecialchars($r['phone']); ?>
+                                </td>
+                                <td>
+                                    <span class="badge" style="background: #f1f5f9; color: #334155; border: 1px solid #e2e8f0; font-weight: 600;">
+                                        <?php echo htmlspecialchars(!empty($r['occupation']) ? $r['occupation'] : 'Student / Working'); ?>
+                                    </span>
+                                </td>
+                                <td>
+                                    <strong><?php echo htmlspecialchars(!empty($r['preferred_city']) ? $r['preferred_city'] : 'Pan India'); ?></strong>
+                                </td>
+                                <td>
+                                    <span class="badge badge-warning" style="font-weight: 700; margin-bottom: 2px; display: inline-flex;">
+                                        <i class="fa-solid fa-heart me-1"></i> <?php echo $r['saved_count']; ?> Saved
+                                    </span><br>
+                                    <span style="font-size: 0.75rem; color: var(--text-muted);">
+                                        <i class="fa-solid fa-envelope me-1"></i> <?php echo $r['inquiries_count']; ?> Inquiries
+                                    </span>
+                                </td>
+                                <td><?php echo date('d M Y', strtotime($r['created_at'])); ?></td>
+                                <td style="text-align: right;">
+                                    <a href="delete-user.php?role=renter&id=<?php echo $r['id']; ?>" class="btn btn-danger btn-sm" title="Permanently Delete Renter Account" onclick="return confirm('⚠️ Delete renter <?php echo addslashes($r['name']); ?> permanently? This will remove all their saved bookmarks and inquiry history.');">
+                                        <i class="fa-solid fa-trash"></i> Delete
+                                    </a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
+
     </div>
 
 </div>
+
+<script>
+function switchUserTab(tab) {
+    const ownersSec = document.getElementById('ownersSection');
+    const rentersSec = document.getElementById('rentersSection');
+    const tabOwners = document.getElementById('tabBtnOwners');
+    const tabRenters = document.getElementById('tabBtnRenters');
+
+    if (tab === 'owners') {
+        ownersSec.style.display = 'block';
+        rentersSec.style.display = 'none';
+        tabOwners.className = 'btn btn-primary';
+        tabRenters.className = 'btn btn-secondary';
+    } else {
+        ownersSec.style.display = 'none';
+        rentersSec.style.display = 'block';
+        tabOwners.className = 'btn btn-secondary';
+        tabRenters.className = 'btn btn-primary';
+        tabRenters.style.background = '#059669';
+        tabRenters.style.borderColor = '#047857';
+    }
+}
+</script>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>
