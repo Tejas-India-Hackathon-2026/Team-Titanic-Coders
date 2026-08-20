@@ -12,7 +12,7 @@ $stay_duration = isset($_GET['stay_duration']) ? trim($_GET['stay_duration']) : 
 $max_price     = isset($_GET['max_price']) && is_numeric($_GET['max_price']) ? (float)$_GET['max_price'] : 100000;
 
 // Construct SQL Query
-$sql = "SELECT p.*, o.name as owner_name, o.phone as owner_phone 
+$sql = "SELECT p.*, o.name as owner_name, o.phone as owner_phone, o.is_verified as owner_is_verified 
         FROM properties p 
         JOIN owners o ON p.owner_id = o.id 
         WHERE p.status = 'available'";
@@ -91,6 +91,7 @@ foreach ($properties as $p) {
         'furnishing'        => $p['furnishing'],
         'tenant_preference' => $p['tenant_preference'] ?? 'Bachelors Allowed',
         'stay_duration'     => $p['stay_duration'] ?? '1 Month (Short Stay Allowed)',
+        'is_verified'       => (int)($p['owner_is_verified'] ?? 0),
         'is_premium'        => (int)$p['is_premium'],
         'image'             => get_property_image($p['image']),
         'lat'               => $finalLat,
@@ -237,9 +238,11 @@ foreach ($properties as $p) {
                                         <?php if (stripos($item['stay_duration'] ?? '', '1 Month') !== false): ?>
                                             <span class="pref-tag" style="background: #fffbeb; color: #b45309; border: 1px solid #fde68a;">⏱️ 1-Mo Stay</span>
                                         <?php endif; ?>
-                                        <span class="pref-tag" style="background: #e0f2fe; color: #0284c7; border: 1px solid #bae6fd;" title="Verified Owner">
-                                            <?php echo render_verified_badge(false, 12); ?> Verified
-                                        </span>
+                                        <?php if (!empty($item['is_verified'])): ?>
+                                            <span class="pref-tag" style="background: #e0f2fe; color: #0284c7; border: 1px solid #bae6fd;" title="Verified Owner">
+                                                <?php echo render_verified_badge(false, 12); ?> Verified
+                                            </span>
+                                        <?php endif; ?>
                                     </div>
                                     <a href="property-details.php?id=<?php echo $item['id']; ?>" target="_blank" class="card-action-btn" onclick="event.stopPropagation();">
                                         View &rarr;
@@ -923,7 +926,7 @@ function renderPinsOnMap(pins) {
                 <div style="display: flex; gap: 4px; margin-bottom: 4px; flex-wrap: wrap;">
                     <span style="font-size: 10px; font-weight: 700; background: #e0e7ff; color: #3730a3; padding: 2px 6px; border-radius: 4px;">${p.property_type}</span>
                     <span style="font-size: 10px; font-weight: 700; background: #dcfce7; color: #166534; padding: 2px 6px; border-radius: 4px;">🟢 Vacant</span>
-                    <span style="font-size: 10px; font-weight: 700; background: #e0f2fe; color: #0284c7; padding: 2px 6px; border-radius: 4px;">✓ Verified Owner</span>
+                    ${p.is_verified ? '<span style="font-size: 10px; font-weight: 700; background: #e0f2fe; color: #0284c7; padding: 2px 6px; border-radius: 4px;">✓ Verified</span>' : ''}
                 </div>
                 <h4 style="font-size: 13px; font-weight: 800; line-height: 1.3; margin: 0 0 3px 0; color: #0f172a;">
                     <a href="property-details.php?id=${p.id}" target="_blank" style="color: #0f172a; text-decoration: none;">${p.title}</a>

@@ -13,7 +13,7 @@ if ($property_id <= 0) {
 
 // Fetch property & owner details
 $stmt = $pdo->prepare("
-    SELECT p.*, o.name as owner_name, o.email as owner_email, o.phone as owner_phone, o.created_at as owner_joined, o.city as owner_city
+    SELECT p.*, o.name as owner_name, o.email as owner_email, o.phone as owner_phone, o.created_at as owner_joined, o.city as owner_city, o.is_verified as owner_is_verified
     FROM properties p 
     JOIN owners o ON p.owner_id = o.id 
     WHERE p.id = :id
@@ -307,13 +307,20 @@ require_once __DIR__ . '/includes/header.php';
                             <?php echo strtoupper(substr($property['owner_name'], 0, 1)); ?>
                         </div>
                         <div>
+                            <?php $isLandlordVerified = !empty($property['owner_is_verified']) && (int)$property['owner_is_verified'] === 1; ?>
                             <h4 style="font-size: 1.12rem; font-weight: 800; margin-bottom: 0.2rem; display: flex; align-items: center; gap: 4px;">
                                 <?php echo htmlspecialchars($property['owner_name']); ?>
-                                <?php echo render_verified_badge(false, 19); ?>
+                                <?php if ($isLandlordVerified) echo render_verified_badge(false, 19); ?>
                             </h4>
-                            <p style="font-size: 0.78rem; color: #0284c7; font-weight: 700; display: flex; align-items: center; gap: 4px; margin: 0;">
-                                <i class="fa-solid fa-shield-check text-primary"></i> Govt ID & Property Verified Owner
-                            </p>
+                            <?php if ($isLandlordVerified): ?>
+                                <p style="font-size: 0.78rem; color: #0284c7; font-weight: 700; display: flex; align-items: center; gap: 4px; margin: 0;">
+                                    <i class="fa-solid fa-shield-check text-primary"></i> Govt ID & Property Verified Owner
+                                </p>
+                            <?php else: ?>
+                                <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0;">
+                                    <i class="fa-solid fa-user text-muted"></i> Property Landlord
+                                </p>
+                            <?php endif; ?>
                         </div>
                     </div>
 

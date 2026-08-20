@@ -143,14 +143,35 @@ require_once __DIR__ . '/includes/header.php';
                     <?php echo strtoupper(substr($user['name'], 0, 1)); ?>
                 </div>
                 <div>
-                    <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.25rem;">
-                        <h2 style="color: #fff; font-size: 1.6rem; font-weight: 800; margin: 0;"><?php echo htmlspecialchars($user['name']); ?></h2>
+                    <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.25rem; flex-wrap: wrap;">
+                        <h2 style="color: #fff; font-size: 1.6rem; font-weight: 800; margin: 0; display: flex; align-items: center; gap: 4px;">
+                            <?php echo htmlspecialchars($user['name']); ?>
+                            <?php 
+                            if ($role === 'owner') {
+                                $oCheck = $pdo->prepare("SELECT is_verified FROM owners WHERE id = ?");
+                                $oCheck->execute([$userId]);
+                                $isOwnerVer = (int)$oCheck->fetchColumn() === 1;
+                                if ($isOwnerVer) {
+                                    echo render_verified_badge(false, 20);
+                                }
+                            }
+                            ?>
+                        </h2>
                         <?php if ($role === 'owner'): ?>
-                            <span class="badge badge-warning"><i class="fa-solid fa-house-chimney-user"></i> Property Owner (`owners` Table)</span>
+                            <span class="badge badge-warning"><i class="fa-solid fa-house-chimney-user"></i> Property Owner</span>
+                            <?php if (!empty($isOwnerVer)): ?>
+                                <a href="verify-receipt.php" class="badge" style="background: #e0f2fe; color: #0284c7; text-decoration: none;">
+                                    <i class="fa-solid fa-certificate"></i> Verified Landlord
+                                </a>
+                            <?php else: ?>
+                                <a href="verify-owner.php" class="badge" style="background: #0095f6; color: #fff; text-decoration: none;">
+                                    <i class="fa-solid fa-circle-check"></i> Get Blue Tick (₹199)
+                                </a>
+                            <?php endif; ?>
                         <?php elseif ($role === 'admin'): ?>
-                            <span class="badge badge-danger"><i class="fa-solid fa-shield-halved"></i> Administrator (`admins` Table)</span>
+                            <span class="badge badge-danger"><i class="fa-solid fa-shield-halved"></i> Administrator</span>
                         <?php else: ?>
-                            <span class="badge badge-success"><i class="fa-solid fa-user"></i> Tenant / Renter (`renters` Table)</span>
+                            <span class="badge badge-success"><i class="fa-solid fa-user"></i> Tenant / Renter</span>
                         <?php endif; ?>
                     </div>
                     <p style="color: #c7d2fe; font-size: 0.9rem; margin: 0;">

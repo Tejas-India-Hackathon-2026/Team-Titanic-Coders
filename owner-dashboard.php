@@ -40,6 +40,12 @@ foreach ($properties as $p) {
 }
 $totalInquiries = count($inquiries);
 
+// Fetch fresh owner verification status
+$ownerStmt = $pdo->prepare("SELECT * FROM owners WHERE id = ?");
+$ownerStmt->execute([$user['id']]);
+$ownerData = $ownerStmt->fetch();
+$isOwnerVerified = !empty($ownerData['is_verified']) && (int)$ownerData['is_verified'] === 1;
+
 $page_title = "Owner Dashboard - RentNear";
 require_once __DIR__ . '/includes/header.php';
 ?>
@@ -47,16 +53,30 @@ require_once __DIR__ . '/includes/header.php';
 <div class="container" style="padding-top: 2rem; padding-bottom: 4rem;">
     
     <!-- Header Banner -->
-    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
         <div>
-            <span class="badge badge-role mb-1">Owner Portal</span>
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+                <span class="badge badge-role">Owner Portal</span>
+                <?php if ($isOwnerVerified): ?>
+                    <a href="verify-receipt.php" style="text-decoration: none;">
+                        <span class="badge" style="background: #e0f2fe; color: #0284c7; border: 1px solid #bae6fd; font-size: 0.74rem; font-weight: 800;">
+                            <?php echo render_verified_badge(false, 14); ?> Verified Landlord &bull; View Certificate
+                        </span>
+                    </a>
+                <?php endif; ?>
+            </div>
             <h1 style="font-size: 2rem; font-weight: 800; display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
                 Welcome back, <?php echo htmlspecialchars($user['name']); ?> 
-                <?php echo render_verified_badge(true, 22); ?>
+                <?php if ($isOwnerVerified) echo render_verified_badge(false, 22); ?>
             </h1>
-            <p style="color: var(--text-muted);">Manage your rental properties, tenant inquiries, and premium featured promotions.</p>
+            <p style="color: var(--text-muted); margin: 0;">Manage your rental properties, tenant inquiries, and premium featured promotions.</p>
         </div>
         <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+            <?php if (!$isOwnerVerified): ?>
+                <a href="verify-owner.php" class="btn btn-primary btn-lg" style="background: linear-gradient(135deg, #0095f6, #0284c7); border: none; box-shadow: 0 4px 12px rgba(0, 149, 246, 0.35);">
+                    <?php echo render_verified_badge(false, 16); ?> Get Verified Blue Tick (₹199)
+                </a>
+            <?php endif; ?>
             <a href="profile.php" class="btn btn-secondary btn-lg">
                 <i class="fa-solid fa-user-pen"></i> Edit Profile
             </a>
@@ -65,6 +85,28 @@ require_once __DIR__ . '/includes/header.php';
             </a>
         </div>
     </div>
+
+    <!-- Verified Owner Promotion Banner (if not verified) -->
+    <?php if (!$isOwnerVerified): ?>
+        <div style="background: linear-gradient(135deg, #eff6ff, #dbeafe); border: 1.5px solid #93c5fd; border-radius: var(--radius-xl); padding: 1.25rem 1.5rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; box-shadow: 0 4px 15px rgba(0, 149, 246, 0.1);">
+            <div style="display: flex; gap: 1rem; align-items: center;">
+                <div style="width: 50px; height: 50px; border-radius: 50%; background: #ffffff; color: #0095f6; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; box-shadow: 0 4px 12px rgba(0, 149, 246, 0.25); flex-shrink: 0;">
+                    <?php echo render_verified_badge(false, 28); ?>
+                </div>
+                <div>
+                    <h4 style="font-size: 1.12rem; font-weight: 800; color: #0f172a; margin: 0 0 0.2rem 0;">
+                        Get the Verified Owner Blue Tick Badge (₹199 / Year)
+                    </h4>
+                    <p style="font-size: 0.86rem; color: #334155; margin: 0;">
+                        Display the iconic blue tick next to your name across all listings, eliminate fraud concerns, and get up to 5x more tenant calls!
+                    </p>
+                </div>
+            </div>
+            <a href="verify-owner.php" class="btn btn-primary" style="background: linear-gradient(135deg, #0095f6, #0284c7); border: none; font-weight: 800; padding: 0.65rem 1.4rem; box-shadow: 0 4px 14px rgba(0, 149, 246, 0.35);">
+                <i class="fa-solid fa-lock me-1"></i> Get Verified Now (₹199)
+            </a>
+        </div>
+    <?php endif; ?>
 
     <!-- Metric Cards -->
     <div class="dashboard-grid-stats">

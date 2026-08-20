@@ -17,7 +17,7 @@ $tenant_preference = isset($_GET['tenant_preference']) ? trim($_GET['tenant_pref
 $stay_duration     = isset($_GET['stay_duration']) ? trim($_GET['stay_duration']) : '';
 
 // Construct Dynamic SQL Query
-$sql = "SELECT p.*, o.name as owner_name, o.phone as owner_phone 
+$sql = "SELECT p.*, o.name as owner_name, o.phone as owner_phone, o.is_verified as owner_is_verified 
         FROM properties p 
         JOIN owners o ON p.owner_id = o.id 
         WHERE p.status = 'available'";
@@ -511,7 +511,8 @@ foreach ($properties as $p) {
                                         <span><?php echo htmlspecialchars($prop['location'] . ', ' . $prop['city']); ?></span>
                                     </div>
                                     <span style="font-size: 0.74rem; color: #475569; display: inline-flex; align-items: center; gap: 2px;">
-                                        <?php echo htmlspecialchars($prop['owner_name']); ?> <?php echo render_verified_badge(false, 13); ?>
+                                        <?php echo htmlspecialchars($prop['owner_name']); ?> 
+                                        <?php if (!empty($prop['owner_is_verified']) && (int)$prop['owner_is_verified'] === 1) echo render_verified_badge(false, 13); ?>
                                     </span>
                                 </div>
                                 <h3 class="property-title">

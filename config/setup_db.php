@@ -276,7 +276,13 @@ function initialize_database($pdo) {
 
     // Auto-migration for Owner Instagram Blue Tick Verification
     try {
-        $pdo->exec("ALTER TABLE owners ADD COLUMN is_verified TINYINT(1) DEFAULT 1");
+        $pdo->exec("ALTER TABLE owners ADD COLUMN is_verified TINYINT(1) DEFAULT 0");
+    } catch (Exception $e) {}
+    try {
+        $pdo->exec("ALTER TABLE owners ADD COLUMN verified_at DATETIME DEFAULT NULL");
+    } catch (Exception $e) {}
+    try {
+        $pdo->exec("ALTER TABLE owners ADD COLUMN verification_txn_id VARCHAR(100) DEFAULT NULL");
     } catch (Exception $e) {}
 
     // Check if initial seeding is needed
