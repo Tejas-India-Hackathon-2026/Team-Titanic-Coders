@@ -1,34 +1,28 @@
 <?php
-// logout.php - Session Termination
+// logout.php - Guaranteed Complete Session Destruction
+require_once __DIR__ . '/config/db.php';
 require_once __DIR__ . '/includes/functions.php';
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Completely wipe all session data
+// 1. Clear and unset all session variables
 $_SESSION = [];
-unset($_SESSION['user_id']);
-unset($_SESSION['user_name']);
-unset($_SESSION['user_email']);
-unset($_SESSION['user_role']);
-unset($_SESSION['user_phone']);
-unset($_SESSION['user_is_verified']);
+session_unset();
 
+// 2. Invalidate the session cookie in browser
 if (ini_get("session.use_cookies")) {
     $params = session_get_cookie_params();
-    setcookie(session_name(), '', time() - 42000,
+    setcookie(session_name(), '', time() - 86400,
         $params["path"], $params["domain"],
         $params["secure"], $params["httponly"]
     );
 }
 
+// 3. Destroy session storage on server
 session_destroy();
 
-// Start fresh session just for the flash alert
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-set_flash_message('success', 'You have been successfully signed out.');
-header("Location: login.php");
+// 4. Redirect to login with explicit logged_out parameter
+header("Location: login.php?logged_out=1");
 exit;
