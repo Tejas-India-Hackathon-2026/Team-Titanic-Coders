@@ -60,8 +60,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_inquiry'])) {
     $moveInDate = sanitize($_POST['move_in_date'] ?? null);
     $renterId = (is_logged_in() && user_role() === 'renter') ? current_user()['id'] : null;
 
+    $senderPhone = preg_replace('/[^0-9]/', '', $senderPhone);
+
     if (empty($senderName) || empty($senderPhone) || empty($senderMessage)) {
         $inquiryError = "Please enter your Name, Phone Number, and Message.";
+    } elseif (strlen($senderPhone) !== 10 || !preg_match('/^[6-9][0-9]{9}$/', $senderPhone)) {
+        $inquiryError = "Please enter a valid 10-digit mobile number starting with 6, 7, 8, or 9.";
+    } elseif (!empty($senderEmail) && (!filter_var($senderEmail, FILTER_VALIDATE_EMAIL) || !preg_match('/^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/', $senderEmail))) {
+        $inquiryError = "Please enter a valid email address (e.g. abc@gah.com).";
     } else {
         $inqStmt = $pdo->prepare("
             INSERT INTO inquiries (property_id, renter_id, name, email, phone, message, move_in_date, status)
@@ -460,13 +466,16 @@ require_once __DIR__ . '/includes/header.php';
                                 </div>
 
                                 <div class="form-group">
-                                    <label style="font-size: 0.8rem;">Your Phone Number <span class="text-danger">*</span></label>
-                                    <input type="tel" name="phone" class="form-control" placeholder="+91 98765 43210" required value="<?php echo is_logged_in() ? htmlspecialchars(current_user()['phone']) : ''; ?>">
+                                    <label style="font-size: 0.8rem;">Your Mobile Number (10 Digits) <span class="text-danger">*</span></label>
+                                    <div style="display: flex; align-items: center; gap: 0.4rem;">
+                                        <span style="background: var(--bg-alt); border: 1px solid var(--border-color); padding: 0.5rem 0.65rem; border-radius: var(--radius-md); font-weight: 700; font-size: 0.85rem; color: var(--dark);">+91</span>
+                                        <input type="tel" name="phone" class="form-control" placeholder="9876543210" maxlength="10" minlength="10" pattern="[6-9][0-9]{9}" title="Enter exact 10-digit Indian mobile number" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);" required value="<?php echo is_logged_in() ? htmlspecialchars(current_user()['phone']) : ''; ?>">
+                                    </div>
                                 </div>
 
                                 <div class="form-group">
                                     <label style="font-size: 0.8rem;">Email Address (Optional)</label>
-                                    <input type="email" name="email" class="form-control" placeholder="you@example.com" value="<?php echo is_logged_in() ? htmlspecialchars(current_user()['email']) : ''; ?>">
+                                    <input type="email" name="email" class="form-control" placeholder="abc@gah.com" pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}" title="Please enter a valid email address (e.g. abc@gah.com)" value="<?php echo is_logged_in() ? htmlspecialchars(current_user()['email']) : ''; ?>">
                                 </div>
 
                                 <div class="form-group">

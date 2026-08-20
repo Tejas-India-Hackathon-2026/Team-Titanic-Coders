@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_contact'])) {
 
                     <div class="form-group">
                         <label>Email Address <span class="text-danger">*</span></label>
-                        <input type="email" name="email" class="form-control" placeholder="rahul@example.com" required>
+                        <input type="email" name="email" class="form-control" placeholder="rahul@example.com" pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}" title="Please enter a valid email address (e.g. abc@gah.com)" required>
                     </div>
 
                     <div class="form-group">

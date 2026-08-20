@@ -114,7 +114,7 @@ require_once __DIR__ . '/includes/header.php';
         <form action="login.php<?php echo !empty($redirect) ? '?redirect=' . urlencode($redirect) : ''; ?>" method="POST">
             <div class="form-group">
                 <label for="loginEmail"><i class="fa-solid fa-envelope me-1"></i> Email Address <span class="text-danger">*</span></label>
-                <input type="email" name="email" id="loginEmail" class="form-control" placeholder="name@example.com" required autofocus>
+                <input type="email" name="email" id="loginEmail" class="form-control" placeholder="name@example.com" pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}" title="Please enter a valid email address (e.g. user@domain.com)" required autofocus>
             </div>
 
             <div class="form-group">

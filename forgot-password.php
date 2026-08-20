@@ -166,7 +166,7 @@ require_once __DIR__ . '/includes/header.php';
 
                 <div class="form-group">
                     <label for="resetEmail"><i class="fa-solid fa-envelope me-1"></i> Registered Email Address <span class="text-danger">*</span></label>
-                    <input type="email" name="email" id="resetEmail" class="form-control" placeholder="name@example.com" value="<?php echo htmlspecialchars($email); ?>" required autofocus>
+                    <input type="email" name="email" id="resetEmail" class="form-control" placeholder="name@example.com" value="<?php echo htmlspecialchars($email); ?>" pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}" title="Please enter a valid email address (e.g. abc@gah.com)" required autofocus>
                 </div>
 
                 <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;">

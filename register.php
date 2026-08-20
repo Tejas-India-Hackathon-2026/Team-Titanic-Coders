@@ -20,9 +20,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'] ?? '';
     $confirmPassword = $_POST['confirm_password'] ?? '';
 
+    // Strip non-digits from phone number
+    $phone = preg_replace('/[^0-9]/', '', $phone);
+
     // Validate
     if (empty($name) || empty($email) || empty($phone) || empty($password)) {
         $error = 'Please fill out all required fields.';
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL) || !preg_match('/^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/', $email)) {
+        $error = 'Please enter a valid email address (e.g. rahul@example.com).';
+    } elseif (strlen($phone) !== 10 || !preg_match('/^[6-9][0-9]{9}$/', $phone)) {
+        $error = 'Please enter a valid 10-digit mobile number starting with 6, 7, 8, or 9.';
     } elseif ($password !== $confirmPassword) {
         $error = 'Passwords do not match. Please re-enter.';
     } elseif (strlen($password) < 6) {
@@ -121,12 +128,17 @@ require_once __DIR__ . '/includes/header.php';
 
             <div class="form-group">
                 <label for="regEmail">Email Address <span class="text-danger">*</span></label>
-                <input type="email" name="email" id="regEmail" class="form-control" placeholder="e.g. rahul@example.com" required value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>">
+                <input type="email" name="email" id="regEmail" class="form-control" placeholder="e.g. rahul@example.com" pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}" title="Please enter a valid email address (e.g. name@example.com)" required value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>">
+                <small style="font-size: 0.76rem; color: var(--text-muted);">Standard email format required (e.g. abc@gah.com)</small>
             </div>
 
             <div class="form-group">
-                <label for="regPhone">Phone Number <span class="text-danger">*</span></label>
-                <input type="tel" name="phone" id="regPhone" class="form-control" placeholder="+91 98765 43210" required value="<?php echo isset($_POST['phone']) ? htmlspecialchars($_POST['phone']) : ''; ?>">
+                <label for="regPhone">Mobile Number (10 Digits) <span class="text-danger">*</span></label>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span style="background: var(--bg-alt); border: 1.5px solid var(--border-color); padding: 0.65rem 0.85rem; border-radius: var(--radius-md); font-weight: 700; font-size: 0.92rem; color: var(--dark);">+91</span>
+                    <input type="tel" name="phone" id="regPhone" class="form-control" placeholder="9876543210" maxlength="10" minlength="10" pattern="[6-9][0-9]{9}" title="Please enter exact 10-digit Indian mobile number (e.g. 9876543210)" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);" required value="<?php echo isset($_POST['phone']) ? htmlspecialchars($_POST['phone']) : ''; ?>">
+                </div>
+                <small style="font-size: 0.76rem; color: var(--text-muted);">Exactly 10 digits starting with 6, 7, 8, or 9.</small>
             </div>
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">

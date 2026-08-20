@@ -36,8 +36,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile_info']
     $extra1 = sanitize($_POST['extra1'] ?? ''); // Owner: address, Renter: occupation
     $extra2 = sanitize($_POST['extra2'] ?? ''); // Owner: city, Renter: preferred_city
 
+    $phone = preg_replace('/[^0-9]/', '', $phone);
+
     if (empty($name) || empty($email) || empty($phone)) {
         $infoError = 'Please provide your Full Name, Email, and Phone Number.';
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL) || !preg_match('/^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/', $email)) {
+        $infoError = 'Please enter a valid email address (e.g. abc@gah.com).';
+    } elseif (strlen($phone) !== 10 || !preg_match('/^[6-9][0-9]{9}$/', $phone)) {
+        $infoError = 'Please enter a valid 10-digit mobile number starting with 6, 7, 8, or 9.';
     } else {
         // Check if email taken by someone else in the same table
         $checkStmt = $pdo->prepare("SELECT id FROM $table WHERE LOWER(email) = LOWER(:email) AND id != :id");
@@ -283,12 +289,15 @@ require_once __DIR__ . '/includes/header.php';
 
                     <div class="form-group">
                         <label for="profEmail">Email Address <span class="text-danger">*</span></label>
-                        <input type="email" name="email" id="profEmail" class="form-control" value="<?php echo htmlspecialchars($user['email']); ?>" required>
+                        <input type="email" name="email" id="profEmail" class="form-control" value="<?php echo htmlspecialchars($user['email']); ?>" pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}" title="Please enter a valid email address (e.g. abc@gah.com)" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="profPhone">Phone Number <span class="text-danger">*</span></label>
-                        <input type="tel" name="phone" id="profPhone" class="form-control" value="<?php echo htmlspecialchars($user['phone']); ?>" required>
+                        <label for="profPhone">Mobile Number (10 Digits) <span class="text-danger">*</span></label>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <span style="background: var(--bg-alt); border: 1.5px solid var(--border-color); padding: 0.65rem 0.85rem; border-radius: var(--radius-md); font-weight: 700; font-size: 0.92rem; color: var(--dark);">+91</span>
+                            <input type="tel" name="phone" id="profPhone" class="form-control" value="<?php echo htmlspecialchars($user['phone']); ?>" maxlength="10" minlength="10" pattern="[6-9][0-9]{9}" title="Enter exact 10-digit Indian mobile number" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);" required>
+                        </div>
                     </div>
 
                     <?php if ($role === 'owner'): ?>
