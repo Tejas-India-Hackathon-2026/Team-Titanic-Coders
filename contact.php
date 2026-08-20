@@ -68,22 +68,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_contact'])) {
                     <input type="hidden" name="send_contact" value="1">
                     
                     <div class="form-group">
-                        <label>Your Name</label>
+                        <label>Your Name <span class="text-danger">*</span></label>
                         <input type="text" name="name" class="form-control" placeholder="Rahul Sharma" required>
                     </div>
 
                     <div class="form-group">
-                        <label>Email Address</label>
+                        <label>Email Address <span class="text-danger">*</span></label>
                         <input type="email" name="email" class="form-control" placeholder="rahul@example.com" required>
                     </div>
 
                     <div class="form-group">
-                        <label>Subject</label>
+                        <label>Subject <span class="text-danger">*</span></label>
                         <input type="text" name="subject" class="form-control" placeholder="Listing Query / Feedback" required>
                     </div>
 
                     <div class="form-group">
-                        <label>Message</label>
+                        <label>Message <span class="text-danger">*</span></label>
                         <textarea name="message" rows="4" class="form-control" placeholder="Write your message here..." required></textarea>
                     </div>
 

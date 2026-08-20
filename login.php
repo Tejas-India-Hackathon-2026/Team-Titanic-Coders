@@ -106,13 +106,13 @@ require_once __DIR__ . '/includes/header.php';
 
         <form action="login.php<?php echo !empty($redirect) ? '?redirect=' . urlencode($redirect) : ''; ?>" method="POST">
             <div class="form-group">
-                <label for="loginEmail"><i class="fa-solid fa-envelope me-1"></i> Email Address</label>
+                <label for="loginEmail"><i class="fa-solid fa-envelope me-1"></i> Email Address <span class="text-danger">*</span></label>
                 <input type="email" name="email" id="loginEmail" class="form-control" placeholder="name@example.com" required autofocus>
             </div>
 
             <div class="form-group">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
-                    <label for="loginPassword" style="margin-bottom: 0;"><i class="fa-solid fa-lock me-1"></i> Password</label>
+                    <label for="loginPassword" style="margin-bottom: 0;"><i class="fa-solid fa-lock me-1"></i> Password <span class="text-danger">*</span></label>
                     <a href="forgot-password.php" style="font-size: 0.8rem; font-weight: 600; color: var(--primary);">Forgot Password?</a>
                 </div>
                 <input type="password" name="password" id="loginPassword" class="form-control" placeholder="••••••••" required>

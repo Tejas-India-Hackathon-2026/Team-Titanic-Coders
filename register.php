@@ -115,27 +115,27 @@ require_once __DIR__ . '/includes/header.php';
             </div>
 
             <div class="form-group">
-                <label for="regName">Full Name</label>
+                <label for="regName">Full Name <span class="text-danger">*</span></label>
                 <input type="text" name="name" id="regName" class="form-control" placeholder="e.g. Rahul Sharma" required value="<?php echo isset($_POST['name']) ? htmlspecialchars($_POST['name']) : ''; ?>">
             </div>
 
             <div class="form-group">
-                <label for="regEmail">Email Address</label>
+                <label for="regEmail">Email Address <span class="text-danger">*</span></label>
                 <input type="email" name="email" id="regEmail" class="form-control" placeholder="e.g. rahul@example.com" required value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>">
             </div>
 
             <div class="form-group">
-                <label for="regPhone">Phone Number</label>
+                <label for="regPhone">Phone Number <span class="text-danger">*</span></label>
                 <input type="tel" name="phone" id="regPhone" class="form-control" placeholder="+91 98765 43210" required value="<?php echo isset($_POST['phone']) ? htmlspecialchars($_POST['phone']) : ''; ?>">
             </div>
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
                 <div class="form-group">
-                    <label for="regPass">Password</label>
+                    <label for="regPass">Password <span class="text-danger">*</span></label>
                     <input type="password" name="password" id="regPass" class="form-control" placeholder="Min 6 chars" required>
                 </div>
                 <div class="form-group">
-                    <label for="regConfirmPass">Confirm</label>
+                    <label for="regConfirmPass">Confirm Password <span class="text-danger">*</span></label>
                     <input type="password" name="confirm_password" id="regConfirmPass" class="form-control" placeholder="Re-type" required>
                 </div>
             </div>

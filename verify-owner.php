@@ -153,7 +153,7 @@ require_once __DIR__ . '/includes/header.php';
                 <!-- KYC Document Check -->
                 <div style="margin-bottom: 1.25rem;">
                     <label style="font-size: 0.82rem; font-weight: 700; color: var(--dark); display: block; margin-bottom: 0.35rem;">
-                        Government ID Type (Self-Declaration)
+                        Government ID Type (Self-Declaration) <span class="text-danger">*</span>
                     </label>
                     <select id="verifyGovtId" class="form-select" style="font-size: 0.88rem;">
                         <option value="Aadhaar Card (UIDAI)">🆔 Aadhaar Card (UIDAI Verified)</option>
@@ -166,7 +166,7 @@ require_once __DIR__ . '/includes/header.php';
                 <!-- Payment Method Tabs -->
                 <div style="margin-bottom: 1.25rem;">
                     <label style="font-size: 0.82rem; font-weight: 700; color: var(--dark); display: block; margin-bottom: 0.5rem;">
-                        Select Payment Method
+                        Select Payment Method <span class="text-danger">*</span>
                     </label>
                     
                     <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.5rem; margin-bottom: 1rem;">

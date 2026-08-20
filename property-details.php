@@ -370,12 +370,12 @@ require_once __DIR__ . '/includes/header.php';
                             <input type="hidden" name="send_inquiry" value="1">
                             
                             <div class="form-group">
-                                <label style="font-size: 0.8rem;">Your Full Name</label>
+                                <label style="font-size: 0.8rem;">Your Full Name <span class="text-danger">*</span></label>
                                 <input type="text" name="name" class="form-control" placeholder="Amit Verma" required value="<?php echo is_logged_in() ? htmlspecialchars(current_user()['name']) : ''; ?>">
                             </div>
 
                             <div class="form-group">
-                                <label style="font-size: 0.8rem;">Your Phone Number</label>
+                                <label style="font-size: 0.8rem;">Your Phone Number <span class="text-danger">*</span></label>
                                 <input type="tel" name="phone" class="form-control" placeholder="+91 98765 43210" required value="<?php echo is_logged_in() ? htmlspecialchars(current_user()['phone']) : ''; ?>">
                             </div>
 
@@ -385,12 +385,12 @@ require_once __DIR__ . '/includes/header.php';
                             </div>
 
                             <div class="form-group">
-                                <label style="font-size: 0.8rem;">Expected Move-in Date</label>
+                                <label style="font-size: 0.8rem;">Expected Move-in Date (Optional)</label>
                                 <input type="date" name="move_in_date" class="form-control" min="<?php echo date('Y-m-d'); ?>">
                             </div>
 
                             <div class="form-group">
-                                <label style="font-size: 0.8rem;">Message to Owner</label>
+                                <label style="font-size: 0.8rem;">Message to Owner <span class="text-danger">*</span></label>
                                 <textarea name="message" rows="3" class="form-control" placeholder="I would like to visit this property..." required>Hi <?php echo htmlspecialchars($property['owner_name']); ?>, I am interested in renting this property. Please let me know when we can arrange a visit.</textarea>
                             </div>
 

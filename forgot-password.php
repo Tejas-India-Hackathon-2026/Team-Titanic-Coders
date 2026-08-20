@@ -165,7 +165,7 @@ require_once __DIR__ . '/includes/header.php';
                 <input type="hidden" name="request_otp" value="1">
 
                 <div class="form-group">
-                    <label for="resetEmail"><i class="fa-solid fa-envelope me-1"></i> Registered Email Address</label>
+                    <label for="resetEmail"><i class="fa-solid fa-envelope me-1"></i> Registered Email Address <span class="text-danger">*</span></label>
                     <input type="email" name="email" id="resetEmail" class="form-control" placeholder="name@example.com" value="<?php echo htmlspecialchars($email); ?>" required autofocus>
                 </div>
 
@@ -179,13 +179,13 @@ require_once __DIR__ . '/includes/header.php';
                 <h6><i class="fa-solid fa-wand-magic-sparkles"></i> 1-Click Demo Accounts to Test:</h6>
                 <div class="demo-btn-group">
                     <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('resetEmail').value='owner@rentnear.com'">
-                        Owner Email
+                        <i class="fa-solid fa-house-user"></i> Owner
                     </button>
                     <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('resetEmail').value='renter@rentnear.com'">
-                        Renter Email
+                        <i class="fa-solid fa-user"></i> Renter
                     </button>
                     <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('resetEmail').value='admin@rentnear.com'">
-                        Admin Email
+                        <i class="fa-solid fa-shield-halved"></i> Admin
                     </button>
                 </div>
             </div>
@@ -197,17 +197,17 @@ require_once __DIR__ . '/includes/header.php';
                 <input type="hidden" name="email" value="<?php echo htmlspecialchars($email); ?>">
 
                 <div class="form-group">
-                    <label for="otpInput"><i class="fa-solid fa-shield-halved me-1"></i> 6-Digit Verification OTP</label>
+                    <label for="otpInput"><i class="fa-solid fa-shield-halved me-1"></i> 6-Digit Verification OTP <span class="text-danger">*</span></label>
                     <input type="text" name="otp" id="otpInput" class="form-control" placeholder="Enter 6-digit code" maxlength="6" value="<?php echo isset($_SESSION['reset_otp']) ? $_SESSION['reset_otp'] : ''; ?>" required style="letter-spacing: 2px; font-weight: 700; font-size: 1.1rem; text-align: center;">
                 </div>
 
                 <div class="form-group">
-                    <label for="newPass"><i class="fa-solid fa-lock me-1"></i> New Password</label>
+                    <label for="newPass"><i class="fa-solid fa-lock me-1"></i> New Password <span class="text-danger">*</span></label>
                     <input type="password" name="new_password" id="newPass" class="form-control" placeholder="Min 6 characters" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="confirmPass"><i class="fa-solid fa-check-double me-1"></i> Confirm New Password</label>
+                    <label for="confirmPass"><i class="fa-solid fa-check-double me-1"></i> Confirm New Password <span class="text-danger">*</span></label>
                     <input type="password" name="confirm_password" id="confirmPass" class="form-control" placeholder="Re-type new password" required>
                 </div>
 

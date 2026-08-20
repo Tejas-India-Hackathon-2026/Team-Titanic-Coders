@@ -178,7 +178,7 @@ require_once __DIR__ . '/includes/header.php';
 
                     <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
                         <div class="form-group">
-                            <label>Property Type</label>
+                            <label>Property Type <span class="text-danger">*</span></label>
                             <select name="property_type" class="form-select" required>
                                 <?php foreach (['Single Room', '1 Room Set', 'Shared Room', 'PG Room', '1 BHK', '2 BHK', '3 BHK', 'Villa', 'Studio'] as $t): ?>
                                     <option value="<?php echo $t; ?>" <?php echo $property['property_type'] === $t ? 'selected' : ''; ?>><?php echo $t; ?></option>
@@ -187,7 +187,7 @@ require_once __DIR__ . '/includes/header.php';
                         </div>
 
                         <div class="form-group">
-                            <label>Furnishing Status</label>
+                            <label>Furnishing Status <span class="text-danger">*</span></label>
                             <select name="furnishing" class="form-select" required>
                                 <?php foreach (['Furnished', 'Semi-Furnished', 'Unfurnished'] as $f): ?>
                                     <option value="<?php echo $f; ?>" <?php echo $property['furnishing'] === $f ? 'selected' : ''; ?>><?php echo $f; ?></option>
@@ -196,7 +196,7 @@ require_once __DIR__ . '/includes/header.php';
                         </div>
 
                         <div class="form-group">
-                            <label>Listing Status</label>
+                            <label>Listing Status <span class="text-danger">*</span></label>
                             <select name="status" class="form-select" required>
                                 <option value="available" <?php echo $property['status'] === 'available' ? 'selected' : ''; ?>>Available</option>
                                 <option value="rented" <?php echo $property['status'] === 'rented' ? 'selected' : ''; ?>>Rented Out</option>
