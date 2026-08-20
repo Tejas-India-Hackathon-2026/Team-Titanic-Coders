@@ -37,34 +37,34 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <!-- Brand Logo -->
             <?php if (is_logged_in() && $user['role'] === 'admin'): ?>
                 <!-- Admin Role Brand Logo -->
-                <a href="admin-dashboard.php" class="brand-logo">
-                    <div class="logo-icon" style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);">
+                <a href="admin-dashboard.php" class="brand-logo" style="gap: 0.45rem;">
+                    <div class="logo-icon" style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); width: 34px; height: 34px; font-size: 0.95rem;">
                         <i class="fa-solid fa-shield-halved"></i>
                     </div>
                     <span>Rent<span class="accent-text" style="color: #dc2626;">Near</span></span>
-                    <span style="font-size: 0.72rem; background: #fee2e2; color: #991b1b; padding: 2px 7px; border-radius: 6px; font-weight: 800; border: 1px solid #fca5a5; margin-left: 4px;">ADMIN PANEL</span>
+                    <span style="font-size: 0.68rem; background: #fee2e2; color: #991b1b; padding: 2px 6px; border-radius: 4px; font-weight: 800; border: 1px solid #fca5a5; margin-left: 2px;">ADMIN</span>
                 </a>
 
                 <!-- Dedicated Admin Navigation Links -->
                 <ul class="nav-links" id="navLinks">
                     <li>
                         <a href="admin-dashboard.php" class="<?php echo $current_page === 'admin-dashboard.php' ? 'active' : ''; ?>" style="font-weight: 700;">
-                            <i class="fa-solid fa-gauge-high me-1 text-danger"></i> Admin Dashboard
+                            <i class="fa-solid fa-gauge-high me-1 text-danger"></i> Dashboard
                         </a>
                     </li>
                     <li>
                         <a href="admin-dashboard.php#propertiesTable" style="font-weight: 600;">
-                            <i class="fa-solid fa-building me-1"></i> Manage Properties
+                            <i class="fa-solid fa-building me-1"></i> Properties
                         </a>
                     </li>
                     <li>
                         <a href="admin-dashboard.php#usersTable" style="font-weight: 600;">
-                            <i class="fa-solid fa-users me-1"></i> Manage Users
+                            <i class="fa-solid fa-users me-1"></i> Users
                         </a>
                     </li>
                     <li>
                         <a href="admin-dashboard.php#revenueTable" style="font-weight: 600;">
-                            <i class="fa-solid fa-chart-line me-1"></i> Platform Revenue
+                            <i class="fa-solid fa-chart-line me-1"></i> Revenue
                         </a>
                     </li>
                     <li>
@@ -143,16 +143,12 @@ $current_page = basename($_SERVER['PHP_SELF']);
                         <a href="add-property.php" class="btn btn-primary btn-sm">
                             <i class="fa-solid fa-plus"></i> Post Property
                         </a>
-                    <?php elseif ($user['role'] === 'admin'): ?>
-                        <a href="admin-dashboard.php" class="btn btn-danger btn-sm" style="background: #dc2626; border-color: #b91c1c; font-weight: 700;">
-                            <i class="fa-solid fa-shield-halved"></i> Admin Panel
-                        </a>
                     <?php endif; ?>
 
                     <!-- User Profile Dropdown -->
                     <div class="user-dropdown">
-                        <button class="user-avatar-btn" id="userDropdownBtn" type="button">
-                            <div class="user-avatar">
+                        <button class="user-avatar-btn" id="userDropdownBtn" type="button" onclick="toggleUserDropdown(event)" style="<?php echo $user['role'] === 'admin' ? 'border-color: #fca5a5; background: #fff5f5;' : ''; ?>">
+                            <div class="user-avatar" style="<?php echo $user['role'] === 'admin' ? 'background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);' : ''; ?>">
                                 <?php echo strtoupper(substr($user['name'], 0, 1)); ?>
                             </div>
                             <span style="font-weight: 700; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 4px;">

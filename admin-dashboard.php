@@ -120,7 +120,7 @@ require_once __DIR__ . '/includes/header.php';
     </div>
 
     <!-- Recent Payments & Revenue Ledger -->
-    <div style="background: #fff; border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: 1.5rem; margin-bottom: 2.5rem; box-shadow: var(--shadow-sm);">
+    <div id="revenueTable" style="background: #fff; border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: 1.5rem; margin-bottom: 2.5rem; box-shadow: var(--shadow-sm); scroll-margin-top: 80px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
             <h3 style="font-size: 1.25rem; font-weight: 800;"><i class="fa-solid fa-receipt text-primary me-1"></i> Recent ₹99 Payment Transactions</h3>
             <span class="badge badge-success">Mock Gateway Active</span>
@@ -164,7 +164,7 @@ require_once __DIR__ . '/includes/header.php';
     </div>
 
     <!-- All Properties Management -->
-    <div style="background: #fff; border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: 1.5rem; margin-bottom: 2.5rem; box-shadow: var(--shadow-sm);">
+    <div id="propertiesTable" style="background: #fff; border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: 1.5rem; margin-bottom: 2.5rem; box-shadow: var(--shadow-sm); scroll-margin-top: 80px;">
         <h3 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 1.25rem;"><i class="fa-solid fa-list-check text-primary me-1"></i> Manage All Properties (<?php echo count($allProperties); ?>)</h3>
 
         <div class="table-responsive">
@@ -220,7 +220,7 @@ require_once __DIR__ . '/includes/header.php';
     </div>
 
     <!-- 1. Dedicated Owners Table Section -->
-    <div style="background: #fff; border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: 1.5rem; margin-bottom: 2.5rem; box-shadow: var(--shadow-sm);">
+    <div id="usersTable" style="background: #fff; border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: 1.5rem; margin-bottom: 2.5rem; box-shadow: var(--shadow-sm); scroll-margin-top: 80px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
             <h3 style="font-size: 1.25rem; font-weight: 800; color: #1e1b4b;">
                 <i class="fa-solid fa-house-chimney-user text-primary me-1"></i> Registered Property Owners (Database: <code>owners</code> table)

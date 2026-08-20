@@ -2,22 +2,33 @@
  * RentNear - Main JavaScript Bundle
  */
 
-document.addEventListener('DOMContentLoaded', () => {
-    // 1. User Dropdown Menu
-    const userBtn = document.getElementById('userDropdownBtn');
+// Global User Profile Dropdown Toggle
+window.toggleUserDropdown = function(e) {
+    if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+    const menu = document.getElementById('userDropdownMenu');
+    if (menu) {
+        menu.classList.toggle('show');
+    }
+};
+
+document.addEventListener('click', (e) => {
     const userMenu = document.getElementById('userDropdownMenu');
+    const userBtn = document.getElementById('userDropdownBtn');
+    if (userMenu && userMenu.classList.contains('show')) {
+        if (!userMenu.contains(e.target) && (!userBtn || !userBtn.contains(e.target))) {
+            userMenu.classList.remove('show');
+        }
+    }
+});
 
-    if (userBtn && userMenu) {
-        userBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            userMenu.classList.toggle('show');
-        });
-
-        document.addEventListener('click', (e) => {
-            if (!userMenu.contains(e.target) && !userBtn.contains(e.target)) {
-                userMenu.classList.remove('show');
-            }
-        });
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. User Dropdown Menu Event Binding
+    const userBtn = document.getElementById('userDropdownBtn');
+    if (userBtn) {
+        userBtn.addEventListener('click', window.toggleUserDropdown);
     }
 
     // 2. Mobile Menu Drawer Toggle
