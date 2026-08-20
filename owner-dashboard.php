@@ -203,6 +203,7 @@ require_once __DIR__ . '/includes/header.php';
                 <table class="table">
                     <thead>
                         <tr>
+                            <th style="width: 50px;">#</th>
                             <th>Property</th>
                             <th>City / Area</th>
                             <th>Monthly Rent</th>
@@ -212,8 +213,9 @@ require_once __DIR__ . '/includes/header.php';
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($properties as $prop): ?>
+                        <?php foreach ($properties as $idx => $prop): ?>
                             <tr style="<?php echo $prop['status'] === 'rented' ? 'background: #fff8f8;' : ''; ?>">
+                                <td><strong style="color: var(--primary); font-size: 0.95rem;"><?php echo ($idx + 1); ?></strong></td>
                                 <td>
                                     <div style="display: flex; align-items: center; gap: 0.85rem;">
                                         <img src="<?php echo htmlspecialchars(get_property_image($prop['image'])); ?>" alt="" style="width: 54px; height: 54px; border-radius: var(--radius-sm); object-fit: cover; <?php echo $prop['status'] === 'rented' ? 'opacity: 0.7; filter: grayscale(40%);' : ''; ?>">
@@ -307,8 +309,8 @@ require_once __DIR__ . '/includes/header.php';
                 ?>
                     <div style="background: #ffffff; border: 1.5px solid #86efac; border-radius: var(--radius-lg); padding: 1.25rem; box-shadow: 0 4px 12px rgba(0,0,0,0.04); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
                         <div style="display: flex; gap: 1rem; align-items: center;">
-                            <div class="user-avatar" style="width: 52px; height: 52px; font-size: 1.2rem; background: linear-gradient(135deg, #10b981 0%, #047857 100%); flex-shrink: 0;">
-                                <?php echo strtoupper(substr($cb['renter_name'], 0, 1)); ?>
+                            <div style="width: 52px; height: 52px; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 2px solid #86efac;">
+                                <?php echo render_user_avatar_img($cb['renter_avatar'] ?? '', $cb['renter_name'], 52); ?>
                             </div>
                             <div>
                                 <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">

@@ -13,7 +13,7 @@ if ($property_id <= 0) {
 
 // Fetch property & owner details
 $stmt = $pdo->prepare("
-    SELECT p.*, o.name as owner_name, o.email as owner_email, o.phone as owner_phone, o.created_at as owner_joined, o.city as owner_city, o.is_verified as owner_is_verified
+    SELECT p.*, o.name as owner_name, o.email as owner_email, o.phone as owner_phone, o.avatar as owner_avatar, o.created_at as owner_joined, o.city as owner_city, o.is_verified as owner_is_verified
     FROM properties p 
     JOIN owners o ON p.owner_id = o.id 
     WHERE p.id = :id
@@ -394,8 +394,8 @@ require_once __DIR__ . '/includes/header.php';
                 <div class="owner-card-sticky">
                     <div class="owner-contact-card">
                         <div class="owner-profile-header">
-                            <div class="owner-avatar-lg">
-                                <?php echo strtoupper(substr($property['owner_name'], 0, 1)); ?>
+                            <div style="width: 52px; height: 52px; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: var(--shadow-sm); border: 2px solid #e2e8f0;">
+                                <?php echo render_user_avatar_img($property['owner_avatar'] ?? '', $property['owner_name'], 52); ?>
                             </div>
                             <div>
                                 <?php $isLandlordVerified = !empty($property['owner_is_verified']) && (int)$property['owner_is_verified'] === 1; ?>

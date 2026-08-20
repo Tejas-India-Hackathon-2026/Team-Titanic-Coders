@@ -83,6 +83,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['user_email'] = $user['email'];
                 $_SESSION['user_role'] = $role;
                 $_SESSION['user_phone'] = $user['phone'] ?? '';
+                $_SESSION['user_avatar'] = $user['avatar'] ?? '';
+                $_SESSION['user_is_verified'] = (int)($user['is_verified'] ?? 0);
 
                 set_flash_message('success', 'Welcome back, ' . $user['name'] . '!');
 

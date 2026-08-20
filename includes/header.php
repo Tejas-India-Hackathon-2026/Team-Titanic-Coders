@@ -176,8 +176,8 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     <!-- User Profile Dropdown -->
                     <div class="user-dropdown">
                         <button class="user-avatar-btn" id="userDropdownBtn" type="button" onclick="toggleUserDropdown(event)" style="<?php echo $user['role'] === 'admin' ? 'border-color: #fca5a5; background: #fff5f5;' : ''; ?>">
-                            <div class="user-avatar" style="<?php echo $user['role'] === 'admin' ? 'background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);' : ''; ?>">
-                                <?php echo strtoupper(substr($user['name'], 0, 1)); ?>
+                            <div style="width: 32px; height: 32px; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                <?php echo render_user_avatar_img($user['avatar'] ?? '', $user['name'], 32); ?>
                             </div>
                             <span style="font-weight: 700; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 4px;">
                                 <?php echo htmlspecialchars(explode(' ', $user['name'])[0]); ?>

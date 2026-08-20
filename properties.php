@@ -34,8 +34,11 @@ if (!empty($search)) {
 }
 
 if (!empty($city)) {
-    $sql .= " AND LOWER(p.city) = LOWER(:city)";
-    $params[':city'] = $city;
+    $cleanCity = trim($city);
+    $sql .= " AND (LOWER(p.city) = LOWER(:city) OR p.city LIKE :city_like OR LOWER(:city_exact) LIKE CONCAT('%', LOWER(p.city), '%'))";
+    $params[':city'] = $cleanCity;
+    $params[':city_like'] = '%' . $cleanCity . '%';
+    $params[':city_exact'] = $cleanCity;
 }
 
 if (!empty($types)) {
@@ -491,38 +494,6 @@ foreach ($properties as $p) {
                 }
             });
             </script>
-
-            <!-- Locality / Area Availability Breakdown Box -->
-            <?php 
-            // Group available properties by area/locality
-            $availableAreas = [];
-            foreach ($properties as $p) {
-                $areaName = trim($p['location']);
-                if (!isset($availableAreas[$areaName])) {
-                    $availableAreas[$areaName] = 0;
-                }
-                $availableAreas[$areaName]++;
-            }
-            ?>
-            <?php if (!empty($availableAreas)): ?>
-            <div style="background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%); border: 1px solid #bbf7d0; border-radius: var(--radius-md); padding: 1rem 1.25rem; margin-bottom: 1.5rem;">
-                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.6rem;">
-                    <i class="fa-solid fa-map-location-dot" style="color: #16a34a; font-size: 1.1rem;"></i>
-                    <strong style="color: #166534; font-size: 0.95rem;">
-                        📍 Available Rooms by Area & Locality (Ready to Move):
-                    </strong>
-                </div>
-                <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
-                    <?php foreach ($availableAreas as $area => $cnt): ?>
-                        <a href="properties.php?search=<?php echo urlencode($area); ?><?php echo !empty($city) ? '&city=' . urlencode($city) : ''; ?>" style="display: inline-flex; align-items: center; gap: 0.35rem; background: #ffffff; color: #166534; border: 1px solid #86efac; padding: 0.3rem 0.75rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600; text-decoration: none; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-                            <span style="width: 8px; height: 8px; border-radius: 50%; background: #22c55e;"></span>
-                            <?php echo htmlspecialchars($area); ?>
-                            <span style="background: #dcfce7; color: #15803d; border-radius: 10px; padding: 0.1rem 0.45rem; font-size: 0.75rem;"><?php echo $cnt; ?> <?php echo $cnt === 1 ? 'room' : 'rooms'; ?></span>
-                        </a>
-                    <?php endforeach; ?>
-                </div>
-            </div>
-            <?php endif; ?>
 
             <!-- Properties Grid -->
             <?php if (empty($properties)): ?>

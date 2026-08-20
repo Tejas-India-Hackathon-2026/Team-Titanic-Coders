@@ -41,12 +41,26 @@ function current_user() {
                 $_SESSION['user_is_verified'] = $is_verified;
             } catch (Exception $e) {}
         }
+
+        $avatar = $_SESSION['user_avatar'] ?? '';
+        if (empty($avatar) && isset($pdo)) {
+            $role = $_SESSION['user_role'] ?? 'renter';
+            $tbl = ($role === 'owner') ? 'owners' : (($role === 'admin') ? 'admins' : 'renters');
+            try {
+                $st = $pdo->prepare("SELECT avatar FROM $tbl WHERE id = ?");
+                $st->execute([$_SESSION['user_id']]);
+                $avatar = $st->fetchColumn() ?: '';
+                $_SESSION['user_avatar'] = $avatar;
+            } catch (Exception $e) {}
+        }
+
         return [
             'id'          => $_SESSION['user_id'],
             'name'        => $_SESSION['user_name'] ?? 'User',
             'email'       => $_SESSION['user_email'] ?? '',
             'role'        => $_SESSION['user_role'] ?? 'renter',
             'phone'       => $_SESSION['user_phone'] ?? '',
+            'avatar'      => $avatar,
             'is_verified' => $is_verified
         ];
     }

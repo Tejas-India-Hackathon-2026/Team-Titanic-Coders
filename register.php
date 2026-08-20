@@ -79,8 +79,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_registration_s
     // Strip non-digits from phone number
     $phone = preg_replace('/[^0-9]/', '', $phone);
 
-    // Password Regex: Min 6 chars, uppercase, lowercase, number, special char (e.g. Abc@#$25)
-    $passwordPattern = '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{6,}$/';
+    // Password Regex: Min 8 chars, uppercase, lowercase, number, special char (e.g. Abc@#$25)
+    $passwordPattern = '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/';
 
     // Validate
     if (empty($name) || empty($email) || empty($phone) || empty($password)) {
@@ -90,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_registration_s
     } elseif (strlen($phone) !== 10 || !preg_match('/^[6-9][0-9]{9}$/', $phone)) {
         $error = 'Please enter a valid 10-digit mobile number starting with 6, 7, 8, or 9.';
     } elseif (!preg_match($passwordPattern, $password)) {
-        $error = 'Password must include uppercase (A-Z), lowercase (a-z), number (0-9), and special symbol (@#$!%*?&), e.g. Abc@#$25';
+        $error = 'Password must be at least 8 characters long and include uppercase (A-Z), lowercase (a-z), number (0-9), and special symbol (@#$!%*?&), e.g. Pass@#$25';
     } elseif ($password !== $confirmPassword) {
         $error = 'Passwords do not match. Please re-enter.';
     } elseif (!in_array($role, ['renter', 'owner'])) {
@@ -202,7 +202,7 @@ require_once __DIR__ . '/includes/header.php';
                     <div class="form-group">
                         <label for="regPass">Create Password <span class="text-danger">*</span></label>
                         <div style="position: relative;">
-                            <input type="password" name="password" id="regPass" class="form-control" placeholder="e.g. Abc@#$25" oninput="checkPasswordStrength(this.value)" required style="padding-right: 2.4rem;">
+                            <input type="password" name="password" id="regPass" class="form-control" placeholder="e.g. Pass@#$25" minlength="8" oninput="checkPasswordStrength(this.value)" required style="padding-right: 2.4rem;">
                             <button type="button" onclick="togglePasswordVisibility('regPass', this)" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #64748b; cursor: pointer; padding: 4px;" title="Show/Hide Password">
                                 <i class="fa-regular fa-eye"></i>
                             </button>
@@ -211,7 +211,7 @@ require_once __DIR__ . '/includes/header.php';
                     <div class="form-group">
                         <label for="regConfirmPass">Confirm Password <span class="text-danger">*</span></label>
                         <div style="position: relative;">
-                            <input type="password" name="confirm_password" id="regConfirmPass" class="form-control" placeholder="Re-type password" required style="padding-right: 2.4rem;">
+                            <input type="password" name="confirm_password" id="regConfirmPass" class="form-control" placeholder="Re-type password" minlength="8" required style="padding-right: 2.4rem;">
                             <button type="button" onclick="togglePasswordVisibility('regConfirmPass', this)" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #64748b; cursor: pointer; padding: 4px;" title="Show/Hide Password">
                                 <i class="fa-regular fa-eye"></i>
                             </button>
@@ -226,7 +226,7 @@ require_once __DIR__ . '/includes/header.php';
                         <span id="strengthText" style="color: #64748b;">Enter Password</span>
                     </div>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.25rem 0.5rem; font-size: 0.72rem; color: #64748b;">
-                        <div id="ruleLength"><i class="fa-regular fa-circle me-1"></i> Min 6 characters</div>
+                        <div id="ruleLength"><i class="fa-regular fa-circle me-1"></i> Min 8 characters</div>
                         <div id="ruleLower"><i class="fa-regular fa-circle me-1"></i> Lowercase letter (a-z)</div>
                         <div id="ruleUpper"><i class="fa-regular fa-circle me-1"></i> Uppercase letter (A-Z)</div>
                         <div id="ruleNumber"><i class="fa-regular fa-circle me-1"></i> Number digit (0-9)</div>
@@ -333,7 +333,7 @@ function selectRole(role) {
 }
 
 function checkPasswordStrength(val) {
-    var hasLength = val.length >= 6;
+    var hasLength = val.length >= 8;
     var hasLower = /[a-z]/.test(val);
     var hasUpper = /[A-Z]/.test(val);
     var hasNumber = /[0-9]/.test(val);

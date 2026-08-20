@@ -582,3 +582,40 @@ function render_indian_city_select_options($selectedCity = '') {
     return $html;
 }
 
+/**
+ * Helper to get valid user avatar URL
+ */
+function get_user_avatar_url($avatarPath) {
+    if (empty($avatarPath) || $avatarPath === 'assets/images/default-avatar.png') {
+        return '';
+    }
+    $cleanPath = trim((string)$avatarPath);
+    if (str_starts_with($cleanPath, 'http://') || str_starts_with($cleanPath, 'https://') || str_starts_with($cleanPath, 'data:image')) {
+        return $cleanPath;
+    }
+    if (str_starts_with($cleanPath, 'uploads/') || str_starts_with($cleanPath, 'assets/')) {
+        return $cleanPath;
+    }
+    return $cleanPath;
+}
+
+/**
+ * Render Avatar Image or Colorful Initial Fallback Circle
+ */
+function render_user_avatar_img($avatarPath, $name = 'User', $size = 44, $extraStyle = '') {
+    $url = get_user_avatar_url($avatarPath);
+    $initial = strtoupper(substr(trim($name ?: 'U'), 0, 1));
+    $style = "width: {$size}px; height: {$size}px; border-radius: 50%; object-fit: cover; {$extraStyle}";
+
+    if (!empty($url)) {
+        return '<img src="' . htmlspecialchars($url) . '" alt="' . htmlspecialchars($name) . '" style="' . $style . '" onerror="this.style.display=\'none\'; if(this.nextElementSibling) this.nextElementSibling.style.display=\'inline-flex\';"><div style="display: none; width: ' . $size . 'px; height: ' . $size . 'px; border-radius: 50%; background: #4f46e5; color: #ffffff; align-items: center; justify-content: center; font-weight: 800; font-size: ' . round($size * 0.45) . 'px; flex-shrink: 0; ' . $extraStyle . '">' . $initial . '</div>';
+    }
+
+    $colors = ['#4f46e5', '#059669', '#d97706', '#dc2626', '#7c3aed', '#0284c7'];
+    $colorIndex = abs(crc32($name)) % count($colors);
+    $bg = $colors[$colorIndex];
+    $fontSize = round($size * 0.45);
+
+    return '<div style="width: ' . $size . 'px; height: ' . $size . 'px; border-radius: 50%; background: ' . $bg . '; color: #ffffff; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: ' . $fontSize . 'px; flex-shrink: 0; ' . $extraStyle . '">' . $initial . '</div>';
+}
+

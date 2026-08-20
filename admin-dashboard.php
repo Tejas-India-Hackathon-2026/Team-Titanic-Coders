@@ -88,7 +88,7 @@ $stmtAllProps = $pdo->query("
     SELECT p.*, o.name as owner_name, o.email as owner_email, o.is_verified as owner_is_verified 
     FROM properties p 
     JOIN owners o ON p.owner_id = o.id 
-    ORDER BY p.id DESC
+    ORDER BY p.id ASC
 ");
 $allProperties = $stmtAllProps->fetchAll();
 
@@ -99,7 +99,7 @@ $stmtOwners = $pdo->query("
            (SELECT COUNT(*) FROM properties WHERE owner_id = o.id AND status = 'available') as active_props_count,
            (SELECT COUNT(*) FROM properties WHERE owner_id = o.id AND status = 'rented') as rented_props_count
     FROM owners o 
-    ORDER BY o.id DESC
+    ORDER BY o.id ASC
 ");
 $allOwners = $stmtOwners->fetchAll();
 
@@ -109,7 +109,7 @@ $stmtRenters = $pdo->query("
            (SELECT COUNT(*) FROM favorites WHERE renter_id = r.id) as saved_count,
            (SELECT COUNT(*) FROM inquiries WHERE renter_id = r.id) as inquiries_count
     FROM renters r 
-    ORDER BY r.id DESC
+    ORDER BY r.id ASC
 ");
 $allRenters = $stmtRenters->fetchAll();
 
@@ -180,6 +180,7 @@ require_once __DIR__ . '/includes/header.php';
             <table class="table">
                 <thead>
                     <tr>
+                        <th style="width: 50px;">#</th>
                         <th>Transaction ID</th>
                         <th>User / Owner</th>
                         <th>Associated Property</th>
@@ -191,10 +192,11 @@ require_once __DIR__ . '/includes/header.php';
                 </thead>
                 <tbody>
                     <?php if (empty($recentPayments)): ?>
-                        <tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 2rem;">No payment transactions recorded yet.</td></tr>
+                        <tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 2rem;">No payment transactions recorded yet.</td></tr>
                     <?php else: ?>
-                        <?php foreach ($recentPayments as $pay): ?>
+                        <?php foreach ($recentPayments as $idx => $pay): ?>
                             <tr>
+                                <td><strong style="color: #64748b;"><?php echo ($idx + 1); ?></strong></td>
                                 <td><code><?php echo htmlspecialchars($pay['transaction_id']); ?></code></td>
                                 <td>
                                     <strong><?php echo htmlspecialchars($pay['owner_name']); ?></strong><br>
@@ -224,7 +226,7 @@ require_once __DIR__ . '/includes/header.php';
             <table class="table">
                 <thead>
                     <tr>
-                        <th>ID</th>
+                        <th style="width: 65px;"># / ID</th>
                         <th>Property</th>
                         <th>Owner & Verification</th>
                         <th>City / Area</th>
@@ -235,9 +237,12 @@ require_once __DIR__ . '/includes/header.php';
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($allProperties as $prop): ?>
+                    <?php foreach ($allProperties as $idx => $prop): ?>
                         <tr>
-                            <td>#<?php echo $prop['id']; ?></td>
+                            <td>
+                                <strong style="color: #4f46e5; font-size: 0.95rem;"><?php echo ($idx + 1); ?></strong>
+                                <div style="font-size: 0.7rem; color: var(--text-muted); font-family: monospace;">#<?php echo $prop['id']; ?></div>
+                            </td>
                             <td>
                                 <strong><a href="property-details.php?id=<?php echo $prop['id']; ?>"><?php echo htmlspecialchars($prop['title']); ?></a></strong><br>
                                 <span style="font-size: 0.75rem; color: var(--text-muted);"><?php echo htmlspecialchars($prop['property_type']); ?> • <?php echo htmlspecialchars($prop['furnishing']); ?></span>
@@ -332,7 +337,7 @@ require_once __DIR__ . '/includes/header.php';
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Owner ID</th>
+                            <th style="width: 65px;"># / ID</th>
                             <th>Landlord Profile</th>
                             <th>Contact Info</th>
                             <th>Operating City / Address</th>
@@ -343,13 +348,16 @@ require_once __DIR__ . '/includes/header.php';
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($allOwners as $o): ?>
+                        <?php foreach ($allOwners as $idx => $o): ?>
                             <tr>
-                                <td><strong>#<?php echo $o['id']; ?></strong></td>
+                                <td>
+                                    <strong style="color: #4338ca; font-size: 1rem;"><?php echo ($idx + 1); ?></strong>
+                                    <div style="font-size: 0.7rem; color: var(--text-muted); font-family: monospace;">#<?php echo $o['id']; ?></div>
+                                </td>
                                 <td>
                                     <div style="display: flex; align-items: center; gap: 0.65rem;">
-                                        <div class="user-avatar" style="width: 36px; height: 36px; font-size: 0.85rem; flex-shrink: 0; background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);">
-                                            <?php echo strtoupper(substr($o['name'], 0, 1)); ?>
+                                        <div style="width: 36px; height: 36px; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 1.5px solid #c7d2fe;">
+                                            <?php echo render_user_avatar_img($o['avatar'] ?? '', $o['name'], 36); ?>
                                         </div>
                                         <div>
                                             <strong style="color: #0f172a; display: flex; align-items: center; gap: 3px;">
@@ -431,7 +439,7 @@ require_once __DIR__ . '/includes/header.php';
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Renter ID</th>
+                            <th style="width: 65px;"># / ID</th>
                             <th>Tenant Profile</th>
                             <th>Contact Info</th>
                             <th>Occupation & City</th>
@@ -442,13 +450,16 @@ require_once __DIR__ . '/includes/header.php';
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($allRenters as $r): ?>
+                        <?php foreach ($allRenters as $idx => $r): ?>
                             <tr>
-                                <td><strong>#<?php echo $r['id']; ?></strong></td>
+                                <td>
+                                    <strong style="color: #059669; font-size: 1rem;"><?php echo ($idx + 1); ?></strong>
+                                    <div style="font-size: 0.7rem; color: var(--text-muted); font-family: monospace;">#<?php echo $r['id']; ?></div>
+                                </td>
                                 <td>
                                     <div style="display: flex; align-items: center; gap: 0.65rem;">
-                                        <div class="user-avatar" style="width: 36px; height: 36px; font-size: 0.85rem; flex-shrink: 0; background: linear-gradient(135deg, #10b981 0%, #047857 100%);">
-                                            <?php echo strtoupper(substr($r['name'], 0, 1)); ?>
+                                        <div style="width: 36px; height: 36px; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 1.5px solid #86efac;">
+                                            <?php echo render_user_avatar_img($r['avatar'] ?? '', $r['name'], 36); ?>
                                         </div>
                                         <div>
                                             <strong style="color: #0f172a; display: inline-flex; align-items: center; gap: 4px;">

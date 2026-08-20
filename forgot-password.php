@@ -90,8 +90,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reset_password'])) {
         $error = 'Please fill out all fields.';
     } elseif ($enteredOtp != $sessionOtp) {
         $error = 'Invalid verification OTP code. Please enter the correct code.';
-    } elseif (strlen($newPass) < 6) {
-        $error = 'New password must be at least 6 characters long.';
+    } elseif (strlen($newPass) < 8) {
+        $error = 'New password must be at least 8 characters long.';
     } elseif ($newPass !== $confirmPass) {
         $error = 'New password and confirmation password do not match.';
     } else {
@@ -203,12 +203,22 @@ require_once __DIR__ . '/includes/header.php';
 
                 <div class="form-group">
                     <label for="newPass"><i class="fa-solid fa-lock me-1"></i> New Password <span class="text-danger">*</span></label>
-                    <input type="password" name="new_password" id="newPass" class="form-control" placeholder="Min 6 characters" required>
+                    <div style="position: relative;">
+                        <input type="password" name="new_password" id="newPass" class="form-control" placeholder="Min 8 characters" minlength="8" required style="padding-right: 2.5rem;">
+                        <button type="button" onclick="togglePasswordVisibility('newPass', this)" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #64748b; cursor: pointer; padding: 4px;" title="Show/Hide Password">
+                            <i class="fa-regular fa-eye"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="form-group">
                     <label for="confirmPass"><i class="fa-solid fa-check-double me-1"></i> Confirm New Password <span class="text-danger">*</span></label>
-                    <input type="password" name="confirm_password" id="confirmPass" class="form-control" placeholder="Re-type new password" required>
+                    <div style="position: relative;">
+                        <input type="password" name="confirm_password" id="confirmPass" class="form-control" placeholder="Re-type new password" minlength="8" required style="padding-right: 2.5rem;">
+                        <button type="button" onclick="togglePasswordVisibility('confirmPass', this)" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #64748b; cursor: pointer; padding: 4px;" title="Show/Hide Password">
+                            <i class="fa-regular fa-eye"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;">
@@ -228,5 +238,26 @@ require_once __DIR__ . '/includes/header.php';
         </div>
     </div>
 </div>
+
+<script>
+function togglePasswordVisibility(inputId, btn) {
+    var input = document.getElementById(inputId);
+    if (!input) return;
+    var icon = btn.querySelector('i');
+    if (input.type === 'password') {
+        input.type = 'text';
+        if (icon) {
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        }
+    } else {
+        input.type = 'password';
+        if (icon) {
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    }
+}
+</script>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>
