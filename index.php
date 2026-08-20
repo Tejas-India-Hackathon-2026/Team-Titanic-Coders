@@ -609,7 +609,8 @@ function showAllIndia(btnElement) {
     </div>
 </section>
 
-<!-- Call to Action Banner -->
+<?php if (!is_logged_in()): ?>
+<!-- Call to Action Banner (Visible only for non-logged in guests) -->
 <section class="section" style="background: linear-gradient(135deg, #312e81 0%, #4f46e5 100%); color: #fff; text-align: center;">
     <div class="container">
         <h2 style="color: #fff; font-size: 2.3rem; margin-bottom: 1rem;">Are You a Property Owner?</h2>
@@ -626,5 +627,6 @@ function showAllIndia(btnElement) {
         </div>
     </div>
 </section>
+<?php endif; ?>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>
