@@ -128,6 +128,13 @@ require_once __DIR__ . '/includes/header.php';
             </p>
         </div>
 
+        <?php 
+        $isPropertyOwner = is_logged_in() && (
+            (user_role() === 'owner' && (int)current_user()['id'] === (int)$property['owner_id']) ||
+            user_role() === 'admin'
+        );
+        ?>
+
         <div style="text-align: right;">
             <div style="font-size: 2.2rem; font-weight: 800; color: var(--primary); line-height: 1;">
                 <?php echo format_inr($property['price']); ?><span style="font-size: 1rem; font-weight: 500; color: var(--text-muted);">/month</span>
@@ -135,6 +142,13 @@ require_once __DIR__ . '/includes/header.php';
             <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.3rem;">
                 Security Deposit: <strong><?php echo format_inr($property['deposit']); ?></strong>
             </p>
+            <?php if ($isPropertyOwner): ?>
+                <div style="margin-top: 0.6rem; display: flex; gap: 0.5rem; justify-content: flex-end; flex-wrap: wrap;">
+                    <a href="edit-property.php?id=<?php echo $property_id; ?>" class="btn btn-primary btn-sm">
+                        <i class="fa-solid fa-pen-to-square"></i> Edit Listing
+                    </a>
+                </div>
+            <?php endif; ?>
         </div>
     </div>
 
@@ -178,74 +192,71 @@ require_once __DIR__ . '/includes/header.php';
                         <div style="font-weight: 800; font-size: 0.95rem; color: #4338ca;"><?php echo htmlspecialchars($tenantPref); ?></div>
                     </div>
                     <div style="background: #fffbeb; border: 1px solid #fde68a; padding: 1rem; border-radius: var(--radius-md);">
-                        <i class="fa-solid fa-clock" style="font-size: 1.5rem; color: #b45309; margin-bottom: 0.4rem;"></i>
-                        <div style="font-size: 0.8rem; color: #92400e; font-weight: 700;">Stay Duration</div>
-                        <div style="font-weight: 800; font-size: 0.92rem; color: #b45309;"><?php echo htmlspecialchars($property['stay_duration'] ?? '1 Month (Short Stay)'); ?></div>
+                        <i class="fa-solid fa-clock-rotate-left" style="font-size: 1.5rem; color: #d97706; margin-bottom: 0.4rem;"></i>
+                        <div style="font-size: 0.8rem; color: #92400e;">Stay Duration</div>
+                        <div style="font-weight: 800; font-size: 0.92rem; color: #b45309;">
+                            <?php echo !empty($property['stay_duration']) ? htmlspecialchars($property['stay_duration']) : '1 Month (Short Stay Allowed)'; ?>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- Description -->
             <div class="details-card">
-                <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem;">Property Description</h3>
-                <p style="color: var(--dark-muted); line-height: 1.8; font-size: 1rem; white-space: pre-line;">
-                    <?php echo htmlspecialchars($property['description']); ?>
+                <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem;">About this Rental Property</h3>
+                <p style="font-size: 0.95rem; line-height: 1.8; color: var(--dark-muted); white-space: pre-line;">
+                    <?php echo nl2br(htmlspecialchars($property['description'])); ?>
                 </p>
             </div>
 
             <!-- Amenities -->
-            <?php if (!empty($amenities)): ?>
             <div class="details-card">
-                <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem;">Society & Home Amenities</h3>
-                <div class="amenities-grid">
-                    <?php foreach ($amenities as $amenity): 
-                        $amenityTrim = trim($amenity);
-                        if (empty($amenityTrim)) continue;
-                    ?>
-                        <div class="amenity-item">
-                            <i class="fa-solid fa-circle-check"></i>
-                            <span><?php echo htmlspecialchars($amenityTrim); ?></span>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-            </div>
-            <?php endif; ?>
-
-            <!-- Location & Neighborhood Box with Embedded Interactive Pin Map -->
-            <?php 
-            $propCoords = get_property_coordinates($property['location'], $property['city'], $property['id']);
-            $finalLat = !empty($property['latitude']) ? (float)$property['latitude'] : $propCoords['lat'];
-            $finalLng = !empty($property['longitude']) ? (float)$property['longitude'] : $propCoords['lng'];
-            ?>
-            <div class="details-card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.75rem;">
-                    <div>
-                        <h3 style="font-size: 1.25rem; font-weight: 700; margin: 0;"><i class="fa-solid fa-map-location-dot text-danger me-1"></i> Interactive Location Map</h3>
-                        <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0;">
-                            <?php echo htmlspecialchars($property['location'] . ', ' . $property['city']); ?>
-                            <?php if (!empty($property['landmark'])): ?>
-                                &bull; <span style="color: var(--primary); font-weight: 600;">(Near <?php echo htmlspecialchars($property['landmark']); ?>)</span>
-                            <?php endif; ?>
-                        </p>
+                <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1.25rem;">Amenities & Facilities</h3>
+                <?php if (!empty($amenities)): ?>
+                    <div class="amenities-grid">
+                        <?php foreach ($amenities as $am): 
+                            $am = trim($am);
+                            if (empty($am)) continue;
+                        ?>
+                            <div class="amenity-item">
+                                <i class="fa-solid fa-circle-check"></i>
+                                <span><?php echo htmlspecialchars($am); ?></span>
+                            </div>
+                        <?php endforeach; ?>
                     </div>
-                    <a href="https://www.google.com/maps/search/?api=1&query=<?php echo urlencode($finalLat . ',' . $finalLng); ?>" target="_blank" class="btn btn-secondary btn-sm" style="background: #eef2ff; color: var(--primary); border: 1px solid #c7d2fe;">
-                        <i class="fa-solid fa-diamond-turn-right"></i> Open in Google Maps App
-                    </a>
-                </div>
+                <?php else: ?>
+                    <p style="color: var(--text-muted);">Basic standard utilities available with this rental.</p>
+                <?php endif; ?>
+            </div>
 
-                <!-- Leaflet Interactive Pin Map -->
-                <div id="singlePropertyMap" style="width: 100%; height: 320px; border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border-color); margin-bottom: 1.25rem; box-shadow: var(--shadow-sm);"></div>
+            <!-- Location Map -->
+            <div class="details-card">
+                <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem;">Explore Exact Location</h3>
+                <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+                    Located at <strong><?php echo htmlspecialchars($property['location'] . ', ' . $property['city']); ?></strong>
+                </p>
+
+                <!-- Interactive Leaflet Map for Single Property -->
+                <div id="propSingleMap" style="height: 340px; border-radius: var(--radius-lg); margin-bottom: 1rem; border: 1px solid var(--border-color); z-index: 1;"></div>
+
+                <?php 
+                $propCoords = get_property_coordinates($property['location'], $property['city'], $property['id']);
+                $singleLat = !empty($property['latitude']) ? (float)$property['latitude'] : $propCoords['lat'];
+                $singleLng = !empty($property['longitude']) ? (float)$property['longitude'] : $propCoords['lng'];
+                ?>
 
                 <script>
-                document.addEventListener('DOMContentLoaded', () => {
-                    if (typeof L !== 'undefined') {
-                        const propLat = <?php echo json_encode($finalLat); ?>;
-                        const propLng = <?php echo json_encode($finalLng); ?>;
+                document.addEventListener('DOMContentLoaded', function() {
+                    if (typeof L !== 'undefined' && document.getElementById('propSingleMap')) {
+                        const propLat = <?php echo json_encode($singleLat); ?>;
+                        const propLng = <?php echo json_encode($singleLng); ?>;
                         const propTitle = <?php echo json_encode($property['title']); ?>;
                         const propPrice = <?php echo json_encode(format_inr($property['price'])); ?>;
                         const propLoc = <?php echo json_encode($property['location'] . ', ' . $property['city']); ?>;
 
-                        const pMap = L.map('singlePropertyMap').setView([propLat, propLng], 15);
+                        const pMap = L.map('propSingleMap', {
+                            scrollWheelZoom: false
+                        }).setView([propLat, propLng], 14);
 
                         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                             maxZoom: 19,
@@ -298,112 +309,174 @@ require_once __DIR__ . '/includes/header.php';
 
         </div>
 
-        <!-- Right Owner Contact & Inquiry Sidebar -->
+        <!-- Right Sidebar: Owner Management Control vs Renter Inquiry -->
         <div>
-            <div class="owner-card-sticky">
-                <div class="owner-contact-card">
-                    <div class="owner-profile-header">
-                        <div class="owner-avatar-lg">
-                            <?php echo strtoupper(substr($property['owner_name'], 0, 1)); ?>
+            <?php if ($isPropertyOwner): ?>
+                <!-- 👑 Dedicated Landlord Control Panel (Visible Only to Property Owner / Admin) -->
+                <div class="owner-card-sticky">
+                    <div class="owner-contact-card" style="border: 2px solid #6366f1; background: #ffffff;">
+                        <div style="background: linear-gradient(135deg, #eff6ff 0%, #e0e7ff 100%); padding: 1.25rem; border-radius: var(--radius-lg); margin-bottom: 1.25rem; text-align: center; border: 1px solid #c7d2fe;">
+                            <div style="width: 48px; height: 48px; border-radius: 50%; background: #4f46e5; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin: 0 auto 0.6rem; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);">
+                                <i class="fa-solid fa-house-chimney-user"></i>
+                            </div>
+                            <h4 style="font-size: 1.15rem; font-weight: 800; color: #1e1b4b; margin-bottom: 0.2rem;">You Own This Property Listing</h4>
+                            <p style="font-size: 0.78rem; color: #4338ca; margin: 0;">
+                                Manage your rental terms, edit pricing, or view tenant leads.
+                            </p>
                         </div>
-                        <div>
-                            <?php $isLandlordVerified = !empty($property['owner_is_verified']) && (int)$property['owner_is_verified'] === 1; ?>
-                            <h4 style="font-size: 1.12rem; font-weight: 800; margin-bottom: 0.2rem; display: flex; align-items: center; gap: 4px;">
-                                <?php echo htmlspecialchars($property['owner_name']); ?>
-                                <?php if ($isLandlordVerified) echo render_verified_badge(false, 19); ?>
-                            </h4>
-                            <?php if ($isLandlordVerified): ?>
-                                <p style="font-size: 0.78rem; color: #b45309; font-weight: 700; display: flex; align-items: center; gap: 4px; margin: 0;">
-                                    <i class="fa-solid fa-shield-check" style="color: #f59e0b;"></i> Govt ID & Property Gold Verified Owner
-                                </p>
-                            <?php else: ?>
-                                <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0;">
-                                    <i class="fa-solid fa-user text-muted"></i> Property Landlord
-                                </p>
-                            <?php endif; ?>
-                        </div>
-                    </div>
 
-                    <!-- Direct Connect Buttons -->
-                    <div style="display: flex; flex-direction: column; gap: 0.65rem; margin-bottom: 1.25rem;">
-                        <!-- Instant Reserve Room / Pay Token Button -->
-                        <a href="booking-payment.php?property_id=<?php echo $property_id; ?>" class="btn btn-premium" style="width: 100%; font-size: 0.92rem; padding: 0.75rem; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);">
-                            <i class="fa-solid fa-credit-card"></i> Pay Token & Reserve Room (₹1,000)
-                        </a>
+                        <!-- Quick Owner Action Buttons -->
+                        <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.25rem;">
+                            <a href="edit-property.php?id=<?php echo $property_id; ?>" class="btn btn-primary btn-lg" style="width: 100%; justify-content: center; font-size: 0.95rem;">
+                                <i class="fa-solid fa-pen-to-square"></i> Edit Property Details
+                            </a>
 
-                        <a href="tel:<?php echo htmlspecialchars($property['owner_phone']); ?>" class="btn btn-primary" style="width: 100%;">
-                            <i class="fa-solid fa-phone"></i> Call Owner: <?php echo htmlspecialchars($property['owner_phone']); ?>
-                        </a>
-                        
-                        <?php 
-                        $cleanPhone = preg_replace('/[^0-9]/', '', $property['owner_phone']);
-                        $waMsg = urlencode("Hi " . $property['owner_name'] . ", I saw your property '" . $property['title'] . "' on RentNear and would like to schedule a visit.");
-                        ?>
-                        <a href="https://wa.me/<?php echo $cleanPhone; ?>?text=<?php echo $waMsg; ?>" target="_blank" class="btn btn-secondary" style="width: 100%; background: #25D366; color: #fff; border: none;">
-                            <i class="fa-brands fa-whatsapp"></i> Chat on WhatsApp
-                        </a>
-                    </div>
-
-                    <!-- Direct Inquiry Form -->
-                    <div style="border-top: 1px solid var(--border-light); padding-top: 1.25rem;">
-                        <h5 style="font-size: 1rem; font-weight: 700; margin-bottom: 0.85rem;">Send Inquiry to Owner</h5>
-
-                        <?php if ($inquirySuccess): ?>
-                            <div class="alert alert-success" style="font-size: 0.85rem; padding: 0.85rem; flex-direction: column; align-items: flex-start; gap: 0.5rem;">
-                                <div><i class="fa-solid fa-check-circle me-1"></i> <strong>Inquiry Sent to Owner!</strong></div>
-                                <p style="font-size: 0.8rem; margin: 0; color: #065f46;">
-                                    Liked this room? Reserve it right now by paying a small refundable token advance before someone else books it!
-                                </p>
-                                <a href="booking-payment.php?property_id=<?php echo $property_id; ?>" class="btn btn-primary btn-sm mt-1" style="width: 100%; font-size: 0.82rem;">
-                                    <i class="fa-solid fa-credit-card"></i> Pay Token & Lock Room Now &rarr;
+                            <?php if (empty($property['is_premium'])): ?>
+                                <a href="payment.php?property_id=<?php echo $property_id; ?>" class="btn btn-premium" style="width: 100%; justify-content: center; font-size: 0.88rem;">
+                                    <i class="fa-solid fa-crown"></i> Upgrade to Featured Listing (₹99)
                                 </a>
-                            </div>
-                        <?php endif; ?>
+                            <?php else: ?>
+                                <div style="background: #fef3c7; color: #b45309; border: 1px solid #fde68a; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); font-size: 0.82rem; font-weight: 700; text-align: center;">
+                                    <i class="fa-solid fa-crown"></i> Featured Listing Active (3x Visibility)
+                                </div>
+                            <?php endif; ?>
 
-                        <?php if (!empty($inquiryError)): ?>
-                            <div class="alert alert-danger" style="font-size: 0.85rem; padding: 0.75rem;">
-                                <?php echo htmlspecialchars($inquiryError); ?>
-                            </div>
-                        <?php endif; ?>
+                            <a href="owner-dashboard.php" class="btn btn-secondary" style="width: 100%; justify-content: center; font-size: 0.88rem;">
+                                <i class="fa-solid fa-inbox"></i> View Inquiries in Dashboard
+                            </a>
 
-                        <form action="property-details.php?id=<?php echo $property_id; ?>" method="POST">
-                            <input type="hidden" name="send_inquiry" value="1">
-                            
-                            <div class="form-group">
-                                <label style="font-size: 0.8rem;">Your Full Name <span class="text-danger">*</span></label>
-                                <input type="text" name="name" class="form-control" placeholder="Amit Verma" required value="<?php echo is_logged_in() ? htmlspecialchars(current_user()['name']) : ''; ?>">
-                            </div>
+                            <a href="delete-property.php?id=<?php echo $property_id; ?>" class="btn btn-secondary btn-sm" style="width: 100%; justify-content: center; color: #dc2626; border-color: #fecaca; background: #fff5f5; font-size: 0.82rem;" onclick="return confirm('Are you sure you want to permanently delete this listing? This action cannot be undone.');">
+                                <i class="fa-solid fa-trash"></i> Delete This Listing
+                            </a>
+                        </div>
 
-                            <div class="form-group">
-                                <label style="font-size: 0.8rem;">Your Phone Number <span class="text-danger">*</span></label>
-                                <input type="tel" name="phone" class="form-control" placeholder="+91 98765 43210" required value="<?php echo is_logged_in() ? htmlspecialchars(current_user()['phone']) : ''; ?>">
+                        <!-- Live Performance & Stats -->
+                        <div style="border-top: 1px solid var(--border-light); padding-top: 1rem;">
+                            <h5 style="font-size: 0.8rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.65rem; letter-spacing: 0.5px;">
+                                Listing Information:
+                            </h5>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; font-size: 0.82rem;">
+                                <div style="background: var(--bg-alt); padding: 0.6rem; border-radius: var(--radius-sm); text-align: center;">
+                                    <div style="color: var(--text-muted); font-size: 0.72rem;">Status</div>
+                                    <strong style="color: <?php echo $property['status'] === 'available' ? '#16a34a' : '#dc2626'; ?>;">
+                                        <?php echo $property['status'] === 'available' ? '🟢 Available' : '🔴 Rented'; ?>
+                                    </strong>
+                                </div>
+                                <div style="background: var(--bg-alt); padding: 0.6rem; border-radius: var(--radius-sm); text-align: center;">
+                                    <div style="color: var(--text-muted); font-size: 0.72rem;">Total Views</div>
+                                    <strong style="color: var(--primary);"><i class="fa-solid fa-eye me-1"></i><?php echo $property['views_count'] ?? 1; ?></strong>
+                                </div>
                             </div>
+                        </div>
 
-                            <div class="form-group">
-                                <label style="font-size: 0.8rem;">Email Address (Optional)</label>
-                                <input type="email" name="email" class="form-control" placeholder="you@example.com" value="<?php echo is_logged_in() ? htmlspecialchars(current_user()['email']) : ''; ?>">
-                            </div>
-
-                            <div class="form-group">
-                                <label style="font-size: 0.8rem;">Expected Move-in Date (Optional)</label>
-                                <input type="date" name="move_in_date" class="form-control" min="<?php echo date('Y-m-d'); ?>">
-                            </div>
-
-                            <div class="form-group">
-                                <label style="font-size: 0.8rem;">Message to Owner <span class="text-danger">*</span></label>
-                                <textarea name="message" rows="3" class="form-control" placeholder="I would like to visit this property..." required>Hi <?php echo htmlspecialchars($property['owner_name']); ?>, I am interested in renting this property. Please let me know when we can arrange a visit.</textarea>
-                            </div>
-
-                            <button type="submit" class="btn btn-primary" style="width: 100%;">
-                                <i class="fa-solid fa-paper-plane"></i> Submit Inquiry
-                            </button>
-                        </form>
                     </div>
-
                 </div>
-            </div>
-        </div>
+            <?php else: ?>
+                <!-- 👤 Renter / Guest Contact & Inquiry Form Sidebar -->
+                <div class="owner-card-sticky">
+                    <div class="owner-contact-card">
+                        <div class="owner-profile-header">
+                            <div class="owner-avatar-lg">
+                                <?php echo strtoupper(substr($property['owner_name'], 0, 1)); ?>
+                            </div>
+                            <div>
+                                <?php $isLandlordVerified = !empty($property['owner_is_verified']) && (int)$property['owner_is_verified'] === 1; ?>
+                                <h4 style="font-size: 1.12rem; font-weight: 800; margin-bottom: 0.2rem; display: flex; align-items: center; gap: 4px;">
+                                    <?php echo htmlspecialchars($property['owner_name']); ?>
+                                    <?php if ($isLandlordVerified) echo render_verified_badge(false, 19); ?>
+                                </h4>
+                                <?php if ($isLandlordVerified): ?>
+                                    <p style="font-size: 0.78rem; color: #b45309; font-weight: 700; display: flex; align-items: center; gap: 4px; margin: 0;">
+                                        <i class="fa-solid fa-shield-check" style="color: #f59e0b;"></i> Govt ID & Property Gold Verified Owner
+                                    </p>
+                                <?php else: ?>
+                                    <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0;">
+                                        <i class="fa-solid fa-user text-muted"></i> Property Landlord
+                                    </p>
+                                <?php endif; ?>
+                            </div>
+                        </div>
 
+                        <!-- Direct Connect Buttons -->
+                        <div style="display: flex; flex-direction: column; gap: 0.65rem; margin-bottom: 1.25rem;">
+                            <!-- Instant Reserve Room / Pay Token Button -->
+                            <a href="booking-payment.php?property_id=<?php echo $property_id; ?>" class="btn btn-premium" style="width: 100%; font-size: 0.92rem; padding: 0.75rem; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);">
+                                <i class="fa-solid fa-credit-card"></i> Pay Token & Reserve Room (₹1,000)
+                            </a>
+
+                            <a href="tel:<?php echo htmlspecialchars($property['owner_phone']); ?>" class="btn btn-primary" style="width: 100%;">
+                                <i class="fa-solid fa-phone"></i> Call Owner: <?php echo htmlspecialchars($property['owner_phone']); ?>
+                            </a>
+                            
+                            <?php 
+                            $cleanPhone = preg_replace('/[^0-9]/', '', $property['owner_phone']);
+                            $waMsg = urlencode("Hi " . $property['owner_name'] . ", I saw your property '" . $property['title'] . "' on RentNear and would like to schedule a visit.");
+                            ?>
+                            <a href="https://wa.me/<?php echo $cleanPhone; ?>?text=<?php echo $waMsg; ?>" target="_blank" class="btn btn-secondary" style="width: 100%; background: #25D366; color: #fff; border: none;">
+                                <i class="fa-brands fa-whatsapp"></i> Chat on WhatsApp
+                            </a>
+                        </div>
+
+                        <!-- Direct Inquiry Form -->
+                        <div style="border-top: 1px solid var(--border-light); padding-top: 1.25rem;">
+                            <h5 style="font-size: 1rem; font-weight: 700; margin-bottom: 0.85rem;">Send Inquiry to Owner</h5>
+
+                            <?php if ($inquirySuccess): ?>
+                                <div class="alert alert-success" style="font-size: 0.85rem; padding: 0.85rem; flex-direction: column; align-items: flex-start; gap: 0.5rem;">
+                                    <div><i class="fa-solid fa-check-circle me-1"></i> <strong>Inquiry Sent to Owner!</strong></div>
+                                    <p style="font-size: 0.8rem; margin: 0; color: #065f46;">
+                                        Liked this room? Reserve it right now by paying a small refundable token advance before someone else books it!
+                                    </p>
+                                    <a href="booking-payment.php?property_id=<?php echo $property_id; ?>" class="btn btn-primary btn-sm mt-1" style="width: 100%; font-size: 0.82rem;">
+                                        <i class="fa-solid fa-credit-card"></i> Pay Token & Lock Room Now &rarr;
+                                    </a>
+                                </div>
+                            <?php endif; ?>
+
+                            <?php if (!empty($inquiryError)): ?>
+                                <div class="alert alert-danger" style="font-size: 0.85rem; padding: 0.75rem;">
+                                    <?php echo htmlspecialchars($inquiryError); ?>
+                                </div>
+                            <?php endif; ?>
+
+                            <form action="property-details.php?id=<?php echo $property_id; ?>" method="POST">
+                                <input type="hidden" name="send_inquiry" value="1">
+                                
+                                <div class="form-group">
+                                    <label style="font-size: 0.8rem;">Your Full Name <span class="text-danger">*</span></label>
+                                    <input type="text" name="name" class="form-control" placeholder="Amit Verma" required value="<?php echo is_logged_in() ? htmlspecialchars(current_user()['name']) : ''; ?>">
+                                </div>
+
+                                <div class="form-group">
+                                    <label style="font-size: 0.8rem;">Your Phone Number <span class="text-danger">*</span></label>
+                                    <input type="tel" name="phone" class="form-control" placeholder="+91 98765 43210" required value="<?php echo is_logged_in() ? htmlspecialchars(current_user()['phone']) : ''; ?>">
+                                </div>
+
+                                <div class="form-group">
+                                    <label style="font-size: 0.8rem;">Email Address (Optional)</label>
+                                    <input type="email" name="email" class="form-control" placeholder="you@example.com" value="<?php echo is_logged_in() ? htmlspecialchars(current_user()['email']) : ''; ?>">
+                                </div>
+
+                                <div class="form-group">
+                                    <label style="font-size: 0.8rem;">Expected Move-in Date (Optional)</label>
+                                    <input type="date" name="move_in_date" class="form-control" min="<?php echo date('Y-m-d'); ?>">
+                                </div>
+
+                                <div class="form-group">
+                                    <label style="font-size: 0.8rem;">Message to Owner <span class="text-danger">*</span></label>
+                                    <textarea name="message" rows="3" class="form-control" placeholder="I would like to visit this property..." required>Hi <?php echo htmlspecialchars($property['owner_name']); ?>, I am interested in renting this property. Please let me know when we can arrange a visit.</textarea>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                                    <i class="fa-solid fa-paper-plane"></i> Submit Inquiry
+                                </button>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+            <?php endif; ?>
+        </div>
     </div>
 
     <!-- Similar Properties in this City -->
