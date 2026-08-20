@@ -34,6 +34,10 @@ function initialize_database($pdo) {
                 occupation VARCHAR(100) DEFAULT '',
                 preferred_city VARCHAR(100) DEFAULT '',
                 avatar VARCHAR(255) DEFAULT 'assets/images/default-avatar.png',
+                is_verified TINYINT(1) NOT NULL DEFAULT 0,
+                digilocker_aadhaar VARCHAR(50) DEFAULT NULL,
+                document_type VARCHAR(50) DEFAULT NULL,
+                verified_at DATETIME DEFAULT NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
         ");

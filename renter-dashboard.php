@@ -35,6 +35,12 @@ $stmtInquiries->execute([
 ]);
 $inquiries = $stmtInquiries->fetchAll();
 
+// Fetch fresh renter record to check DigiLocker KYC
+$renterStmt = $pdo->prepare("SELECT * FROM renters WHERE id = ?");
+$renterStmt->execute([$user['id']]);
+$renterData = $renterStmt->fetch();
+$isRenterVerified = !empty($renterData['is_verified']) && (int)$renterData['is_verified'] === 1;
+
 // Fetch Room Booking Token Payments made by this Renter
 $stmtBookings = $pdo->prepare("
     SELECT pay.*, p.title as property_title, p.city as property_city, p.price as property_price, p.image as property_image,
@@ -54,11 +60,21 @@ require_once __DIR__ . '/includes/header.php';
 
 <div class="container" style="padding-top: 2rem; padding-bottom: 5rem;">
     
-    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
         <div>
-            <span class="badge badge-success mb-1">Renter Portal</span>
-            <h1 style="font-size: 2rem; font-weight: 800;">Hello, <?php echo htmlspecialchars($user['name']); ?></h1>
-            <p style="color: var(--text-muted);">Manage your shortlisted rental homes, inquiries, and online room bookings.</p>
+            <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 0.35rem;">
+                <span class="badge badge-success">Renter Portal</span>
+                <?php if ($isRenterVerified): ?>
+                    <span class="badge badge-success" style="background: #dcfce7; color: #166534; border: 1px solid #86efac;">
+                        <?php echo render_renter_verified_badge(false, 14); ?> DigiLocker Verified
+                    </span>
+                <?php endif; ?>
+            </div>
+            <h1 style="font-size: 2rem; font-weight: 800; display: flex; align-items: center; gap: 8px;">
+                Hello, <?php echo htmlspecialchars($user['name']); ?>
+                <?php if ($isRenterVerified) echo render_renter_verified_badge(false, 20); ?>
+            </h1>
+            <p style="color: var(--text-muted); margin: 0;">Manage your shortlisted rental homes, inquiries, and online room bookings.</p>
         </div>
         <div style="display: flex; gap: 0.5rem;">
             <a href="properties.php" class="btn btn-primary">
@@ -69,6 +85,36 @@ require_once __DIR__ . '/includes/header.php';
             </a>
         </div>
     </div>
+
+    <!-- DigiLocker Banner -->
+    <?php if (!$isRenterVerified): ?>
+        <div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border: 1.5px solid #86efac; border-radius: var(--radius-lg); padding: 1.25rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.08);">
+            <div style="display: flex; align-items: center; gap: 0.85rem;">
+                <div style="width: 44px; height: 44px; border-radius: 50%; background: #16a34a; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0;">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <div>
+                    <strong style="color: #065f46; font-size: 1rem; display: block;">Complete Free DigiLocker e-KYC Verification</strong>
+                    <p style="color: #166534; font-size: 0.82rem; margin: 0;">Link your Aadhaar or Student/Office ID to get 3x faster approvals & the 🛡️ DigiLocker Verified Tenant Badge.</p>
+                </div>
+            </div>
+            <a href="verify-renter.php" class="btn btn-primary btn-sm" style="background: #16a34a; border-color: #15803d; font-weight: 800;">
+                <i class="fa-solid fa-shield-check me-1"></i> Verify with DigiLocker Now &rarr;
+            </a>
+        </div>
+    <?php else: ?>
+        <div style="background: #f0fdf4; border: 1.5px solid #86efac; border-radius: var(--radius-lg); padding: 0.85rem 1.25rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div style="display: flex; align-items: center; gap: 0.6rem;">
+                <?php echo render_renter_verified_badge(false, 20); ?>
+                <span style="color: #166534; font-weight: 700; font-size: 0.9rem;">
+                    DigiLocker Authenticated (Doc Ref: <code><?php echo htmlspecialchars($renterData['digilocker_aadhaar'] ?? 'XXXX-XXXX-8921'); ?></code>)
+                </span>
+            </div>
+            <a href="verify-renter.php" class="btn btn-secondary btn-sm" style="font-size: 0.8rem; color: #166534; border-color: #86efac;">
+                <i class="fa-solid fa-id-card"></i> View DigiLocker Pass
+            </a>
+        </div>
+    <?php endif; ?>
 
     <!-- Quick Stats -->
     <div class="dashboard-grid-stats">

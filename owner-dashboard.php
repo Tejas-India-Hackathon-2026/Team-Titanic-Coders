@@ -34,9 +34,10 @@ $properties = $stmtProps->fetchAll();
 
 // Fetch Owner's Inquiries
 $stmtInquiries = $pdo->prepare("
-    SELECT i.*, p.title as property_title 
+    SELECT i.*, p.title as property_title, r.is_verified as renter_is_verified, r.digilocker_aadhaar 
     FROM inquiries i 
     JOIN properties p ON i.property_id = p.id 
+    LEFT JOIN renters r ON i.renter_id = r.id
     WHERE p.owner_id = :owner_id 
     ORDER BY i.id DESC
 ");
@@ -286,8 +287,13 @@ require_once __DIR__ . '/includes/header.php';
                         <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.6rem;">
                             <div>
                                 <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
-                                    <h4 style="font-size: 1rem; font-weight: 700; margin: 0;">
+                                    <h4 style="font-size: 1rem; font-weight: 700; margin: 0; display: inline-flex; align-items: center; gap: 5px; flex-wrap: wrap;">
                                         <?php echo htmlspecialchars($inq['name']); ?> 
+                                        <?php if (!empty($inq['renter_is_verified']) && (int)$inq['renter_is_verified'] === 1): ?>
+                                            <span class="badge badge-success" style="background: #dcfce7; color: #166534; border: 1px solid #86efac; font-size: 0.68rem; font-weight: 800; padding: 2px 6px;">
+                                                <?php echo render_renter_verified_badge(false, 13); ?> DigiLocker Verified
+                                            </span>
+                                        <?php endif; ?>
                                         <span style="font-weight: 400; font-size: 0.85rem; color: var(--text-muted);">inquired for</span> 
                                         <strong style="color: var(--primary);"><?php echo htmlspecialchars($inq['property_title']); ?></strong>
                                     </h4>

@@ -101,6 +101,19 @@ function render_verified_badge($showLabel = false, $size = 16) {
 }
 
 /**
+ * Render DigiLocker / Govt KYC Verified Tenant Badge
+ */
+function render_renter_verified_badge($showLabel = false, $size = 16) {
+    $svg = '<svg class="digilocker-badge" width="' . $size . '" height="' . $size . '" viewBox="0 0 24 24" style="vertical-align: -2.5px; margin-left: 2px; display: inline-block; flex-shrink: 0;" title="🛡️ DigiLocker / Aadhaar Verified Tenant">
+        <path fill="#16a34a" d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
+    </svg>';
+    if ($showLabel) {
+        return '<span class="verified-tenant-wrap" style="display: inline-flex; align-items: center; gap: 4px;" title="DigiLocker & Government e-KYC Verified Tenant">' . $svg . '<span style="font-size: 0.72rem; font-weight: 800; color: #166534; background: #dcfce7; padding: 1px 7px; border-radius: 12px; border: 1px solid #bbf7d0;">🛡️ DigiLocker Verified</span></span>';
+    }
+    return $svg;
+}
+
+/**
  * Return safe image URL or fallback
  */
 function get_property_image($image_path) {

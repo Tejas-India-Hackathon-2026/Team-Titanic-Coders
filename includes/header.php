@@ -186,6 +186,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                             <span style="font-weight: 700; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 4px;">
                                 <?php echo htmlspecialchars(explode(' ', $user['name'])[0]); ?>
                                 <?php if ($user['role'] === 'owner' && !empty($user['is_verified']) && (int)$user['is_verified'] === 1) echo render_verified_badge(false, 14); ?>
+                                <?php if ($user['role'] === 'renter' && !empty($user['is_verified']) && (int)$user['is_verified'] === 1) echo render_renter_verified_badge(false, 14); ?>
                             </span>
                             <i class="fa-solid fa-chevron-down" style="font-size: 0.75rem; color: var(--text-muted);"></i>
                         </button>
@@ -195,6 +196,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                                 <h5 style="display: flex; align-items: center; gap: 4px; margin-bottom: 2px;">
                                     <?php echo htmlspecialchars($user['name']); ?>
                                     <?php if ($user['role'] === 'owner' && !empty($user['is_verified']) && (int)$user['is_verified'] === 1) echo render_verified_badge(false, 15); ?>
+                                    <?php if ($user['role'] === 'renter' && !empty($user['is_verified']) && (int)$user['is_verified'] === 1) echo render_renter_verified_badge(false, 15); ?>
                                 </h5>
                                 <p><?php echo htmlspecialchars($user['email']); ?></p>
                                 <div style="display: flex; gap: 4px; align-items: center; margin-top: 4px; flex-wrap: wrap;">
@@ -204,6 +206,12 @@ $current_page = basename($_SERVER['PHP_SELF']);
                                             <span class="badge badge-success" style="font-size: 0.68rem;">⭐ Gold Verified</span>
                                         <?php else: ?>
                                             <span class="badge badge-secondary" style="font-size: 0.68rem;">Standard Owner</span>
+                                        <?php endif; ?>
+                                    <?php elseif ($user['role'] === 'renter'): ?>
+                                        <?php if (!empty($user['is_verified']) && (int)$user['is_verified'] === 1): ?>
+                                            <span class="badge badge-success" style="font-size: 0.68rem; background: #dcfce7; color: #166534;">🛡️ DigiLocker Verified</span>
+                                        <?php else: ?>
+                                            <span class="badge badge-secondary" style="font-size: 0.68rem;">Standard Tenant</span>
                                         <?php endif; ?>
                                     <?php endif; ?>
                                 </div>
@@ -229,6 +237,15 @@ $current_page = basename($_SERVER['PHP_SELF']);
                                 <a href="renter-dashboard.php" class="dropdown-item">
                                     <i class="fa-solid fa-bookmark"></i> My Wishlist & Inquiries
                                 </a>
+                                <?php if (empty($user['is_verified']) || (int)$user['is_verified'] !== 1): ?>
+                                    <a href="verify-renter.php" class="dropdown-item" style="color: #166534; font-weight: 700; background: #f0fdf4;">
+                                        <i class="fa-solid fa-shield-check text-success"></i> DigiLocker e-KYC (Verify)
+                                    </a>
+                                <?php else: ?>
+                                    <a href="verify-renter.php" class="dropdown-item" style="color: #15803d; font-weight: 700;">
+                                        <i class="fa-solid fa-id-card-clip text-success"></i> DigiLocker Identity Pass
+                                    </a>
+                                <?php endif; ?>
                             <?php elseif ($user['role'] === 'admin'): ?>
                                 <a href="admin-dashboard.php" class="dropdown-item">
                                     <i class="fa-solid fa-gear"></i> Admin Dashboard
