@@ -160,12 +160,12 @@ require_once __DIR__ . '/includes/header.php';
                         <?php if ($role === 'owner'): ?>
                             <span class="badge badge-warning"><i class="fa-solid fa-house-chimney-user"></i> Property Owner</span>
                             <?php if (!empty($isOwnerVer)): ?>
-                                <a href="verify-receipt.php" class="badge" style="background: #e0f2fe; color: #0284c7; text-decoration: none;">
-                                    <i class="fa-solid fa-certificate"></i> Verified Landlord
+                                <a href="verify-receipt.php" class="badge" style="background: #fef3c7; color: #b45309; border: 1px solid #fde68a; text-decoration: none; font-weight: 800;">
+                                    <i class="fa-solid fa-certificate"></i> ⭐ Gold Verified
                                 </a>
                             <?php else: ?>
-                                <a href="verify-owner.php" class="badge" style="background: #0095f6; color: #fff; text-decoration: none;">
-                                    <i class="fa-solid fa-circle-check"></i> Get Blue Tick (₹199)
+                                <a href="verify-owner.php" class="badge" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; text-decoration: none; font-weight: 800;">
+                                    <i class="fa-solid fa-circle-check"></i> Get Golden Tick (₹199)
                                 </a>
                             <?php endif; ?>
                         <?php elseif ($role === 'admin'): ?>

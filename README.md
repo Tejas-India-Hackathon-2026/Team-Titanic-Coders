@@ -37,13 +37,14 @@
 - **Official Booking Vouchers**: Generates verified printable receipts (`RN-BOOK-XXXXXX`) with property details, landlord contact, and **1-Click WhatsApp Landlord Connect**.
 - **Sync With Dashboards**: Landlords instantly see `🟢 ₹1,000 Token Paid & Reserved` badges on received inquiries in `owner-dashboard.php`.
 
-### 5. 🔵 Instagram-Style Verified Owner Blue Tick
-- **Trust & Anti-Fraud Badging**: Verified scalloped Blue Tick verification badge (`#0095f6`) displayed next to verified landlords across:
-  - Property details sidebar profile card (`🛡️ Govt ID & Property Verified Owner`)
+### 5. ⭐ Luxury Golden Tick Verified Landlord & Paid Subscription (₹199/Year)
+- **VIP Trust & Anti-Fraud Verification**: Luxury Golden Tick badge (`#f59e0b` / `#d97706` radiant gold gradient) displayed next to authenticated landlords across:
+  - Property details sidebar (`⭐ Govt ID & Property Gold Verified Owner`)
   - Property catalog cards
   - Explore Map sidebar and popups
   - Renter and Owner dashboards
-  - Official booking receipt vouchers
+  - Official printable verification certificates (`verify-receipt.php`)
+- **Paid Landlord Verification Gateway (`verify-owner.php`)**: Owners can self-verify with Aadhaar / PAN / Voter ID and activate their Golden Tick via simulated UPI, Card, or NetBanking checkout (₹199 / Year).
 
 ### 6. ⭐ Owner Listing Boost & Premium Upgrades (₹99)
 - Property owners can boost listings to **⭐ Featured Status** via interactive payment simulation.

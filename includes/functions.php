@@ -80,14 +80,22 @@ function generate_mock_txn_id() {
 }
 
 /**
- * Render Instagram-style Blue Tick Verified Badge
+ * Render Luxury Golden Tick Verified Badge (VIP / Govt ID Verified Landlord)
  */
 function render_verified_badge($showLabel = false, $size = 16) {
-    $svg = '<svg class="insta-blue-tick" width="' . $size . '" height="' . $size . '" viewBox="0 0 24 24" fill="#0095f6" style="vertical-align: -2.5px; margin-left: 2px; display: inline-block; flex-shrink: 0;" title="Verified Landlord / Owner">
-        <path d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.79-4-4-4-.495 0-.965.084-1.4.238C14.55 2.475 13.18 1.6 11.6 1.6c-1.58 0-2.95.875-3.6 2.148-.435-.154-.905-.238-1.4-.238-2.21 0-4 1.79-4 4 0 .495.084.965.238 1.4C1.575 9.55.7 10.92.7 12.5c0 1.58.875 2.95 2.148 3.6-.154.435-.238.905-.238 1.4 0 2.21 1.79 4 4 4 .495 0 .965-.084 1.4-.238.65 1.273 2.02 2.148 3.6 2.148 1.58 0 2.95-.875 3.6-2.148.435.154.905.238 1.4.238 2.21 0 4-1.79 4-4 0-.495-.084-.965-.238-1.4 1.273-.65 2.148-2.02 2.148-3.6zm-12.28 4.63l-4.15-4.15 1.42-1.42 2.73 2.73 6.88-6.88 1.42 1.42-8.3 8.3z"/>
+    $gradId = 'goldGrad_' . $size . '_' . mt_rand(100, 999);
+    $svg = '<svg class="gold-tick-badge" width="' . $size . '" height="' . $size . '" viewBox="0 0 24 24" style="vertical-align: -2.5px; margin-left: 2px; display: inline-block; flex-shrink: 0;" title="⭐ Gold Verified Landlord / Owner (Govt ID Authenticated)">
+        <defs>
+            <linearGradient id="' . $gradId . '" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#fde047"/>
+                <stop offset="40%" stop-color="#f59e0b"/>
+                <stop offset="100%" stop-color="#d97706"/>
+            </linearGradient>
+        </defs>
+        <path fill="url(#' . $gradId . ')" d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.79-4-4-4-.495 0-.965.084-1.4.238C14.55 2.475 13.18 1.6 11.6 1.6c-1.58 0-2.95.875-3.6 2.148-.435-.154-.905-.238-1.4-.238-2.21 0-4 1.79-4 4 0 .495.084.965.238 1.4C1.575 9.55.7 10.92.7 12.5c0 1.58.875 2.95 2.148 3.6-.154.435-.238.905-.238 1.4 0 2.21 1.79 4 4 4 .495 0 .965-.084 1.4-.238.65 1.273 2.02 2.148 3.6 2.148 1.58 0 2.95-.875 3.6-2.148.435.154.905.238 1.4.238 2.21 0 4-1.79 4-4 0-.495-.084-.965-.238-1.4 1.273-.65 2.148-2.02 2.148-3.6zm-12.28 4.63l-4.15-4.15 1.42-1.42 2.73 2.73 6.88-6.88 1.42 1.42-8.3 8.3z"/>
     </svg>';
     if ($showLabel) {
-        return '<span class="verified-badge-wrap" style="display: inline-flex; align-items: center; gap: 3px;" title="Government ID & Ownership Verified Landlord">' . $svg . '<span style="font-size: 0.72rem; font-weight: 800; color: #0284c7; background: #e0f2fe; padding: 1px 6px; border-radius: 12px; border: 1px solid #bae6fd;">Verified Owner</span></span>';
+        return '<span class="verified-badge-wrap" style="display: inline-flex; align-items: center; gap: 4px;" title="Government ID & Ownership Verified Landlord">' . $svg . '<span style="font-size: 0.72rem; font-weight: 800; color: #b45309; background: #fef3c7; padding: 1px 7px; border-radius: 12px; border: 1px solid #fde68a;">Gold Verified</span></span>';
     }
     return $svg;
 }

@@ -47,29 +47,29 @@ require_once __DIR__ . '/includes/header.php';
     </div>
 
     <!-- Official Certificate & Voucher Box -->
-    <div id="printableCertificate" style="max-width: 760px; margin: 0 auto; background: #ffffff; border: 2.5px solid #0095f6; border-radius: 20px; padding: 2.5rem; box-shadow: 0 10px 30px rgba(0, 149, 246, 0.15); position: relative; overflow: hidden;">
+    <div id="printableCertificate" style="max-width: 760px; margin: 0 auto; background: #ffffff; border: 2.5px solid #f59e0b; border-radius: 20px; padding: 2.5rem; box-shadow: 0 10px 30px rgba(245, 158, 11, 0.2); position: relative; overflow: hidden;">
         
         <!-- Watermark Background Emblem -->
         <div style="position: absolute; right: -40px; bottom: -40px; opacity: 0.04; pointer-events: none; z-index: 0;">
-            <svg width="340" height="340" viewBox="0 0 24 24" fill="#0095f6"><path d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.79-4-4-4-.495 0-.965.084-1.4.238C14.55 2.475 13.18 1.6 11.6 1.6c-1.58 0-2.95.875-3.6 2.148-.435-.154-.905-.238-1.4-.238-2.21 0-4 1.79-4 4 0 .495.084.965.238 1.4C1.575 9.55.7 10.92.7 12.5c0 1.58.875 2.95 2.148 3.6-.154.435-.238.905-.238 1.4 0 2.21 1.79 4 4 4 .495 0 .965-.084 1.4-.238.65 1.273 2.02 2.148 3.6 2.148 1.58 0 2.95-.875 3.6-2.148.435.154.905.238 1.4.238 2.21 0 4-1.79 4-4 0-.495-.084-.965-.238-1.4 1.273-.65 2.148-2.02 2.148-3.6zm-12.28 4.63l-4.15-4.15 1.42-1.42 2.73 2.73 6.88-6.88 1.42 1.42-8.3 8.3z"/></svg>
+            <svg width="340" height="340" viewBox="0 0 24 24" fill="#f59e0b"><path d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.79-4-4-4-.495 0-.965.084-1.4.238C14.55 2.475 13.18 1.6 11.6 1.6c-1.58 0-2.95.875-3.6 2.148-.435-.154-.905-.238-1.4-.238-2.21 0-4 1.79-4 4 0 .495.084.965.238 1.4C1.575 9.55.7 10.92.7 12.5c0 1.58.875 2.95 2.148 3.6-.154.435-.238.905-.238 1.4 0 2.21 1.79 4 4 4 .495 0 .965-.084 1.4-.238.65 1.273 2.02 2.148 3.6 2.148 1.58 0 2.95-.875 3.6-2.148.435.154.905.238 1.4.238 2.21 0 4-1.79 4-4 0-.495-.084-.965-.238-1.4 1.273-.65 2.148-2.02 2.148-3.6zm-12.28 4.63l-4.15-4.15 1.42-1.42 2.73 2.73 6.88-6.88 1.42 1.42-8.3 8.3z"/></svg>
         </div>
 
         <div style="position: relative; z-index: 1;">
             
             <!-- Certificate Header -->
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #e0f2fe; padding-bottom: 1.5rem; margin-bottom: 1.75rem; flex-wrap: wrap; gap: 1rem;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #fef3c7; padding-bottom: 1.5rem; margin-bottom: 1.75rem; flex-wrap: wrap; gap: 1rem;">
                 <div>
                     <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
-                        <span style="font-size: 1.4rem; font-weight: 900; color: var(--primary);">Rent<span style="color: #0095f6;">Near</span></span>
-                        <span style="background: #e0f2fe; color: #0284c7; font-size: 0.72rem; font-weight: 800; padding: 2px 8px; border-radius: 12px; border: 1px solid #bae6fd;">
-                            VERIFIED IDENTITY
+                        <span style="font-size: 1.4rem; font-weight: 900; color: var(--primary);">Rent<span style="color: #f59e0b;">Near</span></span>
+                        <span style="background: #fef3c7; color: #b45309; font-size: 0.72rem; font-weight: 800; padding: 2px 8px; border-radius: 12px; border: 1px solid #fde68a;">
+                            ⭐ GOLD VIP VERIFIED
                         </span>
                     </div>
-                    <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">Certificate of Landlord Verification & Blue Tick Activation</p>
+                    <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">Official Certificate of Landlord Verification & Golden Tick Activation</p>
                 </div>
                 <div style="text-align: right;">
                     <span style="font-size: 0.72rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px;">Certificate ID</span>
-                    <div style="font-size: 1.05rem; font-weight: 800; font-family: monospace; color: #0095f6;">
+                    <div style="font-size: 1.05rem; font-weight: 800; font-family: monospace; color: #d97706;">
                         <?php echo !empty($payment['transaction_id']) ? htmlspecialchars($payment['transaction_id']) : (!empty($ownerData['verification_txn_id']) ? htmlspecialchars($ownerData['verification_txn_id']) : 'TXN_VERIFY_ACTIVE'); ?>
                     </div>
                     <div style="font-size: 0.76rem; color: var(--text-muted); margin-top: 2px;">
@@ -79,19 +79,19 @@ require_once __DIR__ . '/includes/header.php';
             </div>
 
             <!-- Verified Landlord Honor Showcase -->
-            <div style="text-align: center; background: linear-gradient(135deg, #f0f9ff, #e0f2fe); border: 1.5px solid #bae6fd; border-radius: 16px; padding: 1.75rem 1.5rem; margin-bottom: 2rem;">
-                <div style="width: 64px; height: 64px; border-radius: 50%; background: #ffffff; color: #0095f6; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem; box-shadow: 0 4px 12px rgba(0, 149, 246, 0.25);">
+            <div style="text-align: center; background: linear-gradient(135deg, #fffbeb, #fef3c7); border: 1.5px solid #fde68a; border-radius: 16px; padding: 1.75rem 1.5rem; margin-bottom: 2rem;">
+                <div style="width: 64px; height: 64px; border-radius: 50%; background: #ffffff; color: #f59e0b; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem; box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35); border: 2px solid #fde68a;">
                     <?php echo render_verified_badge(false, 36); ?>
                 </div>
                 <h2 style="font-size: 1.6rem; font-weight: 900; color: #0f172a; margin-bottom: 0.2rem; display: flex; align-items: center; justify-content: center; gap: 6px;">
                     <?php echo htmlspecialchars($ownerData['name'] ?? $user['name']); ?>
                     <?php echo render_verified_badge(false, 22); ?>
                 </h2>
-                <div style="font-size: 0.88rem; font-weight: 800; color: #0284c7; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">
-                    Official Verified Property Owner
+                <div style="font-size: 0.88rem; font-weight: 800; color: #b45309; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">
+                    ⭐ Official Gold Verified Property Owner
                 </div>
-                <p style="font-size: 0.84rem; color: #334155; max-width: 520px; margin: 0 auto;">
-                    This acknowledges that the identity, contact credentials, and property listings of the owner have been authenticated on the RentNear platform.
+                <p style="font-size: 0.84rem; color: #78350f; max-width: 520px; margin: 0 auto;">
+                    This acknowledges that the identity, contact credentials, and property listings of the owner have been authenticated with the highest Trust Tier on the RentNear platform.
                 </p>
             </div>
 
@@ -110,7 +110,7 @@ require_once __DIR__ . '/includes/header.php';
                         <i class="fa-solid fa-circle-check"></i> 100% Active & Authenticated
                     </div>
                     <div style="font-size: 0.82rem; color: var(--text-muted);">Amount Paid: <strong>₹199.00 (Annual)</strong></div>
-                    <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.2rem;">Badge: <strong>🔵 Instagram Blue Tick</strong></div>
+                    <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.2rem;">Badge: <strong>⭐ Luxury Golden Tick</strong></div>
                 </div>
             </div>
 

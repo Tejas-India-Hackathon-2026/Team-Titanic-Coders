@@ -313,8 +313,8 @@ require_once __DIR__ . '/includes/header.php';
                                 <?php if ($isLandlordVerified) echo render_verified_badge(false, 19); ?>
                             </h4>
                             <?php if ($isLandlordVerified): ?>
-                                <p style="font-size: 0.78rem; color: #0284c7; font-weight: 700; display: flex; align-items: center; gap: 4px; margin: 0;">
-                                    <i class="fa-solid fa-shield-check text-primary"></i> Govt ID & Property Verified Owner
+                                <p style="font-size: 0.78rem; color: #b45309; font-weight: 700; display: flex; align-items: center; gap: 4px; margin: 0;">
+                                    <i class="fa-solid fa-shield-check" style="color: #f59e0b;"></i> Govt ID & Property Gold Verified Owner
                                 </p>
                             <?php else: ?>
                                 <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0;">

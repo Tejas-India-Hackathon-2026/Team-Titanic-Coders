@@ -21,28 +21,28 @@ require_once __DIR__ . '/includes/header.php';
 <div class="container" style="padding-top: 2.5rem; padding-bottom: 5rem;">
     
     <div style="text-align: center; max-width: 680px; margin: 0 auto 2.5rem;">
-        <div style="display: inline-flex; align-items: center; gap: 6px; background: #e0f2fe; color: #0284c7; padding: 0.35rem 0.9rem; border-radius: 20px; font-weight: 800; font-size: 0.85rem; margin-bottom: 0.75rem; border: 1px solid #bae6fd;">
-            <?php echo render_verified_badge(false, 18); ?> RentNear Meta-Verified
+        <div style="display: inline-flex; align-items: center; gap: 6px; background: #fef3c7; color: #b45309; padding: 0.35rem 0.95rem; border-radius: 20px; font-weight: 800; font-size: 0.85rem; margin-bottom: 0.75rem; border: 1.5px solid #fde68a; box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2);">
+            <?php echo render_verified_badge(false, 18); ?> RentNear Gold VIP Verified
         </div>
         <h1 style="font-size: 2.4rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 0.5rem;">
-            Get the Official <span style="color: #0095f6;">Verified Owner</span> Blue Tick
+            Get the Official <span style="background: linear-gradient(135deg, #f59e0b, #d97706); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Golden Tick Verified</span> Badge
         </h1>
         <p style="color: var(--text-muted); font-size: 1.05rem; line-height: 1.6;">
-            Build 100% trust with tenants, eliminate fraud concerns, and get the iconic Instagram-style blue tick badge on all your rental listings for only <strong>₹199 / Year</strong>.
+            Build 100% trust with tenants, eliminate fraud concerns, and get the iconic luxury <strong>Golden Tick badge</strong> on all your rental listings for only <strong>₹199 / Year</strong>.
         </p>
     </div>
 
     <?php if ($isAlreadyVerified): ?>
-        <div class="alert alert-success" style="max-width: 640px; margin: 0 auto 2rem; text-align: center; border-radius: 12px; padding: 1.25rem;">
-            <h4 style="font-weight: 800; margin-bottom: 0.25rem;">
-                <i class="fa-solid fa-circle-check text-success"></i> You are already a Verified Landlord!
+        <div class="alert alert-success" style="max-width: 640px; margin: 0 auto 2rem; text-align: center; border-radius: 12px; padding: 1.25rem; background: #fffbeb; border: 1.5px solid #fde68a; color: #92400e;">
+            <h4 style="font-weight: 800; margin-bottom: 0.25rem; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                <?php echo render_verified_badge(false, 22); ?> You are an Official Gold Verified Landlord!
             </h4>
-            <p style="font-size: 0.88rem; margin: 0 0 0.75rem 0;">
-                Your Blue Tick badge is active on all your rental listings.
+            <p style="font-size: 0.88rem; margin: 0 0 0.75rem 0; color: #b45309;">
+                Your Golden Tick badge is active on all your rental listings.
             </p>
             <div style="display: flex; justify-content: center; gap: 0.75rem;">
-                <a href="verify-receipt.php" class="btn btn-primary btn-sm">
-                    <i class="fa-solid fa-certificate"></i> View My Verification Certificate
+                <a href="verify-receipt.php" class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #f59e0b, #d97706); border: none; font-weight: 800;">
+                    <i class="fa-solid fa-certificate"></i> View My Gold Certificate
                 </a>
                 <a href="owner-dashboard.php" class="btn btn-secondary btn-sm">
                     Go to Dashboard
@@ -63,13 +63,13 @@ require_once __DIR__ . '/includes/header.php';
                 <div style="display: flex; flex-direction: column; gap: 1.25rem;">
                     
                     <div style="display: flex; gap: 1rem; align-items: flex-start;">
-                        <div style="width: 42px; height: 42px; border-radius: 50%; background: #e0f2fe; color: #0284c7; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; flex-shrink: 0;">
+                        <div style="width: 42px; height: 42px; border-radius: 50%; background: #fef3c7; color: #b45309; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; flex-shrink: 0; border: 1px solid #fde68a;">
                             <?php echo render_verified_badge(false, 22); ?>
                         </div>
                         <div>
-                            <h4 style="font-size: 1rem; font-weight: 800; margin-bottom: 0.2rem;">Iconic Blue Tick Verification Badge</h4>
+                            <h4 style="font-size: 1rem; font-weight: 800; margin-bottom: 0.2rem;">Luxury Golden Tick Verified Badge</h4>
                             <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0;">
-                                Display the recognized blue tick next to your name across Property Details, Catalog Cards, Explore Map, and Receipts.
+                                Display the recognized VIP Golden Tick next to your name across Property Details, Catalog Cards, Explore Map, and Receipts.
                             </p>
                         </div>
                     </div>
@@ -222,19 +222,19 @@ require_once __DIR__ . '/includes/header.php';
 
                 <!-- Simulation Info Alert -->
                 <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.65rem 0.85rem; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 1.25rem;">
-                    <i class="fa-solid fa-shield text-primary"></i> Simulated Gateway for Hackathon Demo. Instant Blue Tick activation without charging real money.
+                    <i class="fa-solid fa-shield text-primary"></i> Simulated Gateway for Hackathon Demo. Instant Golden Tick activation without charging real money.
                 </div>
 
                 <!-- Pay Button -->
-                <button type="button" id="btnPayVerification" class="btn btn-primary btn-lg" style="width: 100%; font-weight: 800; padding: 0.85rem; font-size: 1rem; background: linear-gradient(135deg, #0095f6, #0284c7); border: none; box-shadow: 0 4px 14px rgba(0, 149, 246, 0.4);">
-                    <i class="fa-solid fa-lock me-1"></i> Pay ₹199 & Activate Blue Tick
+                <button type="button" id="btnPayVerification" class="btn btn-primary btn-lg" style="width: 100%; font-weight: 800; padding: 0.85rem; font-size: 1rem; background: linear-gradient(135deg, #f59e0b, #d97706); border: none; box-shadow: 0 4px 14px rgba(245, 158, 11, 0.45); color: #fff;">
+                    <i class="fa-solid fa-lock me-1"></i> Pay ₹199 & Activate Golden Tick
                 </button>
 
                 <!-- Processing Overlay -->
                 <div id="verifyProcessingOverlay" style="display: none; margin-top: 1rem; text-align: center;">
-                    <div class="spinner-border text-primary" role="status" style="width: 1.8rem; height: 1.8rem;"></div>
-                    <div style="font-weight: 800; font-size: 0.9rem; margin-top: 0.5rem; color: #0095f6;">
-                        Authorizing Payment & Verifying Landlord Credentials...
+                    <div class="spinner-border text-warning" role="status" style="width: 1.8rem; height: 1.8rem;"></div>
+                    <div style="font-weight: 800; font-size: 0.9rem; margin-top: 0.5rem; color: #d97706;">
+                        Authorizing Payment & Activating Golden Tick Credentials...
                     </div>
                 </div>
 
