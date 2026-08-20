@@ -355,8 +355,8 @@ foreach ($properties as $p) {
                     // Custom HTML Pin Marker with Price Bubble
                     const priceFormatted = '₹' + Number(p.price).toLocaleString('en-IN');
                     const pinHtml = `
-                        <div style="background: ${p.is_premium ? '#d97706' : '#4338ca'}; color: #fff; padding: 4px 8px; border-radius: 18px; font-weight: 800; font-size: 11px; box-shadow: 0 4px 10px rgba(0,0,0,0.35); border: 2px solid #fff; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px; cursor: pointer; transform: translate(-50%, -100%);">
-                            <span style="width: 7px; height: 7px; border-radius: 50%; background: #22c55e; display: inline-block;"></span>
+                        <div class="custom-map-pin ${p.is_premium ? 'is-premium-pin' : ''}">
+                            <span class="pin-dot"></span>
                             ${priceFormatted}
                         </div>
                     `;
@@ -370,13 +370,13 @@ foreach ($properties as $p) {
 
                     // Interactive Popup with Photo and Details
                     const popupContent = `
-                        <div style="width: 230px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-                            <img src="${p.image}" alt="${p.title}" style="width: 100%; height: 110px; object-fit: cover; border-radius: 8px; margin-bottom: 6px;">
+                        <div style="width: 230px; font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+                            <img src="${p.image}" alt="${p.title}" style="width: 100%; height: 115px; object-fit: cover; border-radius: 10px; margin-bottom: 6px;">
                             <div style="display: flex; gap: 4px; margin-bottom: 4px; flex-wrap: wrap;">
                                 <span style="font-size: 10px; font-weight: 700; background: #e0e7ff; color: #3730a3; padding: 2px 6px; border-radius: 4px;">${p.property_type}</span>
                                 <span style="font-size: 10px; font-weight: 700; background: #dcfce7; color: #166534; padding: 2px 6px; border-radius: 4px;">🟢 Vacant</span>
                             </div>
-                            <h4 style="font-size: 13px; font-weight: 700; line-height: 1.3; margin: 0 0 4px 0; color: #0f172a;">
+                            <h4 style="font-size: 13px; font-weight: 800; line-height: 1.3; margin: 0 0 3px 0; color: #0f172a;">
                                 <a href="property-details.php?id=${p.id}" style="color: #0f172a; text-decoration: none;">${p.title}</a>
                             </h4>
                             <div style="font-size: 11px; color: #64748b; margin-bottom: 8px;">
@@ -386,7 +386,7 @@ foreach ($properties as $p) {
                                 <div style="font-size: 14px; font-weight: 800; color: #4338ca;">
                                     ${priceFormatted}<span style="font-size: 10px; font-weight: normal; color: #64748b;">/mo</span>
                                 </div>
-                                <a href="property-details.php?id=${p.id}" style="background: #4f46e5; color: #fff; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 6px; text-decoration: none; display: inline-block;">
+                                <a href="property-details.php?id=${p.id}" style="background: #4f46e5; color: #fff; font-size: 11px; font-weight: 700; padding: 5px 12px; border-radius: 6px; text-decoration: none; display: inline-block;">
                                     View Details &rarr;
                                 </a>
                             </div>
