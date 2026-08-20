@@ -238,12 +238,19 @@ function initialize_database($pdo) {
         ");
     }
 
-    // Auto-migration for tenant_preference
+    // Auto-migration for tenant_preference, latitude, longitude, landmark
     try {
         $pdo->exec("ALTER TABLE properties ADD COLUMN tenant_preference VARCHAR(50) DEFAULT 'Bachelors Allowed'");
-    } catch (Exception $e) {
-        // Already exists or supported
-    }
+    } catch (Exception $e) {}
+    try {
+        $pdo->exec("ALTER TABLE properties ADD COLUMN latitude DECIMAL(10, 8) DEFAULT NULL");
+    } catch (Exception $e) {}
+    try {
+        $pdo->exec("ALTER TABLE properties ADD COLUMN longitude DECIMAL(11, 8) DEFAULT NULL");
+    } catch (Exception $e) {}
+    try {
+        $pdo->exec("ALTER TABLE properties ADD COLUMN landmark VARCHAR(255) DEFAULT ''");
+    } catch (Exception $e) {}
 
     // Check if initial seeding is needed
     $ownerCountStmt = $pdo->query("SELECT COUNT(*) FROM owners");

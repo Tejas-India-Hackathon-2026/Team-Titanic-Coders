@@ -68,6 +68,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
+    $landmark          = sanitize($_POST['landmark'] ?? '');
+    $latitude          = isset($_POST['latitude']) && is_numeric($_POST['latitude']) ? (float)$_POST['latitude'] : null;
+    $longitude         = isset($_POST['longitude']) && is_numeric($_POST['longitude']) ? (float)$_POST['longitude'] : null;
+
+    if (empty($latitude) || empty($longitude)) {
+        $resolvedCoords = get_property_coordinates($location, $city, $propId);
+        $latitude  = $resolvedCoords['lat'];
+        $longitude = $resolvedCoords['lng'];
+    }
+
     if (empty($title) || empty($city) || empty($location) || $price <= 0) {
         $error = 'Please fill out all required fields with valid values.';
     } else {
@@ -79,6 +89,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 furnishing = :furnishing,
                 location = :location,
                 city = :city,
+                landmark = :landmark,
+                latitude = :latitude,
+                longitude = :longitude,
                 price = :price,
                 deposit = :deposit,
                 bedrooms = :bedrooms,
@@ -98,6 +111,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ':furnishing'        => $furnishing,
             ':location'          => $location,
             ':city'              => $city,
+            ':landmark'          => $landmark,
+            ':latitude'          => $latitude,
+            ':longitude'         => $longitude,
             ':price'             => $price,
             ':deposit'           => $deposit,
             ':bedrooms'          => $bedrooms,
@@ -218,11 +234,48 @@ require_once __DIR__ . '/includes/header.php';
 
                         <div class="form-group">
                             <label>Area / Locality <span class="text-danger">*</span></label>
-                            <input type="text" name="location" class="form-control" value="<?php echo htmlspecialchars($property['location']); ?>" required>
+                            <input type="text" name="location" id="editInputLocation" class="form-control" value="<?php echo htmlspecialchars($property['location']); ?>" required>
                         </div>
                     </div>
 
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <?php 
+                    $propCoords = get_property_coordinates($property['location'], $property['city'], $property['id']);
+                    $curLat = !empty($property['latitude']) ? (float)$property['latitude'] : $propCoords['lat'];
+                    $curLng = !empty($property['longitude']) ? (float)$property['longitude'] : $propCoords['lng'];
+                    $curLandmark = $property['landmark'] ?? '';
+                    ?>
+
+                    <div class="form-group" style="margin-top: 0.75rem;">
+                        <label>Nearby Landmark / Transit (Optional)</label>
+                        <input type="text" name="landmark" class="form-control" value="<?php echo htmlspecialchars($curLandmark); ?>" placeholder="e.g. Near Malaypur Railway Station / Opposite City Hospital / 2 min from Metro">
+                    </div>
+
+                    <!-- Interactive Pinpoint Map Location Picker -->
+                    <div style="margin-top: 1rem; background: var(--bg-alt); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.5rem;">
+                            <div>
+                                <label style="font-weight: 700; color: var(--dark); font-size: 0.9rem; margin: 0;">
+                                    <i class="fa-solid fa-map-pin text-danger"></i> Pin Exact Location on Map
+                                </label>
+                                <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0;">Drag the pin or click on the map to fine-tune your room's location.</p>
+                            </div>
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="detectEditOwnerGps()" style="font-size: 0.78rem; font-weight: 700; background: #ecfdf5; color: #059669; border-color: #a7f3d0;">
+                                <i class="fa-solid fa-crosshairs"></i> Use My GPS Location
+                            </button>
+                        </div>
+
+                        <div id="editPropertyPickerMap" style="height: 260px; width: 100%; border-radius: var(--radius-md); border: 1px solid #cbd5e1;"></div>
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem; font-size: 0.78rem; color: var(--text-muted);">
+                            <span>Current GPS Coordinates: <strong id="editCoordsBadge" style="color: var(--primary);"><?php echo number_format($curLat, 4) . ', ' . number_format($curLng, 4); ?></strong></span>
+                            <span style="color: #16a34a; font-weight: 600;"><i class="fa-solid fa-circle-check"></i> Location Active</span>
+                        </div>
+
+                        <input type="hidden" name="latitude" id="editLatitude" value="<?php echo htmlspecialchars($curLat); ?>">
+                        <input type="hidden" name="longitude" id="editLongitude" value="<?php echo htmlspecialchars($curLng); ?>">
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.25rem;">
                         <div class="form-group">
                             <label>Monthly Rent (₹) <span class="text-danger">*</span></label>
                             <input type="number" name="price" class="form-control" value="<?php echo (int)$property['price']; ?>" min="500" step="500" required>
@@ -303,5 +356,93 @@ require_once __DIR__ . '/includes/header.php';
         </div>
     </div>
 </div>
+
+<script>
+let editPickerMap = null;
+let editPickerMarker = null;
+
+const cityCoordinatesMap = {
+    'Jamui': [24.9213, 86.2234],
+    'Patna': [25.5941, 85.1376],
+    'New Delhi': [28.6139, 77.2090],
+    'Bengaluru': [12.9716, 77.5946],
+    'Pune': [18.5204, 73.8567],
+    'Kota': [25.1800, 75.8300],
+    'Jaipur': [26.9124, 75.7873],
+    'Lucknow': [26.8467, 80.9462],
+    'Mumbai': [19.0760, 72.8777],
+    'Hyderabad': [17.3850, 78.4867],
+    'Gurugram': [28.4595, 77.0266],
+    'Noida': [28.5355, 77.3910]
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    if (typeof L !== 'undefined') {
+        let defaultLat = <?php echo $curLat; ?>;
+        let defaultLng = <?php echo $curLng; ?>;
+
+        editPickerMap = L.map('editPropertyPickerMap').setView([defaultLat, defaultLng], 15);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; OpenStreetMap contributors | RentNear'
+        }).addTo(editPickerMap);
+
+        // Add Draggable Marker
+        editPickerMarker = L.marker([defaultLat, defaultLng], { draggable: true }).addTo(editPickerMap);
+        editPickerMarker.bindPopup("📍 Drag pin or click on map to adjust exact location").openPopup();
+
+        // Update inputs on drag
+        editPickerMarker.on('dragend', function(e) {
+            const pos = editPickerMarker.getLatLng();
+            updateEditCoordinates(pos.lat, pos.lng);
+        });
+
+        // Click anywhere to move pin
+        editPickerMap.on('click', function(e) {
+            editPickerMarker.setLatLng(e.latlng);
+            updateEditCoordinates(e.latlng.lat, e.latlng.lng);
+            editPickerMarker.openPopup();
+        });
+
+        // Listen for City Dropdown Change
+        const citySelect = document.querySelector('select[name="city"]');
+        if (citySelect) {
+            citySelect.addEventListener('change', () => {
+                const selectedCity = citySelect.value;
+                if (cityCoordinatesMap[selectedCity]) {
+                    const coords = cityCoordinatesMap[selectedCity];
+                    editPickerMap.flyTo(coords, 14);
+                    editPickerMarker.setLatLng(coords);
+                    updateEditCoordinates(coords[0], coords[1]);
+                }
+            });
+        }
+    }
+});
+
+function updateEditCoordinates(lat, lng) {
+    document.getElementById('editLatitude').value = lat.toFixed(6);
+    document.getElementById('editLongitude').value = lng.toFixed(6);
+    document.getElementById('editCoordsBadge').textContent = lat.toFixed(4) + ', ' + lng.toFixed(4);
+}
+
+function detectEditOwnerGps() {
+    if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(pos => {
+            const lat = pos.coords.latitude;
+            const lng = pos.coords.longitude;
+            editPickerMap.flyTo([lat, lng], 16);
+            editPickerMarker.setLatLng([lat, lng]);
+            updateEditCoordinates(lat, lng);
+            editPickerMarker.bindPopup("📍 GPS Location (Updated!)").openPopup();
+        }, err => {
+            alert("Could not access GPS. Please allow location permission in your browser.");
+        });
+    } else {
+        alert("Geolocation is not supported by your browser.");
+    }
+}
+</script>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>

@@ -209,14 +209,21 @@ require_once __DIR__ . '/includes/header.php';
             <!-- Location & Neighborhood Box with Embedded Interactive Pin Map -->
             <?php 
             $propCoords = get_property_coordinates($property['location'], $property['city'], $property['id']);
+            $finalLat = !empty($property['latitude']) ? (float)$property['latitude'] : $propCoords['lat'];
+            $finalLng = !empty($property['longitude']) ? (float)$property['longitude'] : $propCoords['lng'];
             ?>
             <div class="details-card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.75rem;">
                     <div>
                         <h3 style="font-size: 1.25rem; font-weight: 700; margin: 0;"><i class="fa-solid fa-map-location-dot text-danger me-1"></i> Interactive Location Map</h3>
-                        <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0;"><?php echo htmlspecialchars($property['location'] . ', ' . $property['city']); ?></p>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0;">
+                            <?php echo htmlspecialchars($property['location'] . ', ' . $property['city']); ?>
+                            <?php if (!empty($property['landmark'])): ?>
+                                &bull; <span style="color: var(--primary); font-weight: 600;">(Near <?php echo htmlspecialchars($property['landmark']); ?>)</span>
+                            <?php endif; ?>
+                        </p>
                     </div>
-                    <a href="https://www.google.com/maps/search/?api=1&query=<?php echo urlencode($property['location'] . ', ' . $property['city']); ?>" target="_blank" class="btn btn-secondary btn-sm" style="background: #eef2ff; color: var(--primary); border: 1px solid #c7d2fe;">
+                    <a href="https://www.google.com/maps/search/?api=1&query=<?php echo urlencode($finalLat . ',' . $finalLng); ?>" target="_blank" class="btn btn-secondary btn-sm" style="background: #eef2ff; color: var(--primary); border: 1px solid #c7d2fe;">
                         <i class="fa-solid fa-diamond-turn-right"></i> Open in Google Maps App
                     </a>
                 </div>
@@ -227,8 +234,8 @@ require_once __DIR__ . '/includes/header.php';
                 <script>
                 document.addEventListener('DOMContentLoaded', () => {
                     if (typeof L !== 'undefined') {
-                        const propLat = <?php echo json_encode($propCoords['lat']); ?>;
-                        const propLng = <?php echo json_encode($propCoords['lng']); ?>;
+                        const propLat = <?php echo json_encode($finalLat); ?>;
+                        const propLng = <?php echo json_encode($finalLng); ?>;
                         const propTitle = <?php echo json_encode($property['title']); ?>;
                         const propPrice = <?php echo json_encode(format_inr($property['price'])); ?>;
                         const propLoc = <?php echo json_encode($property['location'] . ', ' . $property['city']); ?>;
@@ -277,8 +284,8 @@ require_once __DIR__ . '/includes/header.php';
                             <strong><?php echo htmlspecialchars($property['city']); ?></strong>
                         </div>
                         <div>
-                            <span style="color: var(--text-muted); font-size: 0.8rem; display: block;">Transit & Connectivity</span>
-                            <span class="text-success"><i class="fa-solid fa-train-subway"></i> Near Metro & Auto Stand</span>
+                            <span style="color: var(--text-muted); font-size: 0.8rem; display: block;">Landmark / Connectivity</span>
+                            <strong><?php echo !empty($property['landmark']) ? htmlspecialchars($property['landmark']) : 'Main Road Access'; ?></strong>
                         </div>
                     </div>
                 </div>
