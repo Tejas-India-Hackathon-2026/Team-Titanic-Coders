@@ -126,4 +126,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_contact'])) {
 </style>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>
-s
