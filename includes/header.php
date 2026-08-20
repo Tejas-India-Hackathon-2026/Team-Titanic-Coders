@@ -28,6 +28,34 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <?php if (isset($extra_css)): ?>
         <link rel="stylesheet" href="<?php echo htmlspecialchars($extra_css); ?>">
     <?php endif; ?>
+
+    <!-- Inline Core Dropdown Handler (Zero-latency & Cache-proof) -->
+    <script>
+    function toggleUserDropdown(e) {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        var menu = document.getElementById('userDropdownMenu');
+        if (menu) {
+            menu.classList.toggle('show');
+        }
+    }
+
+    document.addEventListener('click', function(e) {
+        var menu = document.getElementById('userDropdownMenu');
+        var btn = document.getElementById('userDropdownBtn');
+        if (!menu || !menu.classList.contains('show')) return;
+        
+        if (btn && (btn === e.target || btn.contains(e.target))) {
+            return;
+        }
+        if (menu === e.target || menu.contains(e.target)) {
+            return;
+        }
+        menu.classList.remove('show');
+    });
+    </script>
 </head>
 <body>
 
