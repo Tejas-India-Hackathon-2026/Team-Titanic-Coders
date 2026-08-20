@@ -314,6 +314,67 @@ foreach ($properties as $p) {
                 <div id="propertiesLeafletMap" style="height: 420px; width: 100%;"></div>
             </div>
 
+            <style>
+            /* Map Pin Markers for Properties Page */
+            .leaflet-div-icon.rentnear-map-marker {
+                background: transparent !important;
+                border: none !important;
+            }
+            .custom-map-pin {
+                position: relative;
+                background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+                color: #ffffff !important;
+                padding: 6px 12px;
+                border-radius: 20px;
+                font-weight: 800;
+                font-size: 12px;
+                box-shadow: 0 4px 14px rgba(79, 70, 229, 0.5), 0 2px 6px rgba(0, 0, 0, 0.25);
+                border: 2px solid #ffffff;
+                white-space: nowrap;
+                display: inline-flex;
+                align-items: center;
+                gap: 5px;
+                cursor: pointer;
+                transform: translate(-50%, -100%);
+                transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+                z-index: 100;
+            }
+            .custom-map-pin::after {
+                content: '';
+                position: absolute;
+                bottom: -6px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 0;
+                height: 0;
+                border-left: 6px solid transparent;
+                border-right: 6px solid transparent;
+                border-top: 6px solid #3730a3;
+            }
+            .custom-map-pin.is-premium-pin {
+                background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+                box-shadow: 0 4px 16px rgba(245, 158, 11, 0.6), 0 2px 6px rgba(0, 0, 0, 0.25);
+                border: 2px solid #fffbeb;
+            }
+            .custom-map-pin.is-premium-pin::after {
+                border-top-color: #d97706;
+            }
+            .custom-map-pin .pin-dot {
+                width: 7px;
+                height: 7px;
+                border-radius: 50%;
+                background: #22c55e;
+                display: inline-block;
+                box-shadow: 0 0 6px #22c55e;
+                flex-shrink: 0;
+            }
+            .custom-map-pin:hover {
+                transform: translate(-50%, -110%) scale(1.18);
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.45);
+                z-index: 9999 !important;
+            }
+            </style>
+
             <script>
             let rentnearLeafletMap = null;
             const geoPropertiesData = <?php echo json_encode($propertiesGeo); ?>;
@@ -372,14 +433,14 @@ foreach ($properties as $p) {
                     const pinHtml = `
                         <div class="custom-map-pin ${p.is_premium ? 'is-premium-pin' : ''}">
                             <span class="pin-dot"></span>
-                            ${priceFormatted}
+                            <span>${priceFormatted}/mo</span>
                         </div>
                     `;
 
                     const customIcon = L.divIcon({
                         className: 'rentnear-map-marker',
                         html: pinHtml,
-                        iconSize: [0, 0],
+                        iconSize: null,
                         iconAnchor: [0, 0]
                     });
 
