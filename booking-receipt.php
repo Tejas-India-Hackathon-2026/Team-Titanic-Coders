@@ -21,7 +21,7 @@ $stmt = $pdo->prepare("
            p.title as property_title, p.location as property_location, p.city as property_city, 
            p.price as property_price, p.deposit as property_deposit, p.image as property_image,
            p.property_type, p.furnishing,
-           o.name as owner_name, o.phone as owner_phone, o.email as owner_email
+           o.name as owner_name, o.phone as owner_phone, o.email as owner_email, o.is_verified as owner_is_verified
     FROM payments pay
     JOIN properties p ON pay.property_id = p.id
     JOIN owners o ON p.owner_id = o.id
@@ -92,7 +92,7 @@ require_once __DIR__ . '/includes/header.php';
                 <span style="font-size: 0.72rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px;">Landlord / Owner Details</span>
                 <h4 style="font-size: 1.05rem; font-weight: 800; color: #0f172a; margin: 0.2rem 0; display: flex; align-items: center; gap: 4px;">
                     <?php echo htmlspecialchars($payment['owner_name']); ?>
-                    <?php echo render_verified_badge(false, 16); ?>
+                    <?php if (!empty($payment['owner_is_verified']) && (int)$payment['owner_is_verified'] === 1) echo render_verified_badge(false, 16); ?>
                 </h4>
                 <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0;">
                     <i class="fa-solid fa-phone"></i> <?php echo htmlspecialchars($payment['owner_phone']); ?><br>

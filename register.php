@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
             if ($role === 'owner') {
-                $stmt = $pdo->prepare("INSERT INTO owners (name, email, phone, password) VALUES (?, ?, ?, ?)");
+                $stmt = $pdo->prepare("INSERT INTO owners (name, email, phone, password, is_verified) VALUES (?, ?, ?, ?, 0)");
                 $stmt->execute([$name, $email, $phone, $hashedPassword]);
             } else {
                 $stmt = $pdo->prepare("INSERT INTO renters (name, email, phone, password) VALUES (?, ?, ?, ?)");
@@ -56,6 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_email'] = $email;
             $_SESSION['user_role'] = $role;
             $_SESSION['user_phone'] = $phone;
+            $_SESSION['user_is_verified'] = 0;
 
             set_flash_message('success', 'Account created successfully in ' . ucfirst($role) . ' database! Welcome to RentNear.');
 

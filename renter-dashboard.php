@@ -22,7 +22,7 @@ $savedProperties = $stmtFavs->fetchAll();
 // Fetch Sent Inquiries
 $stmtInquiries = $pdo->prepare("
     SELECT i.*, p.title as property_title, p.city as property_city, p.price as property_price, p.image as property_image,
-           o.name as owner_name, o.phone as owner_phone
+           o.name as owner_name, o.phone as owner_phone, o.is_verified as owner_is_verified
     FROM inquiries i
     JOIN properties p ON i.property_id = p.id
     JOIN owners o ON p.owner_id = o.id
@@ -172,7 +172,7 @@ require_once __DIR__ . '/includes/header.php';
                                     <?php endif; ?>
                                 </div>
                                 <div style="display: flex; gap: 1rem; font-size: 0.85rem; color: var(--text-muted); flex-wrap: wrap; margin-top: 3px;">
-                                    <span>Owner: <strong style="color: var(--dark);"><?php echo htmlspecialchars($inq['owner_name']); ?></strong> <?php echo render_verified_badge(false, 13); ?> (<?php echo htmlspecialchars($inq['owner_phone']); ?>)</span>
+                                    <span>Owner: <strong style="color: var(--dark);"><?php echo htmlspecialchars($inq['owner_name']); ?></strong> <?php if (!empty($inq['owner_is_verified']) && (int)$inq['owner_is_verified'] === 1) echo render_verified_badge(false, 13); ?> (<?php echo htmlspecialchars($inq['owner_phone']); ?>)</span>
                                     <span>Rent: <strong><?php echo format_inr($inq['property_price']); ?>/mo</strong></span>
                                     <?php if (!empty($inq['move_in_date'])): ?>
                                         <span>Target Move-in: <strong><?php echo date('d M Y', strtotime($inq['move_in_date'])); ?></strong></span>

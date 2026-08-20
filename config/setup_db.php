@@ -16,6 +16,9 @@ function initialize_database($pdo) {
                 address VARCHAR(255) DEFAULT '',
                 city VARCHAR(100) DEFAULT '',
                 avatar VARCHAR(255) DEFAULT 'assets/images/default-avatar.png',
+                is_verified TINYINT(1) NOT NULL DEFAULT 0,
+                verified_at DATETIME DEFAULT NULL,
+                verification_txn_id VARCHAR(100) DEFAULT NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
         ");
@@ -254,6 +257,9 @@ function initialize_database($pdo) {
 
     // Auto-migration for Renter Booking Payments & Token Advance
     try {
+        $pdo->exec("ALTER TABLE payments MODIFY COLUMN property_id INT NULL DEFAULT NULL");
+    } catch (Exception $e) {}
+    try {
         $pdo->exec("ALTER TABLE payments ADD COLUMN renter_id INT DEFAULT NULL");
     } catch (Exception $e) {}
     try {
@@ -274,10 +280,14 @@ function initialize_database($pdo) {
         $pdo->exec("ALTER TABLE properties ADD COLUMN stay_duration VARCHAR(50) DEFAULT '1 Month (Short Stay Allowed)'");
     } catch (Exception $e) {}
 
-    // Auto-migration for Owner Instagram Blue Tick Verification
+    // Auto-migration for Owner Golden Tick Verification
     try {
-        $pdo->exec("ALTER TABLE owners ADD COLUMN is_verified TINYINT(1) DEFAULT 0");
-    } catch (Exception $e) {}
+        $pdo->exec("ALTER TABLE owners ADD COLUMN is_verified TINYINT(1) NOT NULL DEFAULT 0");
+    } catch (Exception $e) {
+        try {
+            $pdo->exec("ALTER TABLE owners MODIFY COLUMN is_verified TINYINT(1) NOT NULL DEFAULT 0");
+        } catch (Exception $e2) {}
+    }
     try {
         $pdo->exec("ALTER TABLE owners ADD COLUMN verified_at DATETIME DEFAULT NULL");
     } catch (Exception $e) {}
