@@ -99,7 +99,7 @@ require_once __DIR__ . '/includes/header.php';
         </div>
 
         <?php if (!empty($error)): ?>
-            <div class="alert alert-danger" style="font-size: 0.9rem; padding: 0.75rem 1rem;">
+            <div class="alert alert-danger" style="font-size: 0.9rem; padding: 0.75rem 1rem; text-align: center; justify-content: center; display: flex; align-items: center; gap: 6px;">
                 <i class="fa-solid fa-circle-exclamation me-1"></i> <?php echo htmlspecialchars($error); ?>
             </div>
         <?php endif; ?>
