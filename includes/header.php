@@ -100,8 +100,8 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     <a href="login.php" class="btn btn-secondary btn-sm">
                         <i class="fa-solid fa-right-to-bracket"></i> Login
                     </a>
-                    <a href="register.php?role=owner" class="btn btn-primary btn-sm">
-                        <i class="fa-solid fa-plus-circle"></i> List Property
+                    <a href="register.php" class="btn btn-primary btn-sm">
+                        <i class="fa-solid fa-user-plus"></i> Registration
                     </a>
                 <?php else: ?>
                     <?php if ($user['role'] === 'owner'): ?>
